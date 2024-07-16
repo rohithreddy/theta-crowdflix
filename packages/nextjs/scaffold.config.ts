@@ -1,4 +1,61 @@
+import { defineChain } from "viem";
 import * as chains from "viem/chains";
+
+export const theta_privatenet = defineChain({
+  id: 366,
+  name: "Theta Private Net",
+  nativeCurrency: {
+    decimals: 18,
+    name: "TFUEL",
+    symbol: "TFUEL",
+  },
+  rpcUrls: {
+    default: {
+      http: ["http://localhost:18888/rpc"],
+    },
+  },
+  blockExplorers: {
+    default: { name: "Explorer", url: "" },
+  },
+  testnet: true,
+});
+export const theta_testnet = defineChain({
+  id: 365,
+  name: "Theta Test Net",
+  nativeCurrency: {
+    decimals: 18,
+    name: "TFUEL",
+    symbol: "TFUEL",
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://eth-rpc-api-testnet.thetatoken.org/rpc"],
+    },
+  },
+  blockExplorers: {
+    default: { name: "Explorer", url: "https://testnet-explorer.thetatoken.org/" },
+  },
+  testnet: true,
+});
+
+export const theta_mainnet = defineChain({
+  id: 361,
+  name: "Theta Mainnet",
+  nativeCurrency: {
+    decimals: 18,
+    name: "TFUEL",
+    symbol: "TFUEL",
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://eth-rpc-api.thetatoken.org/rpc"],
+    },
+  },
+  blockExplorers: {
+    default: { name: "Explorer", url: "https://explorer.thetatoken.org/" },
+  },
+  testnet: false,
+});
 
 export type ScaffoldConfig = {
   targetNetworks: readonly chains.Chain[];
@@ -10,7 +67,7 @@ export type ScaffoldConfig = {
 
 const scaffoldConfig = {
   // The networks on which your DApp is live
-  targetNetworks: [chains.hardhat],
+  targetNetworks: [chains.hardhat, theta_privatenet, theta_testnet, theta_mainnet],
 
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect if you only target the local network (default is 4000)

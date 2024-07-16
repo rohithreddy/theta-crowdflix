@@ -3,28 +3,30 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/manager/AccessManaged.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
-/// @custom:security-contact crash@web108.xyz
-contract CROWDFLIX is ERC20, ERC20Pausable, Ownable, ERC20Permit, ERC20Votes {
-    constructor(address initialOwner)
-        ERC20("CROWDFLIX", "CROWDFLIX")
-        Ownable(initialOwner)
-        ERC20Permit("CROWDFLIX")
-    {}
+contract CrowdFlixToken is ERC20, ERC20Burnable, ERC20Pausable, AccessManaged, ERC20Permit, ERC20Votes {
+    constructor(address initialAuthority)
+        ERC20("CrowdFlixToken", "CFLIX")
+        AccessManaged(initialAuthority)
+        ERC20Permit("CrowdFlixToken")
+    {
+        _mint(msg.sender, 1000000 * 10 ** decimals());
+    }
 
-    function pause() public onlyOwner {
+    function pause() public restricted {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function unpause() public restricted {
         _unpause();
     }
 
-    function mint(address to, uint256 amount) public onlyOwner {
+    function mint(address to, uint256 amount) public restricted {
         _mint(to, amount);
     }
 

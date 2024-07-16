@@ -19,29 +19,40 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     with a random private key in the .env file (then used on hardhat.config.ts)
     You can run the `yarn account` command to check your balance in every network.
   */
+  // Deploy Access Manager
+
   const { deployer } = await hre.getNamedAccounts();
   console.log("Deploying contracts with the account:", deployer);
 
   const { deploy } = hre.deployments;
 
-  await deploy("CROWDFLIX", {
+  await deploy("AccessManager", {
+    from: deployer,
+    args: [deployer],
+    log: true,
+    autoMine: true,
+  });
+  const accessManager = await hre.ethers.getContract<Contract>("AccessManager", deployer);
+  console.log("Access Manager Deployed at address", await accessManager.getAddress());
+
+  await deploy("CrowdFlixToken", {
     from: deployer,
     // Contract constructor arguments
-    args: [deployer],
+    args: [await accessManager.getAddress()],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
-  const crowdFlix = await hre.ethers.getContract<Contract>("CROWDFLIX", deployer);
-  console.log("CROWDFLIX Token Deployed at address", await crowdFlix.getAddress());
+  const crowdFlixToken = await hre.ethers.getContract<Contract>("CrowdFlixToken", deployer);
+  console.log("CROWDFLIX Token Deployed at address", await crowdFlixToken.getAddress());
 
   console.log("Time lock controller");
 
   await deploy("Timelock", {
     from: deployer,
     // Contract constructor arguments
-    args: [1000, [], []],
+    args: [100, [deployer], [deployer]],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
@@ -50,12 +61,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   const timeLock = await hre.ethers.getContract<Contract>("Timelock", deployer);
   console.log("Time lock deployed at address", await timeLock.getAddress());
-  const tokenAdd = await crowdFlix.getAddress();
+  const tokenAdd = await crowdFlixToken.getAddress();
   const timeLockAdd = await timeLock.getAddress();
 
   // Get the deployed contract to interact with it after deploying.
 
-  await deploy("FLIXGOV", {
+  await deploy("CrowdFlixDaoGovernor", {
     from: deployer,
     // Contract constructor arguments
     args: [tokenAdd, timeLockAdd],
@@ -66,12 +77,18 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
 
   // Get the deployed contract to interact with it after deploying.
-  const flixGovernor = await hre.ethers.getContract<Contract>("FLIXGOV", deployer);
-  console.log("Deployed Governer successfully", await flixGovernor.getAddress());
+  const crowdFlixDaoGovernor = await hre.ethers.getContract<Contract>("CrowdFlixDaoGovernor", deployer);
+  console.log("Deployed Governer successfully", await crowdFlixDaoGovernor.getAddress());
+
+  console.log("Minting CROWDFLIX TOken to Flix Governer");
+  await crowdFlixToken
+    .mint(await crowdFlixDaoGovernor.getAddress(), 10000000 * 10 ** 8)
+    .then(() => console.log("Minted CROWDFLIX Token to Flix Governer"))
+    .catch(err => console.log(err));
 };
 
 export default deployYourContract;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployYourContract.tags = ["CROWDFLIX"];
+deployYourContract.tags = ["CROWDFLIX", "DaoGov", "TimeLock"];
