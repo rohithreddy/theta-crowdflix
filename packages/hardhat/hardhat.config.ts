@@ -49,6 +49,7 @@ const config: HardhatUserConfig = {
       accounts: [deployerPrivateKey],
       chainId: 365,
       gasPrice: 4000000000000,
+      timeout: 8000000,
     },
     theta_mainnet: {
       url: `https://eth-rpc-api.thetatoken.org/rpc`,
