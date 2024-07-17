@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/access/manager/AccessManaged.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
+/// @custom:security-contact crash@web108.xyz
 contract CrowdFlixToken is ERC20, ERC20Burnable, ERC20Pausable, AccessManaged, ERC20Permit, ERC20Votes {
     constructor(address initialAuthority)
         ERC20("CrowdFlixToken", "CFLIX")

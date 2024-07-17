@@ -46,13 +46,27 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
   const crowdFlixToken = await hre.ethers.getContract<Contract>("CrowdFlixToken", deployer);
   console.log("CROWDFLIX Token Deployed at address", await crowdFlixToken.getAddress());
+  const tokenAdd = await crowdFlixToken.getAddress();
+  console.log("Deploying launchpad contract");
 
-  console.log("Time lock controller");
+  await deploy("LaunchPad", {
+    from: deployer,
+    // Contract constructor arguments
+    args: [tokenAdd, await accessManager.getAddress()],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
+  const launchPad = await hre.ethers.getContract<Contract>("LaunchPad", deployer);
+  console.log("Launchpad Deployed at address", await launchPad.getAddress());
+
+  console.log("Deploying Time lock controller");
 
   await deploy("Timelock", {
     from: deployer,
     // Contract constructor arguments
-    args: [100, [deployer], [deployer]],
+    args: [10, [], []], //just 10 seconds + public proposers
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
@@ -61,7 +75,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   const timeLock = await hre.ethers.getContract<Contract>("Timelock", deployer);
   console.log("Time lock deployed at address", await timeLock.getAddress());
-  const tokenAdd = await crowdFlixToken.getAddress();
+
   const timeLockAdd = await timeLock.getAddress();
 
   // Get the deployed contract to interact with it after deploying.
