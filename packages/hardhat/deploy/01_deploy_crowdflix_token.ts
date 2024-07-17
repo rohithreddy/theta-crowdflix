@@ -99,10 +99,45 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     .mint(await crowdFlixDaoGovernor.getAddress(), 10000000 * 10 ** 8)
     .then(() => console.log("Minted CROWDFLIX Token to Flix Governer"))
     .catch(err => console.log(err));
+
+  // Deploy MasterTicket
+  // await deploy("MasterTicket", {
+  //   from: deployer,
+  //   log: true,
+  //   autoMine: true,
+  // });
+  // const masterTicket = await hre.ethers.getContract<Contract>("MasterTicket", deployer);
+  // console.log("MasterTicket Deployed at address", await masterTicket.getAddress());
+
+  // ... (other imports and variables)
+
+  const MasterTicket = await hre.ethers.getContractFactory("MasterTicket");
+  const masterTicket = await MasterTicket.deploy();
+  // await masterTicket.deployed();
+
+  // Initialize MasterTicket
+
+  console.log("MasterTicket deployed to:", await masterTicket.getAddress());
+
+  // Deploy TicketManager
+  await deploy("TicketManager", {
+    from: deployer,
+    args: [await masterTicket.getAddress(), await accessManager.getAddress()],
+    log: true,
+    autoMine: true,
+  });
+  const ticketManager = await hre.ethers.getContract<Contract>("TicketManager", deployer);
+  console.log("TicketManager Deployed at address", await ticketManager.getAddress());
+  await masterTicket.initialize(
+    await ticketManager.getAddress(), // Replace with the address of your initial authority
+    "Master Ticket", // Replace with your desired name
+    "MTKT", // Replace with your desired symbol
+    100, // Replace with your desired initial price (in wei)
+  );
 };
 
 export default deployYourContract;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployYourContract.tags = ["CROWDFLIX", "DaoGov", "TimeLock"];
+deployYourContract.tags = ["CROWDFLIX", "DaoGov", "TimeLock", "MasterTicket", "TicketManager"];
