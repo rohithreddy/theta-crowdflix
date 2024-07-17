@@ -38,7 +38,7 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
     }
 
     // Function to create a new ERC721 ticket collection clone
-    function createTicketCollection(uint256 _projectId, address initialOwner, string memory _name, string memory _symbol, uint256 _price) public restricted whenNotPaused returns (address) {
+    function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price) public restricted whenNotPaused returns (address) {
         // Create a new clone of the ERC721 ticket implementation
         address payable ticketContract = payable(Clones.clone(ticketImplementation));
 
@@ -51,7 +51,7 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
 
         // Initialize the cloned contract
         // Cast to MasterTicket and call initialize
-        MasterTicket(ticketContract).initialize(initialOwner, _name, _symbol, _price); // Initialize with the authority and price
+        MasterTicket(ticketContract).initialize(address(this), _name, _symbol, _price); // Initialize with TicketManager address and price
 
         // Increment the collection count
         collectionCount++;
