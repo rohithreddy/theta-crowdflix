@@ -43,7 +43,7 @@ const Home: NextPage = () => {
             <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
               Crowd Flix
             </code>
-            or{" "}
+            <span> / </span>{" "}
             <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
               the FLIX
             </code>
