@@ -1,47 +1,42 @@
 // SPDX-License-Identifier: MIT
-
 // Compatible with OpenZeppelin Contracts ^5.0.0
-
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
+import "@openzeppelin/contracts/access/manager/AccessManaged.sol";
 
-contract MasterTicket is ERC721Upgradeable, ERC721EnumerableUpgradeable, ERC721PausableUpgradeable, OwnableUpgradeable {
+/// @custom:security-contact crash@web108.xyz
+contract MasterTicket is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Pausable, AccessManaged {
     uint256 private _nextTokenId;
     uint256 public price; // Add price variable
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    function initialize(address initialOwner, string memory _name, string memory _symbol, uint256 _price) initializer public {
-        __ERC721_init(_name, _symbol); // Initialize with name and symbol
-        __ERC721Enumerable_init();
-        __ERC721Pausable_init();
-        __Ownable_init(initialOwner);
+    constructor(address initialAuthority, uint256 _price)
+        ERC721("MasterTicket", "MTK")
+        AccessManaged(initialAuthority)
+    {
         price = _price; // Initialize price
     }
 
-    function pause() public onlyOwner {
+    function pause() public restricted {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function unpause() public restricted {
         _unpause();
     }
 
-    function safeMint(address to) public payable onlyOwner {
+    function safeMint(address to, string memory uri) public restricted payable {
         require(msg.value >= price, "Insufficient payment"); // Check payment in ETH
 
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
     }
 
-    function setPrice(uint256 _newPrice) public onlyOwner {
+    function setPrice(uint256 _newPrice) public restricted {
         price = _newPrice; // Update price
     }
 
@@ -49,7 +44,7 @@ contract MasterTicket is ERC721Upgradeable, ERC721EnumerableUpgradeable, ERC721P
 
     function _update(address to, uint256 tokenId, address auth)
         internal
-        override(ERC721Upgradeable, ERC721EnumerableUpgradeable, ERC721PausableUpgradeable)
+        override(ERC721, ERC721Enumerable, ERC721Pausable)
         returns (address)
     {
         return super._update(to, tokenId, auth);
@@ -57,20 +52,26 @@ contract MasterTicket is ERC721Upgradeable, ERC721EnumerableUpgradeable, ERC721P
 
     function _increaseBalance(address account, uint128 value)
         internal
-        override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
+        override(ERC721, ERC721Enumerable)
     {
         super._increaseBalance(account, value);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
+        override(ERC721, ERC721Enumerable, ERC721URIStorage)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
     }
-
-    // Receive ETH
-    receive() external payable {}
 }

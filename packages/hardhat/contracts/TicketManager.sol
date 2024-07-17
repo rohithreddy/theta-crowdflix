@@ -26,6 +26,8 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
 
     // Event emitted when a new ticket collection is created
     event TicketCollectionCreated(uint256 indexed projectId, address indexed ticketContract, uint256 price);
+    
+    uint256 public completeCount;
 
     constructor(address _ticketImplementation, address initialAuthority) AccessManaged(initialAuthority) {
         ticketImplementation = _ticketImplementation;
@@ -45,11 +47,11 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
 
         // Initialize the cloned contract
         // Cast to MasterTicket and call initialize
-        MasterTicket(ticketContract).initialize(initialAuthority, _name, _symbol, _price); // Initialize with the authority and price
+        // MasterTicket(ticketContract).initialize(initialAuthority, _name, _symbol, _price); // Initialize with the authority and price
 
         // Emit an event to signal the creation of the ticket collection
         emit TicketCollectionCreated(_projectId, ticketContract, _price);
-
+        completeCount++;
         return ticketContract;
     }
 
@@ -61,6 +63,16 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
     // Function to get the price of a ticket collection
     function getTicketCollectionPrice(uint256 _projectId) public view returns (uint256) {
         return ticketCollections[_projectId].price;
+    }
+
+    // Function to update the price of an existing ticket collection
+    function updateTicketCollectionPrice(uint256 _projectId, uint256 _newPrice) public restricted {
+        require(_projectId < completeCount, "Invalid project ID");
+        TicketCollection storage collection = ticketCollections[_projectId];
+        collection.price = _newPrice;
+
+        // Update the price on the MasterTicket contract
+        MasterTicket(collection.ticketContract).setPrice(_newPrice);
     }
 
     // Function to pause the factory
