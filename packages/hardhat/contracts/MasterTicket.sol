@@ -35,7 +35,7 @@ contract MasterTicket is ERC721Upgradeable, ERC721EnumerableUpgradeable, ERC721P
     }
 
     function safeMint(address to) public payable onlyOwner {
-        require(msg.value >= price, "Insufficient payment"); // Check payment in ETH
+        // require(msg.value >= price, "Insufficient payment"); // Check payment in ETH
 
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
