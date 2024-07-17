@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SwitchTheme } from "./SwitchTheme";
-import { Bars3Icon, BugAntIcon, UserGroupIcon, VideoCameraIcon } from "@heroicons/react/24/outline";
+import { BanknotesIcon, Bars3Icon, BugAntIcon, UserGroupIcon, VideoCameraIcon } from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
@@ -34,6 +34,11 @@ export const menuLinks: HeaderMenuLink[] = [
     label: "Theatre",
     href: "/theatre",
     icon: <VideoCameraIcon className="h-4 w-4" />,
+  },
+  {
+    label: "Flix Starter",
+    href: "/flixstarter",
+    icon: <BanknotesIcon className="h-4 w-4" />,
   },
 ];
 

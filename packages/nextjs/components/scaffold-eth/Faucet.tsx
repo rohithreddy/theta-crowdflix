@@ -7,6 +7,7 @@ import { useAccount } from "wagmi";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { Address, AddressInput, Balance, EtherInput } from "~~/components/scaffold-eth";
 import { useTransactor } from "~~/hooks/scaffold-eth";
+import { theta_testnet } from "~~/scaffold.config";
 import { notification } from "~~/utils/scaffold-eth";
 
 // Account index to use from generated hardhat accounts.
@@ -34,6 +35,7 @@ export const Faucet = () => {
     const getFaucetAddress = async () => {
       try {
         const accounts = await localWalletClient.getAddresses();
+        console.log("Accounts FAUCET", accounts);
         setFaucetAddress(accounts[FAUCET_ACCOUNT_INDEX]);
       } catch (error) {
         notification.error(
