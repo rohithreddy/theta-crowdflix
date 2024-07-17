@@ -32,7 +32,7 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
     }
 
     // Function to create a new ERC721 ticket collection clone
-    function createTicketCollection(uint256 _projectId, address initialAuthority, string memory _name, string memory _symbol, uint256 _price) public restricted whenNotPaused returns (address) {
+    function createTicketCollection(uint256 _projectId, address initialOwner, string memory _name, string memory _symbol, uint256 _price) public restricted whenNotPaused returns (address) {
         // Create a new clone of the ERC721 ticket implementation
         address payable ticketContract = payable(Clones.clone(ticketImplementation));
 
@@ -45,7 +45,7 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
 
         // Initialize the cloned contract
         // Cast to MasterTicket and call initialize
-        MasterTicket(ticketContract).initialize(initialAuthority, _name, _symbol, _price); // Initialize with the authority and price
+        MasterTicket(ticketContract).initialize(initialOwner, _name, _symbol, _price); // Initialize with the authority and price
 
         // Emit an event to signal the creation of the ticket collection
         emit TicketCollectionCreated(_projectId, ticketContract, _price);
@@ -72,4 +72,28 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
     function unpause() public restricted {
         _unpause();
     }
+
+    // Function to check if the factory is paused
+    function isPaused() public view returns (bool) {
+        return Pausable.paused();
+    }
+
+    //function to buy ticket from a collection based on project id
+     //function to buy ticket from a collection based on project id
+    function buyTicket(uint256 _projectId) public payable {
+    // Get the ticket collection
+    TicketCollection storage collection = ticketCollections[_projectId];
+
+    // Check if the payment is sufficient
+    require(msg.value >= collection.price, "Insufficient payment");
+
+    // Cast the ticket contract address to MasterTicket (make it payable)
+    MasterTicket ticketContract = MasterTicket(payable(collection.ticketContract)); 
+
+    // Convert _projectId to a string
+    // Mint the ticket
+    ticketContract.safeMint(msg.sender);
+}
+
+    //function to set BaseURI for a collection 
 }

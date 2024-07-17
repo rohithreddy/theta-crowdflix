@@ -128,12 +128,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
   const ticketManager = await hre.ethers.getContract<Contract>("TicketManager", deployer);
   console.log("TicketManager Deployed at address", await ticketManager.getAddress());
-  await masterTicket.initialize(
-    await ticketManager.getAddress(), // Replace with the address of your initial authority
-    "Master Ticket", // Replace with your desired name
-    "MTKT", // Replace with your desired symbol
-    100, // Replace with your desired initial price (in wei)
-  );
+  // await masterTicket.initialize(
+  //   await ticketManager.getAddress(), // Replace with the address of your initial authority
+  //   "Master Ticket", // Replace with your desired name
+  //   "MTKT", // Replace with your desired symbol
+  //   100, // Replace with your desired initial price (in wei)
+  // );
 };
 
 export default deployYourContract;
