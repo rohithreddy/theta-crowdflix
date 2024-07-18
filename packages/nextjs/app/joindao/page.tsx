@@ -1,3 +1,4 @@
+import TokenDetails from "./_components/TokenDetails";
 import type { NextPage } from "next";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
@@ -6,7 +7,7 @@ export const metadata = getMetadata({
   description: "Join the Awesomest DAO and build the Future",
 });
 
-const JoinDAO: NextPage = () => {
+const JoinDAO: NextPage = async () => {
   return (
     <>
       <div className="text-center mt-8 bg-secondary p-10">
@@ -16,6 +17,9 @@ const JoinDAO: NextPage = () => {
           <br /> Build the{" "}
           <code className="italic bg-base-300 text-base font-bold [word-spacing:-0.5rem] px-1">Future</code>
         </p>
+      </div>
+      <div>
+        <TokenDetails />
       </div>
     </>
   );

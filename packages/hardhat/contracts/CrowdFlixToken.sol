@@ -16,7 +16,7 @@ contract CrowdFlixToken is ERC20, ERC20Burnable, ERC20Pausable, AccessManaged, E
         AccessManaged(initialAuthority)
         ERC20Permit("CrowdFlixToken")
     {
-        _mint(msg.sender, 1000000 * 10 ** decimals());
+        _mint(msg.sender, 10000000 * 10 ** decimals());
     }
 
     function pause() public restricted {

@@ -23,6 +23,8 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         uint256 totalFunded;
         bool isActive;
         address[] contributors; // Array to store contributor addresses
+        address creator; // Added project creator address
+        uint256 profitSharePercentage; // Percentage of profits to distribute to contributors
     }
 
     mapping(uint256 => Project) public projects;
@@ -33,10 +35,12 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
     // Track investments
     mapping(uint256 => mapping(address => uint256)) public projectInvestments;
 
-    event ProjectCreated(uint256 indexed projectId, string name, uint256 fundingGoal, uint256 startTime, uint256 endTime, address teamWallet);
+    event ProjectCreated(uint256 indexed projectId, string name, uint256 fundingGoal, uint256 startTime, uint256 endTime, address teamWallet, address creator, uint256 profitSharePercentage);
     event Contributed(uint256 indexed projectId, address indexed contributor, uint256 amount);
     event Withdrawn(uint256 indexed projectId, address indexed recipient, uint256 amount);
     event ProjectFinalized(uint256 indexed projectId, bool success);
+    event ProfitSharePercentageUpdated(uint256 indexed projectId, uint256 newPercentage);
+    event TicketsSoldUpdated(uint256 indexed projectId, uint256 newTicketsSold);
 
     constructor(IERC20 _fundingToken, address initialAuthority) AccessManaged(initialAuthority) {
         fundingToken = _fundingToken;
@@ -48,11 +52,13 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         uint256 _fundingGoal,
         uint256 _startTime,
         uint256 _endTime,
-        address _teamWallet // Added teamWallet parameter
+        address _teamWallet, // Added teamWallet parameter
+        uint256 _profitSharePercentage // Added profitSharePercentage parameter
     ) public restricted {
         require(_startTime >= block.timestamp, "Start time must be in the future");
         require(_endTime > _startTime, "End time must be after start time");
         require(_teamWallet != address(0), "Team wallet cannot be zero address"); // Check teamWallet is not zero address
+        require(_profitSharePercentage <= 90, "Profit share percentage cannot exceed 90%");
 
         uint256 projectId = projectCount;
         projects[projectId] = Project({
@@ -64,12 +70,14 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
             totalFunded: 0,
             isActive: true,
             teamWallet: _teamWallet, // Assign teamWallet
-            contributors: new address[](0) // Initialize contributors array
+            contributors: new address[](0), // Initialize contributors array
+            creator: msg.sender, // Store the creator address
+            profitSharePercentage: _profitSharePercentage // Assign profitSharePercentage
         });
 
         projectCount++;
 
-        emit ProjectCreated(projectId, _name, _fundingGoal, _startTime, _endTime, _teamWallet);
+        emit ProjectCreated(projectId, _name, _fundingGoal, _startTime, _endTime, _teamWallet, msg.sender, _profitSharePercentage);
     }
 
     function contribute(uint256 _projectId, uint256 _amount) public whenNotPaused {
@@ -100,7 +108,9 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
 
         uint256 amount = project.totalFunded;
         project.totalFunded = 0;
-        payable(project.teamWallet).transfer(amount); // Transfer to teamWallet
+
+        // Transfer remaining funds to team wallet
+        payable(project.teamWallet).transfer(amount);
 
         emit Withdrawn(_projectId, project.teamWallet, amount);
     }
@@ -116,7 +126,11 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         if (success) {
             uint256 amount = project.totalFunded;
             project.totalFunded = 0;
-            payable(project.teamWallet).transfer(amount); // Transfer to teamWallet
+
+            // Transfer remaining funds to team wallet
+            payable(project.teamWallet).transfer(amount);
+
+            emit Withdrawn(_projectId, project.teamWallet, amount);
         } else {
             // Iterate through contributors using the array
             for (uint256 i = 0; i < project.contributors.length; i++) {
@@ -165,5 +179,26 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         require(project.startTime >= block.timestamp, "Start time must be in the future");
         require(project.endTime > project.startTime, "End time must be after start time");
         require(project.teamWallet != address(0), "Team wallet cannot be zero address");
+    }
+
+    // Function to get projects by address
+    function getProjectsByAddress(address _address) public view returns (Project[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].creator == _address) {
+                count++;
+            }
+        }
+
+        Project[] memory projectsByAddress = new Project[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].creator == _address) {
+                projectsByAddress[index] = projects[i];
+                index++;
+            }
+        }
+
+        return projectsByAddress;
     }
 }

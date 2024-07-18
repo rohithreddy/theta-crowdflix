@@ -15,11 +15,14 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
     struct TicketCollection {
         address ticketContract;
         uint256 projectId;
-        uint256 price; // Add price for the ticket collection
+        uint256 price;  // Add price for the ticket collection
+        string category;
+        string title;
+        uint256 ticketsSold; // Track tickets sold for this collection
     }
 
     // Mapping to store ticket collections and their associated project IDs
-    mapping(uint256 => TicketCollection) public ticketCollections;
+    mapping(uint256 => TicketCollection) private ticketCollections;
 
     // Address of the ERC721 ticket implementation contract
     address public immutable ticketImplementation;
@@ -30,6 +33,9 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
     // Array to store collection addresses
     address[] public collectionAddresses;
 
+    // Track total tickets sold across all collections
+    uint256 public totalTicketsSold;
+
     // Event emitted when a new ticket collection is created
     event TicketCollectionCreated(uint256 indexed projectId, address indexed ticketContract, uint256 price);
 
@@ -38,7 +44,7 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
     }
 
     // Function to create a new ERC721 ticket collection clone
-    function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price) public restricted whenNotPaused returns (address) {
+    function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price, string memory _category, string memory _title) public restricted whenNotPaused returns (address) {
         // Create a new clone of the ERC721 ticket implementation
         address payable ticketContract = payable(Clones.clone(ticketImplementation));
 
@@ -46,7 +52,10 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
         ticketCollections[_projectId] = TicketCollection({
             ticketContract: ticketContract,
             projectId: _projectId,
-            price: _price // Store the price
+            price: _price, // Store the price
+            category: _category,
+            title: _title,
+            ticketsSold: 0 // Initialize ticketsSold to 0
         });
 
         // Initialize the cloned contract
@@ -103,6 +112,12 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
 
         // Mint the ticket
         ticketContract.safeMint(msg.sender);
+
+        // Update tickets sold for the collection
+        collection.ticketsSold++;
+
+        // Update total tickets sold
+        totalTicketsSold++;
     }
 
     // Function to get existing collection addresses and details
@@ -113,6 +128,27 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
         }
         return collections;
     }
+    // Function to get ticket collections by category 
+    function getCollectionsByCategory(string memory _category) public view returns (TicketCollection[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < collectionCount; i++) {
+            if (keccak256(bytes(ticketCollections[i].category)) == keccak256(bytes(_category))) {
+                count++;
+            }
+        }
+
+        TicketCollection[] memory collections = new TicketCollection[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < collectionCount; i++) {
+            if (keccak256(bytes(ticketCollections[i].category)) == keccak256(bytes(_category))) {
+                collections[index] = ticketCollections[i];
+                index++;
+            }
+        }
+
+        return collections;
+    }
+
     receive() external payable {}
     //function to set BaseURI for a collection 
 }

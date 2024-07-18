@@ -10008,6 +10008,75 @@ const deployedContracts = {
         updateTimelock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
       },
     },
+    CrowdFlixFaucet: {
+      address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_crowdFlixToken",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [],
+          name: "claim",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "claimLimit",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "crowdFlixToken",
+          outputs: [
+            {
+              internalType: "contract IERC20",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "lastClaimTime",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
     CrowdFlixToken: {
       address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       abi: [
@@ -11269,6 +11338,12 @@ const deployedContracts = {
               name: "teamWallet",
               type: "address",
             },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "creator",
+              type: "address",
+            },
           ],
           name: "ProjectCreated",
           type: "event",
@@ -11469,6 +11544,77 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_address",
+              type: "address",
+            },
+          ],
+          name: "getProjectsByAddress",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "name",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "description",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fundingGoal",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "startTime",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "endTime",
+                  type: "uint256",
+                },
+                {
+                  internalType: "address",
+                  name: "teamWallet",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "totalFunded",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "isActive",
+                  type: "bool",
+                },
+                {
+                  internalType: "address[]",
+                  name: "contributors",
+                  type: "address[]",
+                },
+                {
+                  internalType: "address",
+                  name: "creator",
+                  type: "address",
+                },
+              ],
+              internalType: "struct LaunchPad.Project[]",
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "isConsumingScheduledOp",
           outputs: [
@@ -11588,6 +11734,11 @@ const deployedContracts = {
               name: "isActive",
               type: "bool",
             },
+            {
+              internalType: "address",
+              name: "creator",
+              type: "address",
+            },
           ],
           stateMutability: "view",
           type: "function",
@@ -11634,7 +11785,7 @@ const deployedContracts = {
       },
     },
     TicketManager: {
-      address: "0x9A676e781A523b5d0C0e43731313A708CB607508",
+      address: "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",
       abi: [
         {
           inputs: [
@@ -11854,6 +12005,16 @@ const deployedContracts = {
               name: "_price",
               type: "uint256",
             },
+            {
+              internalType: "string",
+              name: "_category",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_title",
+              type: "string",
+            },
           ],
           name: "createTicketCollection",
           outputs: [
@@ -11885,6 +12046,72 @@ const deployedContracts = {
                 {
                   internalType: "uint256",
                   name: "price",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "category",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "title",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "ticketsSold",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct TicketManager.TicketCollection[]",
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_category",
+              type: "string",
+            },
+          ],
+          name: "getCollectionsByCategory",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "address",
+                  name: "ticketContract",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "projectId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "price",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "category",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "title",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "ticketsSold",
                   type: "uint256",
                 },
               ],
@@ -11994,35 +12221,6 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "ticketCollections",
-          outputs: [
-            {
-              internalType: "address",
-              name: "ticketContract",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "projectId",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "price",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
           inputs: [],
           name: "ticketImplementation",
           outputs: [
@@ -12030,6 +12228,19 @@ const deployedContracts = {
               internalType: "address",
               name: "",
               type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalTicketsSold",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
             },
           ],
           stateMutability: "view",

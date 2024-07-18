@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { Contract } from "ethers";
+import { Contract, parseEther } from "ethers";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -96,7 +96,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   console.log("Minting CROWDFLIX TOken to Flix Governer");
   await crowdFlixToken
-    .mint(await crowdFlixDaoGovernor.getAddress(), 10000000 * 10 ** 8)
+    .mint(await crowdFlixDaoGovernor.getAddress(), parseEther("1000000000"))
     .then(() => console.log("Minted CROWDFLIX Token to Flix Governer"))
     .catch(err => console.log(err));
 
@@ -134,6 +134,22 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   //   "MTKT", // Replace with your desired symbol
   //   100, // Replace with your desired initial price (in wei)
   // );
+  // Deploy CrowdFlixFaucet
+  await deploy("CrowdFlixFaucet", {
+    from: deployer,
+    args: [await crowdFlixToken.getAddress()], // Pass the CrowdFlixToken address
+    log: true,
+    autoMine: true,
+  });
+
+  const crowdFlixFaucet = await hre.ethers.getContract<Contract>("CrowdFlixFaucet", deployer);
+  console.log("CrowdFlixFaucet Deployed at address", await crowdFlixFaucet.getAddress());
+
+  // Mint 10 million CROWDFLIX tokens to CrowdFlixFaucet
+  await crowdFlixToken
+    .mint(await crowdFlixFaucet.getAddress(), parseEther("10000000")) // 10 million tokens
+    .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
+    .catch(err => console.log(err));
 };
 
 export default deployYourContract;
