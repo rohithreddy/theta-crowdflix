@@ -11310,6 +11310,25 @@ const deployedContracts = {
             },
             {
               indexed: false,
+              internalType: "uint256",
+              name: "newPercentage",
+              type: "uint256",
+            },
+          ],
+          name: "ProfitSharePercentageUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
               internalType: "string",
               name: "name",
               type: "string",
@@ -11344,6 +11363,12 @@ const deployedContracts = {
               name: "creator",
               type: "address",
             },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "profitSharePercentage",
+              type: "uint256",
+            },
           ],
           name: "ProjectCreated",
           type: "event",
@@ -11365,6 +11390,25 @@ const deployedContracts = {
             },
           ],
           name: "ProjectFinalized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "newTicketsSold",
+              type: "uint256",
+            },
+          ],
+          name: "TicketsSoldUpdated",
           type: "event",
         },
         {
@@ -11467,6 +11511,11 @@ const deployedContracts = {
               internalType: "address",
               name: "_teamWallet",
               type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_profitSharePercentage",
+              type: "uint256",
             },
           ],
           name: "createProject",
@@ -11605,6 +11654,11 @@ const deployedContracts = {
                   name: "creator",
                   type: "address",
                 },
+                {
+                  internalType: "uint256",
+                  name: "profitSharePercentage",
+                  type: "uint256",
+                },
               ],
               internalType: "struct LaunchPad.Project[]",
               name: "",
@@ -11739,6 +11793,11 @@ const deployedContracts = {
               name: "creator",
               type: "address",
             },
+            {
+              internalType: "uint256",
+              name: "profitSharePercentage",
+              type: "uint256",
+            },
           ],
           stateMutability: "view",
           type: "function",
@@ -11785,7 +11844,7 @@ const deployedContracts = {
       },
     },
     TicketManager: {
-      address: "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",
+      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
       abi: [
         {
           inputs: [
