@@ -40,6 +40,11 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/flixstarter",
     icon: <BanknotesIcon className="h-4 w-4" />,
   },
+  {
+    label: "Faucet",
+    href: "/faucet",
+    icon: <BanknotesIcon className="h-4 w-4" />,
+  },
 ];
 
 export const HeaderMenuLinks = () => {
