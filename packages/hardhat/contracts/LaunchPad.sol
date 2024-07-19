@@ -9,10 +9,19 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
-import "@openzeppelin/contracts/access/manager/AccessManaged.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
+contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
+    bytes32 public constant DAO_GOVERNER_ROLE = keccak256("DAO_GOVERNER_ROLE");
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+
+    enum ProjectStatus {
+        InProgress,
+        Success,
+        Fail
+    }
+
     struct Project {
         string name;
         string description;
@@ -25,6 +34,8 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         address[] contributors; // Array to store contributor addresses
         address creator; // Added project creator address
         uint256 profitSharePercentage; // Percentage of profits to distribute to contributors
+        string category; // Added category
+        ProjectStatus status; // Added project status
     }
 
     mapping(uint256 => Project) public projects;
@@ -35,15 +46,18 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
     // Track investments
     mapping(uint256 => mapping(address => uint256)) public projectInvestments;
 
-    event ProjectCreated(uint256 indexed projectId, string name, uint256 fundingGoal, uint256 startTime, uint256 endTime, address teamWallet, address creator, uint256 profitSharePercentage);
+    event ProjectCreated(uint256 indexed projectId, string name, uint256 fundingGoal, uint256 startTime, uint256 endTime, address teamWallet, address creator, uint256 profitSharePercentage, string category);
     event Contributed(uint256 indexed projectId, address indexed contributor, uint256 amount);
     event Withdrawn(uint256 indexed projectId, address indexed recipient, uint256 amount);
     event ProjectFinalized(uint256 indexed projectId, bool success);
     event ProfitSharePercentageUpdated(uint256 indexed projectId, uint256 newPercentage);
     event TicketsSoldUpdated(uint256 indexed projectId, uint256 newTicketsSold);
 
-    constructor(IERC20 _fundingToken, address initialAuthority) AccessManaged(initialAuthority) {
+    constructor(IERC20 _fundingToken, address initialAuthority) {
         fundingToken = _fundingToken;
+        _grantRole(DEFAULT_ADMIN_ROLE, initialAuthority);
+        _grantRole(DAO_GOVERNER_ROLE, initialAuthority);
+        _grantRole(PAUSER_ROLE, initialAuthority);
     }
 
     function createProject(
@@ -53,8 +67,10 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         uint256 _startTime,
         uint256 _endTime,
         address _teamWallet, // Added teamWallet parameter
-        uint256 _profitSharePercentage // Added profitSharePercentage parameter
-    ) public restricted {
+        address _creator,
+        uint256 _profitSharePercentage, // Added profitSharePercentage parameter
+        string memory _category // Added category parameter
+    ) public onlyRole(DAO_GOVERNER_ROLE) {
         require(_startTime >= block.timestamp, "Start time must be in the future");
         require(_endTime > _startTime, "End time must be after start time");
         require(_teamWallet != address(0), "Team wallet cannot be zero address"); // Check teamWallet is not zero address
@@ -71,13 +87,15 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
             isActive: true,
             teamWallet: _teamWallet, // Assign teamWallet
             contributors: new address[](0), // Initialize contributors array
-            creator: msg.sender, // Store the creator address
-            profitSharePercentage: _profitSharePercentage // Assign profitSharePercentage
+            creator: _creator, // Store the creator address
+            profitSharePercentage: _profitSharePercentage, // Assign profitSharePercentage
+            category: _category, // Assign category
+            status: ProjectStatus.InProgress // Set initial status to InProgress
         });
 
         projectCount++;
 
-        emit ProjectCreated(projectId, _name, _fundingGoal, _startTime, _endTime, _teamWallet, msg.sender, _profitSharePercentage);
+        emit ProjectCreated(projectId, _name, _fundingGoal, _startTime, _endTime, _teamWallet, msg.sender, _profitSharePercentage, _category);
     }
 
     function contribute(uint256 _projectId, uint256 _amount) public whenNotPaused {
@@ -101,10 +119,11 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         emit Contributed(_projectId, msg.sender, _amount);
     }
 
-    function withdraw(uint256 _projectId) public restricted {
+    function withdraw(uint256 _projectId) public {
         Project storage project = projects[_projectId];
         require(!project.isActive, "Project is still active");
         require(project.totalFunded >= project.fundingGoal, "Funding goal not reached");
+        require(msg.sender == project.creator, "Only the project creator can withdraw");
 
         uint256 amount = project.totalFunded;
         project.totalFunded = 0;
@@ -115,7 +134,7 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         emit Withdrawn(_projectId, project.teamWallet, amount);
     }
 
-    function finalizeProject(uint256 _projectId) public restricted {
+    function finalizeProject(uint256 _projectId) public onlyRole(DAO_GOVERNER_ROLE) {
         Project storage project = projects[_projectId];
         require(project.isActive, "Project is not active");
         require(block.timestamp > project.endTime, "Project has not ended yet");
@@ -124,6 +143,7 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         bool success = project.totalFunded >= project.fundingGoal;
 
         if (success) {
+            project.status = ProjectStatus.Success;
             uint256 amount = project.totalFunded;
             project.totalFunded = 0;
 
@@ -132,6 +152,7 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
 
             emit Withdrawn(_projectId, project.teamWallet, amount);
         } else {
+            project.status = ProjectStatus.Fail;
             // Iterate through contributors using the array
             for (uint256 i = 0; i < project.contributors.length; i++) {
                 address contributorAddress = project.contributors[i];
@@ -146,11 +167,11 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         emit ProjectFinalized(_projectId, success);
     }
 
-    function pause() public restricted {
+    function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
     }
 
-    function unpause() public restricted {
+    function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
     }
 
@@ -162,10 +183,12 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         uint256 _newFundingGoal,
         uint256 _newStartTime,
         uint256 _newEndTime,
-        address _newTeamWallet
-    ) public restricted {
+        address _newTeamWallet,
+        string memory _newCategory
+    ) public {
         require(_projectId < projectCount, "Invalid project ID");
         Project storage project = projects[_projectId];
+        require(msg.sender == project.creator, "Only the project creator can edit");
 
         // Update project details
         project.name = _newName;
@@ -174,6 +197,7 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         project.startTime = _newStartTime;
         project.endTime = _newEndTime;
         project.teamWallet = _newTeamWallet;
+        project.category = _newCategory;
 
         // Ensure new start and end times are valid
         require(project.startTime >= block.timestamp, "Start time must be in the future");
@@ -200,5 +224,89 @@ contract LaunchPad is Pausable, AccessManaged, ReentrancyGuard {
         }
 
         return projectsByAddress;
+    }
+
+    // Function to get projects by category
+    function getProjectsByCategory(string memory _category) public view returns (Project[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (keccak256(bytes(projects[i].category)) == keccak256(bytes(_category))) {
+                count++;
+            }
+        }
+
+        Project[] memory projectsByCategory = new Project[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (keccak256(bytes(projects[i].category)) == keccak256(bytes(_category))) {
+                projectsByCategory[index] = projects[i];
+                index++;
+            }
+        }
+
+        return projectsByCategory;
+    }
+
+    // Function to get projects in progress
+    function getProjectsInProgress() public view returns (Project[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].status == ProjectStatus.InProgress) {
+                count++;
+            }
+        }
+
+        Project[] memory inProgressProjects = new Project[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].status == ProjectStatus.InProgress) {
+                inProgressProjects[index] = projects[i];
+                index++;
+            }
+        }
+
+        return inProgressProjects;
+    }
+
+    // Function to get successful projects
+    function getSuccessfulProjects() public view returns (Project[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].status == ProjectStatus.Success) {
+                count++;
+            }
+        }
+
+        Project[] memory successfulProjects = new Project[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].status == ProjectStatus.Success) {
+                successfulProjects[index] = projects[i];
+                index++;
+            }
+        }
+
+        return successfulProjects;
+    }
+
+    // Function to get failed projects
+    function getFailedProjects() public view returns (Project[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].status == ProjectStatus.Fail) {
+                count++;
+            }
+        }
+
+        Project[] memory failedProjects = new Project[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].status == ProjectStatus.Fail) {
+                failedProjects[index] = projects[i];
+                index++;
+            }
+        }
+
+        return failedProjects;
     }
 }

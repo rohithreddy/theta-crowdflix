@@ -70,7 +70,4 @@ contract MasterTicket is ERC721Upgradeable, ERC721EnumerableUpgradeable, ERC721P
     {
         return super.supportsInterface(interfaceId);
     }
-
-    // Receive ETH
-    receive() external payable {}
 }

@@ -54,6 +54,26 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
     .catch(err => console.log(err));
 
+  await deploy("CrowdFlixDaoGovernor", {
+    from: deployer,
+    // Contract constructor arguments
+    args: [cflixTokenAddress],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
+
+  // Get the deployed contract to interact with it after deploying.
+  const crowdFlixDaoGovernor = await hre.ethers.getContract<Contract>("CrowdFlixDaoGovernor", deployer);
+  console.log("Deployed Governer successfully", await crowdFlixDaoGovernor.getAddress());
+
+  // console.log("Minting CROWDFLIX TOken to Flix Governer");
+  // await crowdFlixToken
+  //   .mint(await crowdFlixDaoGovernor.getAddress(), parseEther("1000000000"))
+  //   .then(() => console.log("Minted CROWDFLIX Token to Flix Governer"))
+  //   .catch(err => console.log(err));
+
   // await deploy("AccessManager", {
   //   from: deployer,
   //   args: [deployer],
@@ -94,26 +114,6 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   // const timeLockAdd = await timeLock.getAddress();
 
   // // Get the deployed contract to interact with it after deploying.
-
-  // await deploy("CrowdFlixDaoGovernor", {
-  //   from: deployer,
-  //   // Contract constructor arguments
-  //   args: [tokenAdd, timeLockAdd],
-  //   log: true,
-  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
-  //   autoMine: true,
-  // });
-
-  // // Get the deployed contract to interact with it after deploying.
-  // const crowdFlixDaoGovernor = await hre.ethers.getContract<Contract>("CrowdFlixDaoGovernor", deployer);
-  // console.log("Deployed Governer successfully", await crowdFlixDaoGovernor.getAddress());
-
-  // console.log("Minting CROWDFLIX TOken to Flix Governer");
-  // await crowdFlixToken
-  //   .mint(await crowdFlixDaoGovernor.getAddress(), parseEther("1000000000"))
-  //   .then(() => console.log("Minted CROWDFLIX Token to Flix Governer"))
-  //   .catch(err => console.log(err));
 
   // // Deploy MasterTicket
   // // await deploy("MasterTicket", {

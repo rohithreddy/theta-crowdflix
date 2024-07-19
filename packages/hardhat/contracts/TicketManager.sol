@@ -5,12 +5,15 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
-import "@openzeppelin/contracts/access/manager/AccessManaged.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol"; // Import AccessControl
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./MasterTicket.sol"; // Import MasterTicket from the same directory
 
-contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
+contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
+    bytes32 public constant DAO_CONTROLLER_ROLE = keccak256("DAO_CONTROLLER_ROLE");
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+
     // Struct to store ticket collection information
     struct TicketCollection {
         address ticketContract;
@@ -19,6 +22,7 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
         string category;
         string title;
         uint256 ticketsSold; // Track tickets sold for this collection
+        address paymentContract; // Address of the payment contract
     }
 
     // Mapping to store ticket collections and their associated project IDs
@@ -37,16 +41,19 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
     uint256 public totalTicketsSold;
 
     // Event emitted when a new ticket collection is created
-    event TicketCollectionCreated(uint256 indexed projectId, address indexed ticketContract, uint256 price);
+    event TicketCollectionCreated(uint256 indexed projectId, address indexed ticketContract, uint256 price, address paymentContract);
 
-    constructor(address _ticketImplementation, address initialAuthority) AccessManaged(initialAuthority) {
+    constructor(address _ticketImplementation, address initialAuthority) {
         ticketImplementation = _ticketImplementation;
+        _grantRole(DEFAULT_ADMIN_ROLE, initialAuthority);
+        _grantRole(DAO_CONTROLLER_ROLE, initialAuthority);
+        _grantRole(PAUSER_ROLE, initialAuthority);
     }
 
     // Function to create a new ERC721 ticket collection clone
-    function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price, string memory _category, string memory _title) public restricted whenNotPaused returns (address) {
+    function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price, string memory _category, string memory _title, address _paymentContract) public onlyRole(DAO_CONTROLLER_ROLE) whenNotPaused returns (address) {
         // Create a new clone of the ERC721 ticket implementation
-        address payable ticketContract = payable(Clones.clone(ticketImplementation));
+        address ticketContract = Clones.clone(ticketImplementation);
 
         // Store the ticket collection information
         ticketCollections[_projectId] = TicketCollection({
@@ -55,7 +62,8 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
             price: _price, // Store the price
             category: _category,
             title: _title,
-            ticketsSold: 0 // Initialize ticketsSold to 0
+            ticketsSold: 0, // Initialize ticketsSold to 0
+            paymentContract: _paymentContract // Store the payment contract address
         });
 
         // Initialize the cloned contract
@@ -69,7 +77,7 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
         collectionAddresses.push(ticketContract);
 
         // Emit an event to signal the creation of the ticket collection
-        emit TicketCollectionCreated(_projectId, ticketContract, _price);
+        emit TicketCollectionCreated(_projectId, ticketContract, _price, _paymentContract);
 
         return ticketContract;
     }
@@ -85,12 +93,12 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
     }
 
     // Function to pause the factory
-    function pause() public restricted {
+    function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
     }
 
     // Function to unpause the factory
-    function unpause() public restricted {
+    function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
     }
 
@@ -108,7 +116,7 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
         require(msg.value >= collection.price, "Insufficient payment");
 
         // Cast the ticket contract address to MasterTicket (make it payable)
-        MasterTicket ticketContract = MasterTicket(payable(collection.ticketContract)); 
+        MasterTicket ticketContract = MasterTicket(collection.ticketContract); 
 
         // Mint the ticket
         ticketContract.safeMint(msg.sender);
@@ -118,6 +126,9 @@ contract TicketManager is Pausable, AccessManaged, ReentrancyGuard {
 
         // Update total tickets sold
         totalTicketsSold++;
+
+        // Forward the payment to the payment contract
+        payable(collection.paymentContract).transfer(msg.value);
     }
 
     // Function to get existing collection addresses and details
