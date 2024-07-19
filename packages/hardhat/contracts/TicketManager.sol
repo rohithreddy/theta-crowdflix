@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol"; // Import AccessContr
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./MasterTicket.sol"; // Import MasterTicket from the same directory
+import "./CrowdFlixVault.sol";
 
 contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
     bytes32 public constant DAO_CONTROLLER_ROLE = keccak256("DAO_CONTROLLER_ROLE");
@@ -30,6 +31,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
 
     // Address of the ERC721 ticket implementation contract
     address public immutable ticketImplementation;
+    CrowdFlixVault public crowdFlixVault; 
 
     // Keep track of the total number of collections deployed
     uint256 public collectionCount;
@@ -43,8 +45,9 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
     // Event emitted when a new ticket collection is created
     event TicketCollectionCreated(uint256 indexed projectId, address indexed ticketContract, uint256 price, address paymentContract);
 
-    constructor(address _ticketImplementation, address initialAuthority) {
+    constructor(address _ticketImplementation, address initialAuthority, address _crowdFlixVaultAddress) {
         ticketImplementation = _ticketImplementation;
+        CrowdFlixVault(_crowdFlixVaultAddress);
         _grantRole(DEFAULT_ADMIN_ROLE, initialAuthority);
         _grantRole(DAO_CONTROLLER_ROLE, initialAuthority);
         _grantRole(PAUSER_ROLE, initialAuthority);
@@ -75,6 +78,8 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
 
         // Add the collection address to the array
         collectionAddresses.push(ticketContract);
+
+        CrowdFlixVault(crowdFlixVault).createProjectVault(_projectId);
 
         // Emit an event to signal the creation of the ticket collection
         emit TicketCollectionCreated(_projectId, ticketContract, _price, _paymentContract);
@@ -126,6 +131,8 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
 
         // Update total tickets sold
         totalTicketsSold++;
+
+        CrowdFlixVault(crowdFlixVault).depositFunds(_projectId, msg.sender, collection.price);
 
         // Forward the payment to the payment contract
         payable(collection.paymentContract).transfer(msg.value);
