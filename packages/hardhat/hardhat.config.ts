@@ -42,6 +42,12 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
+    hardhat: {
+      mining: {
+        auto: true,
+        interval: 5000,
+      },
+    },
     // View the networks that are pre-configured.
     // If the network you are looking for is not here you can add new network settings
     theta_testnet: {
