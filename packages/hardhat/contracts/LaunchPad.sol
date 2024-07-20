@@ -309,4 +309,11 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
 
         return failedProjects;
     }
+
+    // Receive function to handle direct ETH transfers
+    receive() external payable {
+        // You can add logic here to handle direct ETH transfers,
+        // such as rejecting them or storing them for a specific purpose.
+        // For example, you could revert the transaction if ETH transfers are not expected.
+    }
 }
