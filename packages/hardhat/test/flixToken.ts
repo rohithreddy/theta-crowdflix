@@ -58,7 +58,7 @@ describe("CrowdFlix", function () {
   describe("TransferFrom", function () {
     it("Should transfer tokens from one account to another", async function () {
       const approveAmount = 50;
-      await crowdFlix.approve(addr1.address, approveAmount);
+      await crowdFlix.approve(addr1.address, approveAmount); // Set the allowance
       await crowdFlix.transferFrom(owner.address, addr2.address, approveAmount);
       const addr2Balance = await crowdFlix.balanceOf(addr2.address);
       expect(addr2Balance).to.equal(approveAmount);

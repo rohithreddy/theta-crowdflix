@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
-    bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE"); 
+    bytes32 public constant TICKET_MANAGER_ROLE = keccak256("TICKET_MANAGER_ROLE"); 
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE"); 
 
     struct ProjectVault {
@@ -22,7 +22,8 @@ contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
     event VaultClosed(uint256 indexed projectId);
 
     constructor(address _initialManager, address _initialPauser) {
-        _grantRole(MANAGER_ROLE, _initialManager);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(TICKET_MANAGER_ROLE, _initialManager);
         _grantRole(PAUSER_ROLE, _initialPauser);
     }
 
@@ -30,7 +31,7 @@ contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
 
     function depositFunds(uint256 _projectId, address _contributor, uint256 _amount) 
         external 
-        onlyRole(MANAGER_ROLE) 
+        onlyRole(TICKET_MANAGER_ROLE) 
         nonReentrant 
         whenNotPaused 
     {
@@ -68,12 +69,12 @@ contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
         emit FundsWithdrawn(_projectId, msg.sender, withdrawalAmount, userShares);
     }
 
-    function createProjectVault(uint256 _projectId) external onlyRole(MANAGER_ROLE) {
+    function createProjectVault(uint256 _projectId) external onlyRole(TICKET_MANAGER_ROLE) {
         require(projectVaults[_projectId].totalShares == 0, "Vault already exists for this project");
         projectVaults[_projectId].isOpen = true; 
     }
 
-    function closeVault(uint256 _projectId) external onlyRole(MANAGER_ROLE) {
+    function closeVault(uint256 _projectId) external onlyRole(TICKET_MANAGER_ROLE) {
         projectVaults[_projectId].isOpen = false;
         emit VaultClosed(_projectId);
     }

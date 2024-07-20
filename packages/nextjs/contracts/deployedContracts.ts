@@ -10339,7 +10339,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "MANAGER_ROLE",
+          name: "PAUSER_ROLE",
           outputs: [
             {
               internalType: "bytes32",
@@ -10352,7 +10352,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "PAUSER_ROLE",
+          name: "TICKET_MANAGER_ROLE",
           outputs: [
             {
               internalType: "bytes32",
@@ -11791,6 +11791,10 @@ const deployedContracts = {
           stateMutability: "nonpayable",
           type: "function",
         },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
       ],
       inheritedFunctions: {
         paused: "@openzeppelin/contracts/utils/Pausable.sol",
@@ -11804,7 +11808,7 @@ const deployedContracts = {
       },
     },
     TicketManager: {
-      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      address: "0x9A676e781A523b5d0C0e43731313A708CB607508",
       abi: [
         {
           inputs: [
@@ -11815,7 +11819,7 @@ const deployedContracts = {
             },
             {
               internalType: "address",
-              name: "initialAuthority",
+              name: "launchPadAddress",
               type: "address",
             },
             {
@@ -11977,12 +11981,6 @@ const deployedContracts = {
               name: "price",
               type: "uint256",
             },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "paymentContract",
-              type: "address",
-            },
           ],
           name: "TicketCollectionCreated",
           type: "event",
@@ -12002,7 +12000,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "DAO_CONTROLLER_ROLE",
+          name: "DEFAULT_ADMIN_ROLE",
           outputs: [
             {
               internalType: "bytes32",
@@ -12015,7 +12013,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "DEFAULT_ADMIN_ROLE",
+          name: "LAUNCHPAD_ROLE",
           outputs: [
             {
               internalType: "bytes32",
@@ -12116,11 +12114,6 @@ const deployedContracts = {
               name: "_title",
               type: "string",
             },
-            {
-              internalType: "address",
-              name: "_paymentContract",
-              type: "address",
-            },
           ],
           name: "createTicketCollection",
           outputs: [
@@ -12182,11 +12175,6 @@ const deployedContracts = {
                   name: "ticketsSold",
                   type: "uint256",
                 },
-                {
-                  internalType: "address",
-                  name: "paymentContract",
-                  type: "address",
-                },
               ],
               internalType: "struct TicketManager.TicketCollection[]",
               name: "",
@@ -12237,11 +12225,6 @@ const deployedContracts = {
                   internalType: "uint256",
                   name: "ticketsSold",
                   type: "uint256",
-                },
-                {
-                  internalType: "address",
-                  name: "paymentContract",
-                  type: "address",
                 },
               ],
               internalType: "struct TicketManager.TicketCollection[]",

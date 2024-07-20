@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Contract, parseEther } from "ethers";
+import { ethers } from "hardhat";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -79,51 +80,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const launchPad = await hre.ethers.getContract<Contract>("LaunchPad", deployer);
   console.log("Launchpad Deployed at address", await launchPad.getAddress());
 
-  // console.log("Minting CROWDFLIX TOken to Flix Governer");
-  // await crowdFlixToken
-  //   .mint(await crowdFlixDaoGovernor.getAddress(), parseEther("1000000000"))
-  //   .then(() => console.log("Minted CROWDFLIX Token to Flix Governer"))
-  //   .catch(err => console.log(err));
-
-  // await deploy("AccessManager", {
-  //   from: deployer,
-  //   args: [deployer],
-  //   log: true,
-  //   autoMine: true,
-  // });
-  // const accessManager = await hre.ethers.getContract<Contract>("AccessManager", deployer);
-  // console.log("Access Manager Deployed at address", await accessManager.getAddress());
-  // console.log("Deploying launchpad contract");
-
-  // console.log("Deploying Time lock controller");
-
-  // await deploy("Timelock", {
-  //   from: deployer,
-  //   // Contract constructor arguments
-  //   args: [10, [], []], //just 10 seconds + public proposers
-  //   log: true,
-  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
-  //   autoMine: true,
-  // });
-
-  // const timeLock = await hre.ethers.getContract<Contract>("Timelock", deployer);
-  // console.log("Time lock deployed at address", await timeLock.getAddress());
-
-  // const timeLockAdd = await timeLock.getAddress();
-
-  // // Get the deployed contract to interact with it after deploying.
-
-  // // Deploy MasterTicket
-  // await deploy("MasterTicket", {
-  //   from: deployer,
-  //   log: true,
-  //   autoMine: true,
-  // });
-  // const masterTicket = await hre.ethers.getContract<Contract>("MasterTicket", deployer);
-  // console.log("MasterTicket Deployed at address", await masterTicket.getAddress());
-
-  // // ... (other imports and variables)
+  console.log("Deploying MasterTicket...");
 
   const MasterTicket = await hre.ethers.getContractFactory("MasterTicket");
   const masterTicket = await MasterTicket.deploy();
@@ -150,6 +107,9 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
   const ticketManager = await hre.ethers.getContract<Contract>("TicketManager", deployer);
   console.log("TicketManager Deployed at address", await ticketManager.getAddress());
+  await crowdFlixVault.grantRole(ethers.id("TICKET_MANAGER_ROLE"), await ticketManager.getAddress());
+  console.log("GRANTED TICKET MANAGER ROLE to=> " + (await ticketManager.getAddress()));
+  // crowdFlixVault.grantRole(crowdFlixVault.TICKET_MANAGER_ROLE, await ticketManager.getAddress())
   // // await masterTicket.initialize(
   // //   await ticketManager.getAddress(), // Replace with the address of your initial authority
   // //   "Master Ticket", // Replace with your desired name

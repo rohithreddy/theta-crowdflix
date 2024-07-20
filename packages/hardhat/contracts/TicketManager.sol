@@ -12,7 +12,7 @@ import "./MasterTicket.sol"; // Import MasterTicket from the same directory
 import "./CrowdFlixVault.sol";
 
 contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
-    bytes32 public constant DAO_CONTROLLER_ROLE = keccak256("DAO_CONTROLLER_ROLE");
+    bytes32 public constant LAUNCHPAD_ROLE = keccak256("LAUNCHPAD_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
     // Struct to store ticket collection information
@@ -23,7 +23,6 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         string category;
         string title;
         uint256 ticketsSold; // Track tickets sold for this collection
-        address paymentContract; // Address of the payment contract
     }
 
     // Mapping to store ticket collections and their associated project IDs
@@ -43,18 +42,18 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
     uint256 public totalTicketsSold;
 
     // Event emitted when a new ticket collection is created
-    event TicketCollectionCreated(uint256 indexed projectId, address indexed ticketContract, uint256 price, address paymentContract);
+    event TicketCollectionCreated(uint256 indexed projectId, address indexed ticketContract, uint256 price);
 
-    constructor(address _ticketImplementation, address initialAuthority, address _crowdFlixVaultAddress) {
+    constructor(address _ticketImplementation, address launchPadAddress, address _crowdFlixVaultAddress) {
         ticketImplementation = _ticketImplementation;
         CrowdFlixVault(_crowdFlixVaultAddress);
-        _grantRole(DEFAULT_ADMIN_ROLE, initialAuthority);
-        _grantRole(DAO_CONTROLLER_ROLE, initialAuthority);
-        _grantRole(PAUSER_ROLE, initialAuthority);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(LAUNCHPAD_ROLE, launchPadAddress);
+        _grantRole(PAUSER_ROLE, msg.sender);
     }
 
     // Function to create a new ERC721 ticket collection clone
-    function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price, string memory _category, string memory _title, address _paymentContract) public onlyRole(DAO_CONTROLLER_ROLE) whenNotPaused returns (address) {
+    function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price, string memory _category, string memory _title) public onlyRole(LAUNCHPAD_ROLE) whenNotPaused returns (address) {
         // Create a new clone of the ERC721 ticket implementation
         address ticketContract = Clones.clone(ticketImplementation);
 
@@ -65,8 +64,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
             price: _price, // Store the price
             category: _category,
             title: _title,
-            ticketsSold: 0, // Initialize ticketsSold to 0
-            paymentContract: _paymentContract // Store the payment contract address
+            ticketsSold: 0 // Initialize ticketsSold to 0
         });
 
         // Initialize the cloned contract
@@ -82,7 +80,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         CrowdFlixVault(crowdFlixVault).createProjectVault(_projectId);
 
         // Emit an event to signal the creation of the ticket collection
-        emit TicketCollectionCreated(_projectId, ticketContract, _price, _paymentContract);
+        emit TicketCollectionCreated(_projectId, ticketContract, _price);
 
         return ticketContract;
     }
@@ -135,7 +133,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         CrowdFlixVault(crowdFlixVault).depositFunds(_projectId, msg.sender, collection.price);
 
         // Forward the payment to the payment contract
-        payable(collection.paymentContract).transfer(msg.value);
+        // payable(collection.paymentContract).transfer(msg.value);
     }
 
     // Function to get existing collection addresses and details
