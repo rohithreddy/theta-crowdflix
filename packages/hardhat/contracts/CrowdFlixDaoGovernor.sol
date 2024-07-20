@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFractio
 contract CrowdFlixDaoGovernor is Governor, GovernorSettings, GovernorCountingSimple, GovernorStorage, GovernorVotes, GovernorVotesQuorumFraction {
     constructor(IVotes _token)
         Governor("CrowdFlixDaoGovernor")
-        GovernorSettings(100 seconds, 2 days, 5e18)
+        GovernorSettings(100 seconds, 2 days, 0)
         GovernorVotes(_token)
         GovernorVotesQuorumFraction(4)
     {}

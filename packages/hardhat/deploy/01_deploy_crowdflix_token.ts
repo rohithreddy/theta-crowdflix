@@ -116,6 +116,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   // //   "MTKT", // Replace with your desired symbol
   // //   100, // Replace with your desired initial price (in wei)
   // // );
+  // Testing a create proposal
 };
 
 export default deployYourContract;

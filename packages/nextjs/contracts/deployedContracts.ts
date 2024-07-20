@@ -11808,7 +11808,7 @@ const deployedContracts = {
       },
     },
     TicketManager: {
-      address: "0x9A676e781A523b5d0C0e43731313A708CB607508",
+      address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
       abi: [
         {
           inputs: [
