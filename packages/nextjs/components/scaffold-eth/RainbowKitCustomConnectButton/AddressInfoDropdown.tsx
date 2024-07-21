@@ -13,9 +13,17 @@ import {
   DocumentDuplicateIcon,
   QrCodeIcon,
 } from "@heroicons/react/24/outline";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~~/@/components/ui/dropdown-menu";
 import { BlockieAvatar, isENS } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";
+
+// Assuming ShadCN's components are in this path
 
 const allowedNetworks = getTargetNetworks();
 
@@ -46,92 +54,81 @@ export const AddressInfoDropdown = ({
   useOutsideClick(dropdownRef, closeDropdown);
 
   return (
-    <>
-      <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
-        <summary tabIndex={0} className="btn btn-secondary btn-sm pl-0 pr-2 shadow-md dropdown-toggle gap-0 !h-auto">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="btn btn-secondary btn-sm pl-0 pr-2 shadow-md gap-0 !h-auto" tabIndex={0}>
           <BlockieAvatar address={checkSumAddress} size={30} ensImage={ensAvatar} />
           <span className="ml-2 mr-1">
             {isENS(displayName) ? displayName : checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4)}
           </span>
           <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
-        </summary>
-        <ul
-          tabIndex={0}
-          className="dropdown-content menu z-[2] p-2 mt-2 shadow-center shadow-accent bg-base-200 rounded-box gap-1"
-        >
-          <NetworkOptions hidden={!selectingNetwork} />
-          <li className={selectingNetwork ? "hidden" : ""}>
-            {addressCopied ? (
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="shadow-md bg-base-200 rounded-box gap-1">
+        <NetworkOptions hidden={!selectingNetwork} />
+        <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
+          {addressCopied ? (
+            <div className="btn-sm !rounded-xl flex gap-3 py-3">
+              <CheckCircleIcon className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0" aria-hidden="true" />
+              <span className=" whitespace-nowrap">Copy address</span>
+            </div>
+          ) : (
+            <CopyToClipboard
+              text={checkSumAddress}
+              onCopy={() => {
+                setAddressCopied(true);
+                setTimeout(() => {
+                  setAddressCopied(false);
+                }, 800);
+              }}
+            >
               <div className="btn-sm !rounded-xl flex gap-3 py-3">
-                <CheckCircleIcon
+                <DocumentDuplicateIcon
                   className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
                   aria-hidden="true"
                 />
                 <span className=" whitespace-nowrap">Copy address</span>
               </div>
-            ) : (
-              <CopyToClipboard
-                text={checkSumAddress}
-                onCopy={() => {
-                  setAddressCopied(true);
-                  setTimeout(() => {
-                    setAddressCopied(false);
-                  }, 800);
-                }}
-              >
-                <div className="btn-sm !rounded-xl flex gap-3 py-3">
-                  <DocumentDuplicateIcon
-                    className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
-                    aria-hidden="true"
-                  />
-                  <span className=" whitespace-nowrap">Copy address</span>
-                </div>
-              </CopyToClipboard>
-            )}
-          </li>
-          <li className={selectingNetwork ? "hidden" : ""}>
-            <label htmlFor="qrcode-modal" className="btn-sm !rounded-xl flex gap-3 py-3">
-              <QrCodeIcon className="h-6 w-4 ml-2 sm:ml-0" />
-              <span className="whitespace-nowrap">View QR Code</span>
-            </label>
-          </li>
-          <li className={selectingNetwork ? "hidden" : ""}>
-            <button className="menu-item btn-sm !rounded-xl flex gap-3 py-3" type="button">
-              <ArrowTopRightOnSquareIcon className="h-6 w-4 ml-2 sm:ml-0" />
-              <a
-                target="_blank"
-                href={blockExplorerAddressLink}
-                rel="noopener noreferrer"
-                className="whitespace-nowrap"
-              >
-                View on Block Explorer
-              </a>
-            </button>
-          </li>
-          {allowedNetworks.length > 1 ? (
-            <li className={selectingNetwork ? "hidden" : ""}>
-              <button
-                className="btn-sm !rounded-xl flex gap-3 py-3"
-                type="button"
-                onClick={() => {
-                  setSelectingNetwork(true);
-                }}
-              >
-                <ArrowsRightLeftIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Switch Network</span>
-              </button>
-            </li>
-          ) : null}
-          <li className={selectingNetwork ? "hidden" : ""}>
+            </CopyToClipboard>
+          )}
+        </DropdownMenuItem>
+        <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
+          <label htmlFor="qrcode-modal" className="btn-sm !rounded-xl flex gap-3 py-3">
+            <QrCodeIcon className="h-6 w-4 ml-2 sm:ml-0" />
+            <span className="whitespace-nowrap">View QR Code</span>
+          </label>
+        </DropdownMenuItem>
+        <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
+          <button className="btn-sm !rounded-xl flex gap-3 py-3" type="button">
+            <ArrowTopRightOnSquareIcon className="h-6 w-4 ml-2 sm:ml-0" />
+            <a target="_blank" href={blockExplorerAddressLink} rel="noopener noreferrer" className="whitespace-nowrap">
+              View on Block Explorer
+            </a>
+          </button>
+        </DropdownMenuItem>
+        {allowedNetworks.length > 1 ? (
+          <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
             <button
-              className="menu-item text-error btn-sm !rounded-xl flex gap-3 py-3"
+              className="btn-sm !rounded-xl flex gap-3 py-3"
               type="button"
-              onClick={() => disconnect()}
+              onClick={() => {
+                setSelectingNetwork(true);
+              }}
             >
-              <ArrowLeftOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Disconnect</span>
+              <ArrowsRightLeftIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Switch Network</span>
             </button>
-          </li>
-        </ul>
-      </details>
-    </>
+          </DropdownMenuItem>
+        ) : null}
+        <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
+          <button
+            className="menu-item text-error btn-sm !rounded-xl flex gap-3 py-3"
+            type="button"
+            onClick={() => disconnect()}
+          >
+            <ArrowLeftOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Disconnect</span>
+          </button>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

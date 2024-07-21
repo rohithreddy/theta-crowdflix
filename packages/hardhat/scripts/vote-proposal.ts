@@ -19,11 +19,25 @@ async function voteOnProposal(hre: HardhatRuntimeEnvironment) {
   } catch (e) {
     console.log(e);
   }
+  console.log("Proposal State");
   console.log(await governer.state(proposalId));
+  console.log("Proposal Details");
   console.log(await governer.proposalDetails(proposalId));
+  console.log("Proposal proposalDeadline");
   console.log(await governer.proposalDeadline(proposalId));
+  console.log("Proposal proposalVotes");
   console.log(await governer.proposalVotes(proposalId));
+  console.log("Proposer ");
   console.log(await governer.proposalProposer(proposalId));
+
+  console.log("Get proposals snapshot");
+  console.log(await governer.proposalSnapshot(proposalId));
+  console.log("Posposal Count");
+  console.log(await governer.proposalCount());
+  console.log("Get Details at index 0");
+  for (let i = 0; i < (await governer.proposalCount()); i++) {
+    console.log(await governer.proposalDetailsAt(i));
+  }
 
   // Prepare the call data for the createProject function
 }
