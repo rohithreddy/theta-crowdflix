@@ -20,7 +20,7 @@ contract CrowdFlixToken is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, E
     {
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
         _grantRole(PAUSER_ROLE, pauser);
-        _mint(msg.sender, 500 * 10 ** decimals());//just 100 tokens
+        // _mint(msg.sender, 500 * 10 ** decimals());//just 100 tokens
         _grantRole(MINTER_ROLE, minter);
     }
 
