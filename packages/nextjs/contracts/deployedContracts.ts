@@ -6996,14 +6996,34 @@ const deployedContracts = {
   },
   31337: {
     CrowdFlixDaoGovernor: {
-      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      address: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
       abi: [
         {
           inputs: [
             {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
+            {
               internalType: "contract IVotes",
               name: "_token",
               type: "address",
+            },
+            {
+              internalType: "contract TimelockController",
+              name: "_timelock",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_quorumNumeratorValue",
+              type: "uint256",
+            },
+            {
+              internalType: "uint48",
+              name: "_initialVoteExtension",
+              type: "uint48",
             },
           ],
           stateMutability: "nonpayable",
@@ -7281,6 +7301,25 @@ const deployedContracts = {
           inputs: [
             {
               indexed: false,
+              internalType: "uint64",
+              name: "oldVoteExtension",
+              type: "uint64",
+            },
+            {
+              indexed: false,
+              internalType: "uint64",
+              name: "newVoteExtension",
+              type: "uint64",
+            },
+          ],
+          name: "LateQuorumVoteExtensionSet",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
               internalType: "uint256",
               name: "proposalId",
               type: "uint256",
@@ -7367,6 +7406,25 @@ const deployedContracts = {
           anonymous: false,
           inputs: [
             {
+              indexed: true,
+              internalType: "uint256",
+              name: "proposalId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint64",
+              name: "extendedDeadline",
+              type: "uint64",
+            },
+          ],
+          name: "ProposalExtended",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
               indexed: false,
               internalType: "uint256",
               name: "proposalId",
@@ -7418,6 +7476,25 @@ const deployedContracts = {
             },
           ],
           name: "QuorumNumeratorUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "oldTimelock",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "newTimelock",
+              type: "address",
+            },
+          ],
+          name: "TimelockChange",
           type: "event",
         },
         {
@@ -8018,6 +8095,19 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "lateQuorumVoteExtension",
+          outputs: [
+            {
+              internalType: "uint48",
+              name: "",
+              type: "uint48",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "name",
           outputs: [
             {
@@ -8288,7 +8378,7 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
-              name: "",
+              name: "proposalId",
               type: "uint256",
             },
           ],
@@ -8554,6 +8644,19 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint48",
+              name: "newVoteExtension",
+              type: "uint48",
+            },
+          ],
+          name: "setLateQuorumVoteExtension",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "uint256",
               name: "newProposalThreshold",
               type: "uint256",
@@ -8630,6 +8733,19 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "timelock",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "token",
           outputs: [
             {
@@ -8650,6 +8766,19 @@ const deployedContracts = {
             },
           ],
           name: "updateQuorumNumerator",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "contract TimelockController",
+              name: "newTimelock",
+              type: "address",
+            },
+          ],
+          name: "updateTimelock",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -8699,44 +8828,43 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        BALLOT_TYPEHASH: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        CLOCK_MODE: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        COUNTING_MODE: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        EXTENDED_BALLOT_TYPEHASH: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        cancel: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        castVote: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        castVoteBySig: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        castVoteWithReason: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        castVoteWithReasonAndParams: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        castVoteWithReasonAndParamsBySig:
-          "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        clock: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        eip712Domain: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        execute: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        getVotes: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        getVotesWithParams: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        hasVoted: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        hashProposal: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        name: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        nonces: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        onERC1155BatchReceived: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        onERC1155Received: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        onERC721Received: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        proposalDeadline: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        proposalEta: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        proposalNeedsQueuing: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        proposalProposer: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        proposalSnapshot: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        proposalThreshold: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        propose: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        queue: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        quorum: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        relay: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        state: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        supportsInterface: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        version: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        votingDelay: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        votingPeriod: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        BALLOT_TYPEHASH: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        CLOCK_MODE: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        COUNTING_MODE: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        EXTENDED_BALLOT_TYPEHASH: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        cancel: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVote: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteBySig: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteWithReason: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteWithReasonAndParams: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteWithReasonAndParamsBySig: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        clock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        eip712Domain: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        execute: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        getVotes: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        getVotesWithParams: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        hasVoted: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        hashProposal: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        name: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        nonces: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        onERC1155BatchReceived: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        onERC1155Received: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        onERC721Received: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalDeadline: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalEta: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalNeedsQueuing: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalProposer: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalSnapshot: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalThreshold: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        propose: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        queue: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        quorum: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        relay: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        state: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        supportsInterface: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        version: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        votingDelay: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        votingPeriod: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
         setProposalThreshold: "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
         setVotingDelay: "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
         setVotingPeriod: "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
@@ -8745,9 +8873,13 @@ const deployedContracts = {
         proposalDetails: "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
         proposalDetailsAt: "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
         token: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        lateQuorumVoteExtension: "@openzeppelin/contracts/governance/extensions/GovernorPreventLateQuorum.sol",
+        setLateQuorumVoteExtension: "@openzeppelin/contracts/governance/extensions/GovernorPreventLateQuorum.sol",
         quorumDenominator: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
         quorumNumerator: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
         updateQuorumNumerator: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        timelock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        updateTimelock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
       },
     },
     CrowdFlixFaucet: {
@@ -10094,7 +10226,7 @@ const deployedContracts = {
       },
     },
     CrowdFlixVault: {
-      address: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
       abi: [
         {
           inputs: [
@@ -10604,8 +10736,1021 @@ const deployedContracts = {
         paused: "@openzeppelin/contracts/utils/Pausable.sol",
       },
     },
+    FlixTimelock: {
+      address: "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "minDelay",
+              type: "uint256",
+            },
+            {
+              internalType: "address[]",
+              name: "proposers",
+              type: "address[]",
+            },
+            {
+              internalType: "address[]",
+              name: "executors",
+              type: "address[]",
+            },
+            {
+              internalType: "address",
+              name: "admin",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [],
+          name: "AccessControlBadConfirmation",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              internalType: "bytes32",
+              name: "neededRole",
+              type: "bytes32",
+            },
+          ],
+          name: "AccessControlUnauthorizedAccount",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "FailedInnerCall",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "delay",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "minDelay",
+              type: "uint256",
+            },
+          ],
+          name: "TimelockInsufficientDelay",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "targets",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "payloads",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "values",
+              type: "uint256",
+            },
+          ],
+          name: "TimelockInvalidOperationLength",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "caller",
+              type: "address",
+            },
+          ],
+          name: "TimelockUnauthorizedCaller",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "predecessorId",
+              type: "bytes32",
+            },
+          ],
+          name: "TimelockUnexecutedPredecessor",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "operationId",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "expectedStates",
+              type: "bytes32",
+            },
+          ],
+          name: "TimelockUnexpectedOperationState",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+          ],
+          name: "CallExecuted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+            {
+              indexed: false,
+              internalType: "bytes32",
+              name: "salt",
+              type: "bytes32",
+            },
+          ],
+          name: "CallSalt",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "index",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+            {
+              indexed: false,
+              internalType: "bytes32",
+              name: "predecessor",
+              type: "bytes32",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "delay",
+              type: "uint256",
+            },
+          ],
+          name: "CallScheduled",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+          ],
+          name: "Cancelled",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "oldDuration",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "newDuration",
+              type: "uint256",
+            },
+          ],
+          name: "MinDelayChange",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "previousAdminRole",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "newAdminRole",
+              type: "bytes32",
+            },
+          ],
+          name: "RoleAdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "RoleGranted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "RoleRevoked",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "CANCELLER_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "DEFAULT_ADMIN_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "EXECUTOR_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "PROPOSER_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+          ],
+          name: "cancel",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes",
+              name: "payload",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes32",
+              name: "predecessor",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "salt",
+              type: "bytes32",
+            },
+          ],
+          name: "execute",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address[]",
+              name: "targets",
+              type: "address[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "values",
+              type: "uint256[]",
+            },
+            {
+              internalType: "bytes[]",
+              name: "payloads",
+              type: "bytes[]",
+            },
+            {
+              internalType: "bytes32",
+              name: "predecessor",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "salt",
+              type: "bytes32",
+            },
+          ],
+          name: "executeBatch",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getMinDelay",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+          ],
+          name: "getOperationState",
+          outputs: [
+            {
+              internalType: "enum FlixTimelock.OperationState",
+              name: "",
+              type: "uint8",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+          ],
+          name: "getRoleAdmin",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+          ],
+          name: "getTimestamp",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "grantRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "hasRole",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes32",
+              name: "predecessor",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "salt",
+              type: "bytes32",
+            },
+          ],
+          name: "hashOperation",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address[]",
+              name: "targets",
+              type: "address[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "values",
+              type: "uint256[]",
+            },
+            {
+              internalType: "bytes[]",
+              name: "payloads",
+              type: "bytes[]",
+            },
+            {
+              internalType: "bytes32",
+              name: "predecessor",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "salt",
+              type: "bytes32",
+            },
+          ],
+          name: "hashOperationBatch",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+          ],
+          name: "isOperation",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+          ],
+          name: "isOperationDone",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+          ],
+          name: "isOperationPending",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+          ],
+          name: "isOperationReady",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256[]",
+              name: "",
+              type: "uint256[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "",
+              type: "uint256[]",
+            },
+            {
+              internalType: "bytes",
+              name: "",
+              type: "bytes",
+            },
+          ],
+          name: "onERC1155BatchReceived",
+          outputs: [
+            {
+              internalType: "bytes4",
+              name: "",
+              type: "bytes4",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes",
+              name: "",
+              type: "bytes",
+            },
+          ],
+          name: "onERC1155Received",
+          outputs: [
+            {
+              internalType: "bytes4",
+              name: "",
+              type: "bytes4",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes",
+              name: "",
+              type: "bytes",
+            },
+          ],
+          name: "onERC721Received",
+          outputs: [
+            {
+              internalType: "bytes4",
+              name: "",
+              type: "bytes4",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "callerConfirmation",
+              type: "address",
+            },
+          ],
+          name: "renounceRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "revokeRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "target",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes32",
+              name: "predecessor",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "salt",
+              type: "bytes32",
+            },
+            {
+              internalType: "uint256",
+              name: "delay",
+              type: "uint256",
+            },
+          ],
+          name: "schedule",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address[]",
+              name: "targets",
+              type: "address[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "values",
+              type: "uint256[]",
+            },
+            {
+              internalType: "bytes[]",
+              name: "payloads",
+              type: "bytes[]",
+            },
+            {
+              internalType: "bytes32",
+              name: "predecessor",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "salt",
+              type: "bytes32",
+            },
+            {
+              internalType: "uint256",
+              name: "delay",
+              type: "uint256",
+            },
+          ],
+          name: "scheduleBatch",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes4",
+              name: "interfaceId",
+              type: "bytes4",
+            },
+          ],
+          name: "supportsInterface",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "newDelay",
+              type: "uint256",
+            },
+          ],
+          name: "updateDelay",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+      ],
+      inheritedFunctions: {
+        DEFAULT_ADMIN_ROLE: "@openzeppelin/contracts/access/AccessControl.sol",
+        getRoleAdmin: "@openzeppelin/contracts/access/AccessControl.sol",
+        grantRole: "@openzeppelin/contracts/access/AccessControl.sol",
+        hasRole: "@openzeppelin/contracts/access/AccessControl.sol",
+        renounceRole: "@openzeppelin/contracts/access/AccessControl.sol",
+        revokeRole: "@openzeppelin/contracts/access/AccessControl.sol",
+        supportsInterface: "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
+        onERC721Received: "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
+        onERC1155BatchReceived: "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
+        onERC1155Received: "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
+      },
+    },
     LaunchPad: {
-      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      address: "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
       abi: [
         {
           inputs: [
@@ -10616,7 +11761,17 @@ const deployedContracts = {
             },
             {
               internalType: "address",
-              name: "initialAuthority",
+              name: "_initialAdmin",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_initialDaoGovernor",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_initialPauser",
               type: "address",
             },
           ],
@@ -11808,7 +12963,7 @@ const deployedContracts = {
       },
     },
     TicketManager: {
-      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      address: "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
       abi: [
         {
           inputs: [

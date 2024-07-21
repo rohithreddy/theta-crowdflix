@@ -53,12 +53,13 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     event ProfitSharePercentageUpdated(uint256 indexed projectId, uint256 newPercentage);
     event TicketsSoldUpdated(uint256 indexed projectId, uint256 newTicketsSold);
 
-    constructor(IERC20 _fundingToken, address initialAuthority) {
-        fundingToken = _fundingToken;
-        _grantRole(DEFAULT_ADMIN_ROLE, initialAuthority);
-        _grantRole(DAO_GOVERNER_ROLE, initialAuthority);
-        _grantRole(PAUSER_ROLE, initialAuthority);
-    }
+    constructor(IERC20 _fundingToken, address _initialAdmin, address _initialDaoGovernor, address _initialPauser) {
+    fundingToken = _fundingToken;
+    _grantRole(DEFAULT_ADMIN_ROLE, _initialAdmin);
+    _grantRole(DAO_GOVERNER_ROLE, _initialDaoGovernor);
+    _grantRole(PAUSER_ROLE, _initialPauser);
+}
+
 
     function createProject(
         string memory _name,
