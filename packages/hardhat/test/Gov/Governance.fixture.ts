@@ -61,8 +61,8 @@ export async function deployGovernanceContractsFixture(): Promise<{
   const Timelock: FlixTimelock__factory = (await ethers.getContractFactory("FlixTimelock")) as FlixTimelock__factory;
   const timelock = await Timelock.connect(deployerSigner).deploy(
     config.timelock.minDelay,
-    [deployerSigner.address, timelockAddress],
-    [deployerSigner.address, timelockAddress],
+    [deployerSigner.address, timelockAddress, governanceAddress],
+    [deployerSigner.address, timelockAddress, governanceAddress],
     timelockAddress,
   );
 

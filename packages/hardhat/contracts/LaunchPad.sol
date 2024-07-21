@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
-    bytes32 public constant DAO_GOVERNER_ROLE = keccak256("DAO_GOVERNER_ROLE");
+    bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE"); // Renamed DAO_GOVERNER_ROLE to PROPOSER_ROLE
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
     enum ProjectStatus {
@@ -53,10 +53,10 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     event ProfitSharePercentageUpdated(uint256 indexed projectId, uint256 newPercentage);
     event TicketsSoldUpdated(uint256 indexed projectId, uint256 newTicketsSold);
 
-    constructor(IERC20 _fundingToken, address _initialAdmin, address _initialDaoGovernor, address _initialPauser) {
+    constructor(IERC20 _fundingToken, address _initialAdmin, address _initialProposer, address _initialPauser) {
     fundingToken = _fundingToken;
     _grantRole(DEFAULT_ADMIN_ROLE, _initialAdmin);
-    _grantRole(DAO_GOVERNER_ROLE, _initialDaoGovernor);
+    _grantRole(PROPOSER_ROLE, _initialProposer); // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
     _grantRole(PAUSER_ROLE, _initialPauser);
 }
 
@@ -71,7 +71,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         address _creator,
         uint256 _profitSharePercentage, // Added profitSharePercentage parameter
         string memory _category // Added category parameter
-    ) public onlyRole(DAO_GOVERNER_ROLE) {
+    ) public onlyRole(PROPOSER_ROLE) { // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
         require(_startTime >= block.timestamp, "Start time must be in the future");
         require(_endTime > _startTime, "End time must be after start time");
         require(_teamWallet != address(0), "Team wallet cannot be zero address"); // Check teamWallet is not zero address
@@ -135,7 +135,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         emit Withdrawn(_projectId, project.teamWallet, amount);
     }
 
-    function finalizeProject(uint256 _projectId) public onlyRole(DAO_GOVERNER_ROLE) {
+    function finalizeProject(uint256 _projectId) public onlyRole(PROPOSER_ROLE) { // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
         Project storage project = projects[_projectId];
         require(project.isActive, "Project is not active");
         require(block.timestamp > project.endTime, "Project has not ended yet");

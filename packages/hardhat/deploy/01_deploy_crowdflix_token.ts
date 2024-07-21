@@ -1,5 +1,5 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { DeployFunction, DeployResult } from "hardhat-deploy/types";
+import { DeployFunction } from "hardhat-deploy/types";
 import { Contract, parseEther } from "ethers";
 import { ethers } from "hardhat";
 import { getExpectedContractAddress } from "../helpers/expected_contract";
@@ -25,9 +25,9 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const deployerSigner = await ethers.getSigner(deployer); // Get the signer for the deployer account
 
   console.log("Deploying contracts with the account:", deployer);
-  // const governance_address = await getExpectedContractAddress(deployerSigner, 2);
+  const dao_governor_address = await getExpectedContractAddress(deployerSigner, 2);
   const timelock_address = await getExpectedContractAddress(deployerSigner, 1);
-  // const token_address = await getExpectedContractAddress(deployerSigner, 0);
+  const token_address = await getExpectedContractAddress(deployerSigner, 0);
   const { deploy } = hre.deployments;
   // Deploy CrowdFlixToken
   await deploy("CrowdFlixToken", {
@@ -41,44 +41,29 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
   const crowdFlixToken = await hre.ethers.getContract<Contract>("CrowdFlixToken", deployer);
   console.log("CROWDFLIX Token Deployed at address", await crowdFlixToken.getAddress());
+  console.log("expected token address iS :D ", token_address);
   const cflixTokenAddress = await crowdFlixToken.getAddress();
 
-  // Deploy CrowdFlixFaucet
-  await deploy("CrowdFlixFaucet", {
-    from: deployer,
-    args: [cflixTokenAddress], // Pass the CrowdFlixToken address
-    log: true,
-    autoMine: true,
-  });
-
-  const crowdFlixFaucet = await hre.ethers.getContract<Contract>("CrowdFlixFaucet", deployer);
-  console.log("CrowdFlixFaucet Deployed at address", await crowdFlixFaucet.getAddress());
-
-  // Mint 10 million CROWDFLIX tokens to CrowdFlixFaucet
-  await crowdFlixToken
-    .mint(await crowdFlixFaucet.getAddress(), parseEther("1000")) // thousand tokens
-    .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
-    .catch(err => console.log(err));
-
   // Deploy TimeLockController
-  const proposers = [deployer, timelock_address];
-  const executors = [deployer, timelock_address];
+  const proposers = [deployer, timelock_address, dao_governor_address];
+  const executors = [deployer, timelock_address, dao_governor_address];
 
   await deploy("FlixTimelock", {
     from: deployer,
-    args: [10, proposers, executors, timelock_address], // Pass the CrowdFlixToken address
+    args: [10, proposers, executors, deployer], // Pass the CrowdFlixToken address
     log: true,
     autoMine: true,
   });
 
   const timeLockController = await hre.ethers.getContract<Contract>("FlixTimelock", deployer);
   console.log("TimeLockController Deployed at address", await timeLockController.getAddress());
+  console.log("The expected timelock address is", timelock_address);
 
   // Deploy CrowdFlixDaoGovernor
   const args = [
     "Crowd Flix DAO",
     cflixTokenAddress,
-    timelock_address,
+    await timeLockController.getAddress(),
     2, //quorum numerator
     100, //voting extension
   ];
@@ -96,6 +81,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   // Get the deployed contract to interact with it after deploying.
   const crowdFlixDaoGovernor = await hre.ethers.getContract<Contract>("CrowdFlixDaoGovernor", deployer);
   console.log("Deployed Governer successfully", await crowdFlixDaoGovernor.getAddress());
+  console.log("expected dao governor address iS :D ", dao_governor_address);
+  // Deploy LaunchPad
   await deploy("LaunchPad", {
     from: deployer,
     args: [
@@ -141,6 +128,24 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("TicketManager Deployed at address", await ticketManager.getAddress());
   await crowdFlixVault.grantRole(ethers.id("TICKET_MANAGER_ROLE"), await ticketManager.getAddress());
   console.log("GRANTED TICKET MANAGER ROLE to=> " + (await ticketManager.getAddress()));
+
+  // Deploy CrowdFlixFaucet
+  await deploy("CrowdFlixFaucet", {
+    from: deployer,
+    args: [cflixTokenAddress], // Pass the CrowdFlixToken address
+    log: true,
+    autoMine: true,
+  });
+
+  const crowdFlixFaucet = await hre.ethers.getContract<Contract>("CrowdFlixFaucet", deployer);
+  console.log("CrowdFlixFaucet Deployed at address", await crowdFlixFaucet.getAddress());
+
+  // Mint 10 million CROWDFLIX tokens to CrowdFlixFaucet
+  await crowdFlixToken
+    .mint(await crowdFlixFaucet.getAddress(), parseEther("1000")) // thousand tokens
+    .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
+    .catch(err => console.log(err));
+
   // crowdFlixVault.grantRole(crowdFlixVault.TICKET_MANAGER_ROLE, await ticketManager.getAddress())
   // // await masterTicket.initialize(
   // //   await ticketManager.getAddress(), // Replace with the address of your initial authority

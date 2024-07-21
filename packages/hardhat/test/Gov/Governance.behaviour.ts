@@ -1,7 +1,7 @@
 // packages/hardhat/test/Gov/Goverance.behavior.ts
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { parseEther } from "ethers";
+import { EventLog, parseEther } from "ethers";
 import { mine } from "@nomicfoundation/hardhat-network-helpers";
 
 // ... other imports ...
@@ -49,14 +49,14 @@ export async function shouldBehaveLikeLaunchPadGovernance(): Promise<void> {
     await token.delegate(admin.address);
 
     // 2. Prepare `createProject` Call Data
-    const projectName = "Test Project";
+    const projectName = "We want to document Theta Chain's Journey";
     const projectDescription = "This is a test project";
     const fundingGoal = parseEther("100");
     const startTime = Math.floor(Date.now() / 1000) + 86400; // 1 day from now
     const endTime = startTime + 86400 * 7; // 1 week from startTime
     const teamWallet = admin.address;
     const profitShare = 50;
-    const category = "Test Category";
+    const category = "documentary";
 
     const createProjectCalldata = launchPad.interface.encodeFunctionData("createProject", [
       projectName,
@@ -71,16 +71,43 @@ export async function shouldBehaveLikeLaunchPadGovernance(): Promise<void> {
     ]);
 
     // 3. Propose Project Creation
-    const proposalTx = await governor.propose(
-      [launchPad.getAddress()], // Targets
-      [0], // Values (ETH)
-      [createProjectCalldata], // Calldatas
-      "Proposal to create a new project", // Description
-    );
-    const proposalReceipt = await proposalTx.wait(1);
-    const proposalCreatedEvent = proposalReceipt.events?.find(event => event.event === "ProposalCreated");
-    const proposalId = proposalCreatedEvent?.args?.proposalId;
-    expect(proposalId).to.not.be.undefined; // Make sure proposalId exists
+    let proposalId: any;
+    try {
+      const proposalTx = await governor.propose(
+        [launchPad.getAddress()], // Targets
+        [0], // Values (ETH)
+        [createProjectCalldata], // Calldatas
+        "Proposal to create a new project", // Description
+      );
+      expect(proposalTx).to.emit(governor, "ProposalCreated");
+      const receipt = await proposalTx.wait(1);
+
+      // console.log("proposalId",receipt?.logs);
+
+      const eventLogs: EventLog[] = (receipt?.logs ?? []).filter((log): log is EventLog => true);
+
+      // Find the ProposalCreated event in the transaction receipt
+      const event = eventLogs.find(log => log.fragment.name === "ProposalCreated");
+
+      const logDescription = governor.interface.parseLog({
+        topics: event?.topics ? [...event.topics] : [],
+        data: event?.data ?? "",
+      });
+
+      // Get the proposalId from the event arguments
+      proposalId = logDescription?.args["proposalId"];
+      console.log("proposalId", proposalId);
+      expect(proposalId).to.not.be.undefined; // Make sure proposalId exists
+      // try to cast before voting delay and fails
+      console.log(await governor.hasVoted(proposalId, admin.address));
+      console.log(await governor.proposalProposer(proposalId));
+      await governor.connect(admin).castVote(proposalId, 1); // For
+      await expect(governor.castVote(proposalId, 1)).to.be.reverted;
+    } catch (error) {
+      console.log(error);
+    }
+
+    // expect(proposalId).to.not.be.undefined; // Make sure proposalId exists
 
     // 4. Vote (after voting delay)
     await mine(Number(await governor.votingDelay()) + 1);

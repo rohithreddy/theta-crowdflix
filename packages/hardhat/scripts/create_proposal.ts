@@ -1,5 +1,5 @@
 import "@nomicfoundation/hardhat-ethers";
-import { Contract } from "ethers";
+import { Contract, EventLog } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import hre from "hardhat";
 import { parseEther } from "ethers";
@@ -25,7 +25,7 @@ async function createProposal(hre: HardhatRuntimeEnvironment) {
     "0xF014198122454b5745bb33c5C91bF78A8Ac49DF7", // _teamWallet
     deployer, // _creator
     50, // _profitSharePercentage
-    "Test Category", // _category
+    "test", // _category
   ]);
 
   console.log("CallData`");
@@ -35,7 +35,7 @@ async function createProposal(hre: HardhatRuntimeEnvironment) {
   console.log("dATE stAMP ONE minute from now");
   const launchPadAddress = (await launchPad.getAddress()).toString();
   const governer = await hre.ethers.getContractAt("CrowdFlixDaoGovernor", await crowdFlixDaoGovernor.getAddress());
-  const proposalDescription = hre.ethers.id("Crowdfunding 2 # Yolo");
+  const proposalDescription = hre.ethers.id("dafaq is this VOTING shit");
   console.log("proposalDescription");
   console.log(proposalDescription);
   const proposal = await governer.propose(
@@ -44,10 +44,31 @@ async function createProposal(hre: HardhatRuntimeEnvironment) {
     [createLaunchPadCampaignCallData], //transaction call data
     proposalDescription,
   );
+  console.log("The proposal ID is ", proposal);
   console.log(`✅ Proposal created with transaction hash: ${proposal.hash}`);
   console.log(`Proposal description: ${proposalDescription}`);
-  const receipt = await proposal.wait();
+  const receipt = await proposal.wait(1);
   console.log(receipt);
+
+  try {
+    const eventLogs: EventLog[] = (receipt?.logs ?? []).filter((log): log is EventLog => true);
+
+    // Find the ProposalCreated event in the transaction receipt
+    const event = eventLogs.find(log => log.fragment.name === "ProposalCreated");
+
+    const logDescription = governer.interface.parseLog({
+      topics: event?.topics ? [...event.topics] : [],
+      data: event?.data ?? "",
+    });
+
+    // Get the proposalId from the event arguments
+    const proposalId = logDescription?.args["proposalId"];
+    console.log(proposalId);
+    // console.log(await governer.castVote(proposalId, 1)); // For
+    // governer.castVote(proposalId, 1); // For
+  } catch (error) {
+    console.log(error);
+  }
   //   const proposalId = receipt.events?.find(event => event.event === "ProposalCreated")?.args?.proposalId;
 
   //   console.log(`Proposal ID: ${proposalId}`);

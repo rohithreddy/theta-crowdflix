@@ -49,7 +49,7 @@ describe("CrowdFlix", function () {
       } catch (error) {
         // Get the error message from the caught error
         const errorMessage = error.message;
-        console.log(errorMessage);
+        // console.log(errorMessage);
         // Assert that the error message contains the expected string
         expect(errorMessage).to.contain("ERC20InsufficientBalance");
       }
@@ -82,10 +82,10 @@ describe("CrowdFlix", function () {
       try {
         await crowdFlix.transferFrom(owner.address, addr2.address, transferAmount);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         // Get the error message from the caught error
         const errorMessage = error.message;
-        console.log(errorMessage);
+        // console.log(errorMessage);
         // Assert that the error message contains the expected string
         expect(errorMessage).to.contain("ERC20InsufficientAllowance");
       }
