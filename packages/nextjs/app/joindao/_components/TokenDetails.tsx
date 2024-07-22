@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { NumberDisplayToken } from "./utilDisplay";
 import { useAccount } from "wagmi";
+import { Card, CardContent, CardHeader, CardTitle } from "~~/@/components/ui/card";
 import { useScaffoldContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 type Props = object;
@@ -37,26 +38,43 @@ const TokenDetails = (props: Props) => {
   }
 
   return (
-    <div className="flex items-center flex-col text-center">
-      <h2>Token Details</h2>
+    <div className="flex items-center flex-col text-center gap-4 mt-8">
+      <h2 className="text-2xl">DAO Details</h2>
       <br />
-      <p>Total Supply of CFLIX Token is</p>
-      <br />
-      <div className="">{totalSupply !== undefined && <NumberDisplayToken value={totalSupply} />}</div>
-      <br />
-      <div>
-        {userAddress ? (
-          <>
-            You have {userTokenBalance !== undefined ? <NumberDisplayToken value={userTokenBalance} /> : "0"} CFLIX
-            Tokens
-            <br />
-            {votingPower !== undefined && <p>Your voting power is: {votingPower.toFixed(2)}%</p>}
-          </>
-        ) : (
-          "Please connect your wallet"
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="p-4">
+          {" "}
+          {/* Add p-4 class for padding */}
+          <CardHeader>
+            <CardTitle>Total Supply</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col mt-2 items-center">
+            {totalSupply !== undefined && <NumberDisplayToken value={totalSupply} />}
+            <div>CFLIX Tokens</div>
+          </CardContent>
+        </Card>
+        {/* Add space between cards */}
+        <div className="gap-8">
+          <Card className="p-4">
+            {" "}
+            {/* Add p-4 class for padding */}
+            <CardHeader>
+              <CardTitle>Your Balance</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col mt-2 items-center">
+              {userAddress ? (
+                <>
+                  {userTokenBalance !== undefined ? <NumberDisplayToken value={userTokenBalance} /> : "0"} CFLIX Tokens
+                  <br />
+                  {votingPower !== undefined && <p>Your voting power is: {votingPower.toFixed(2)}%</p>}
+                </>
+              ) : (
+                "Please connect your wallet"
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-      <div></div>
     </div>
   );
 };

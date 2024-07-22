@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./ThemeToggle";
+import { Bug, CreditCard, DollarSignIcon, Settings, Users, Video } from "lucide-react";
 import { BanknotesIcon, Bars3Icon, BugAntIcon, UserGroupIcon, VideoCameraIcon } from "@heroicons/react/24/outline";
 import { Button } from "~~/@/components/ui/button";
 import {
@@ -17,13 +18,15 @@ import { NavigationMenu, NavigationMenuItem, NavigationMenuLink } from "~~/@/com
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
+// Import Lucide icons
+
 const routes = [
   { name: "Home", href: "/", icon: "" },
-  { name: "Debug Contracts", href: "/debug", icon: <BugAntIcon className="h-4 w-4" /> },
-  { name: "Join Flix DAO", href: "/joindao", icon: <UserGroupIcon className="h-4 w-4" /> },
-  { name: "Theatre", href: "/theatre", icon: <VideoCameraIcon className="h-4 w-4" /> },
-  { name: "Flix Starter", href: "/flixstarter", icon: <BanknotesIcon className="h-4 w-4" /> },
-  { name: "Faucet", href: "/faucet", icon: <BanknotesIcon className="h-4 w-4" /> },
+  { name: "Debug Contracts", href: "/debug", icon: <Bug className="h-4 w-4" /> }, // Use Lucide Bug icon
+  { name: "TheFlix DAO", href: "/joindao", icon: <Users className="h-5 w-5" /> }, // Use Lucide Users icon
+  { name: "Theatre", href: "/theatre", icon: <Video className="h-5 w-5" /> }, // Use Lucide Video icon
+  { name: "Flix Starter", href: "/flixstarter", icon: <DollarSignIcon className="h-5 w-5" /> }, // Use Lucide CreditCard icon
+  { name: "Faucet", href: "/faucet", icon: <DollarSignIcon className="h-5 w-5" /> }, // Use Lucide CurrencyDollar icon
 ] as const;
 
 export const Header = () => {
@@ -53,13 +56,13 @@ export const Header = () => {
           </DropdownMenuTrigger>
           {isDrawerOpen && (
             <DropdownMenuContent align="end">
-              <NavigationMenu className="flex flex-col gap-2">
+              <NavigationMenu className="flex flex-col gap-2 text-2xl">
                 {" "}
                 {/* Make NavigationMenu vertical */}
                 {routes.map(({ name, href, icon }) => {
                   const isActive = pathname === href;
                   return (
-                    <NavigationMenuItem key={href} className="list-none">
+                    <NavigationMenuItem key={href} className="list-none items-center">
                       <NavigationMenuLink
                         href={href}
                         className={`${
@@ -99,7 +102,7 @@ export const Header = () => {
                     href={href}
                     className={`${
                       isActive ? "bg-secondary shadow-md" : ""
-                    } hover:bg-secondary hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
+                    } hover:bg-secondary hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 rounded-full gap-2 grid grid-flow-col`}
                   >
                     {icon}
                     <span>{name}</span>
