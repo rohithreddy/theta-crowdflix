@@ -1,5 +1,8 @@
+"use client";
+
 import { formatUnits } from "viem";
 import { Address } from "viem";
+import { Button } from "~~/@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "~~/@/components/ui/table";
-import { useScaffoldContract, useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+import { useScaffoldContract, useScaffoldEventHistory, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 // Define your types
 export type newProposal = {
@@ -40,6 +43,9 @@ const ProposalsFetching = () => {
     fromBlock: 0n,
     receiptData: true,
   });
+
+  // Access the writeContractAsync function from the hook
+  const { writeContractAsync: castVote } = useScaffoldWriteContract("CrowdFlixDaoGovernor");
 
   // Process event history directly
   const proposals =
@@ -83,6 +89,7 @@ const ProposalsFetching = () => {
             <TableHead>Proposer</TableHead>
             <TableHead>Start Block</TableHead>
             <TableHead>End Block</TableHead>
+            <TableHead>Vote</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -94,7 +101,28 @@ const ProposalsFetching = () => {
               <TableCell>{proposal.description}</TableCell>
               <TableCell>{proposal.proposer}</TableCell>
               <TableCell>{new Date(Number(proposal.startBlock) * 1000).toLocaleString()}</TableCell>
+              {/* <TableCell>{proposal.startBlock}</TableCell> */}
               <TableCell>{new Date(Number(proposal.endBlock) * 1000).toLocaleString()}</TableCell>
+              {/* <TableCell>{proposal.endBlock}</TableCell> */}
+              <TableCell>
+                <Button
+                  className="text-background p-2"
+                  onClick={async () => {
+                    try {
+                      // Call the castVote function with the proposalId and vote (1 for yes, 0 for no)
+                      await castVote({
+                        functionName: "castVote",
+                        args: [BigInt(proposal.id!), 1], // Assuming you want to vote "yes"
+                      });
+                      console.log("Vote cast successfully!");
+                    } catch (e) {
+                      console.error("Error casting vote:", e);
+                    }
+                  }}
+                >
+                  Cast Vote
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
