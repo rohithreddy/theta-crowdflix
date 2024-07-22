@@ -5,8 +5,12 @@ import { createWalletClient, http, parseEther } from "viem";
 import { hardhat } from "viem/chains";
 import { useAccount } from "wagmi";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
+import { Button } from "~~/@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~~/@/components/ui/tooltip";
 import { useTransactor } from "~~/hooks/scaffold-eth";
 import { useWatchBalance } from "~~/hooks/scaffold-eth/useWatchBalance";
+
+// Import Button from Shadcn
 
 // Number of ETH faucet sends to an address
 const NUM_OF_ETH = "1";
@@ -53,21 +57,21 @@ export const FaucetButton = () => {
   const isBalanceZero = balance && balance.value === 0n;
 
   return (
-    <div
-      className={
-        !isBalanceZero
-          ? "ml-1"
-          : "ml-1 tooltip tooltip-bottom tooltip-secondary tooltip-open font-bold before:left-auto before:transform-none before:content-[attr(data-tip)] before:right-0"
-      }
-      data-tip="Grab funds from faucet"
-    >
-      <button className="btn btn-secondary btn-sm px-2 rounded-full" onClick={sendETH} disabled={loading}>
-        {!loading ? (
-          <BanknotesIcon className="h-4 w-4" />
-        ) : (
-          <span className="loading loading-spinner loading-xs"></span>
-        )}
-      </button>
-    </div>
+    <TooltipProvider>
+      {" "}
+      {/* Wrap your component with TooltipProvider */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="secondary" size="sm" className="px-2 rounded-full" onClick={sendETH} disabled={loading}>
+            {!loading ? (
+              <BanknotesIcon className="h-4 w-4" />
+            ) : (
+              <span className="loading loading-spinner loading-xs"></span>
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Grab funds from faucet</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

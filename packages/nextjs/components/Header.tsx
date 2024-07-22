@@ -37,7 +37,7 @@ export const Header = () => {
   const pathname = usePathname();
 
   return (
-    <header className="sticky lg:static top-0 flex justify-between shadow-md shadow-secondary px-0 sm:px-2">
+    <header className="sticky lg:static top-0 flex justify-around shadow-md shadow-secondary px-0 sm:px-2">
       <aside className="lg:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -53,7 +53,9 @@ export const Header = () => {
           </DropdownMenuTrigger>
           {isDrawerOpen && (
             <DropdownMenuContent align="end">
-              <NavigationMenu>
+              <NavigationMenu className="flex flex-col gap-2">
+                {" "}
+                {/* Make NavigationMenu vertical */}
                 {routes.map(({ name, href, icon }) => {
                   const isActive = pathname === href;
                   return (
@@ -86,7 +88,7 @@ export const Header = () => {
           </div>
         </Link>
       </aside>
-      <aside className="items-center flex">
+      <aside className="hidden lg:flex items-center">
         <nav className="">
           <NavigationMenu>
             {routes.map(({ name, href, icon }) => {

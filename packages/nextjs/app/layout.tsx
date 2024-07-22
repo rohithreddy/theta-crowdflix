@@ -1,8 +1,15 @@
+import { Inter as FontSans } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
+import { cn } from "~~/@/lib/utils";
 import "~~/app/globals.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata = getMetadata({
   title: "CrowdFlix",
@@ -12,7 +19,7 @@ export const metadata = getMetadata({
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning>
-      <body>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
           <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
         </ThemeProvider>
