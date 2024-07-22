@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAccount } from "wagmi";
+import { Button } from "~~/@/components/ui/button";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 type Props = object;
@@ -37,9 +38,9 @@ const DaoFaucet = (props: Props) => {
             {userClaimed ? (
               <p>You have already claimed your tokens!</p>
             ) : (
-              <button className="btn btn-primary" onClick={handleClaimTokens}>
+              <Button variant={"default"} className="p-3 text-background bg-foreground" onClick={handleClaimTokens}>
                 Claim Tokens
-              </button>
+              </Button>
             )}
           </>
         ) : (

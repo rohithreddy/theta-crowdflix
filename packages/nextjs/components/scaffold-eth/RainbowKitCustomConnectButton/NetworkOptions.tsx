@@ -1,6 +1,7 @@
 import { useTheme } from "next-themes";
 import { useAccount, useSwitchChain } from "wagmi";
 import { ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
+import { Button } from "~~/@/components/ui/button";
 import { getNetworkColor } from "~~/hooks/scaffold-eth";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";
 
@@ -21,10 +22,10 @@ export const NetworkOptions = ({ hidden = false }: NetworkOptionsProps) => {
       {allowedNetworks
         .filter(allowedNetwork => allowedNetwork.id !== chain?.id)
         .map(allowedNetwork => (
-          <li key={allowedNetwork.id} className={hidden ? "hidden" : ""}>
-            <button
-              className="menu-item btn-sm !rounded-xl flex gap-3 py-3 whitespace-nowrap"
-              type="button"
+          <li key={allowedNetwork.id} className={`list-none ${hidden ? "hidden" : ""}`}>
+            <Button
+              className="!rounded-xl flex gap-3 py-3 whitespace-nowrap"
+              variant={"ghost"}
               onClick={() => {
                 switchChain?.({ chainId: allowedNetwork.id });
               }}
@@ -40,7 +41,7 @@ export const NetworkOptions = ({ hidden = false }: NetworkOptionsProps) => {
                   {allowedNetwork.name}
                 </span>
               </span>
-            </button>
+            </Button>
           </li>
         ))}
     </>
