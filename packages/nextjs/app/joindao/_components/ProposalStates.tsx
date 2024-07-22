@@ -1,112 +1,104 @@
-import { useEffect, useState } from "react";
 import { formatUnits } from "viem";
+import { Address } from "viem";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~~/@/components/ui/table";
 import { useScaffoldContract, useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
 // Define your types
-export type Proposal = {
+export type newProposal = {
   id: string;
+  contractAddress: Address;
   proposer: string;
   targets: string[];
-  values: string[]; // Store values as strings
+  values: string[]; // Changed to string[]
   signatures: string[];
   calldatas: string[];
-  startBlock: bigint; // Store block numbers as bigint
-  endBlock: bigint;
+  startBlock: string; // Changed to string
+  endBlock: string; // Changed to string
   description: string;
   state: number;
 };
 
-// Define your ProposalState enum
-enum ProposalState {
-  Pending = 0,
-  Active = 1,
-  Canceled = 2,
-  Succeeded = 3,
-  Queued = 4,
-  Expired = 5,
-  Executed = 6,
-}
-
 // New component for fetching proposals
 const ProposalsFetching = () => {
-  const [proposals, setProposals] = useState<any[]>([]);
   const { data: governer, isLoading } = useScaffoldContract({
     contractName: "CrowdFlixDaoGovernor",
   });
 
   // Use useScaffoldEventHistory to get ProposalCreated events
-  const proposalCreatedEvents = useScaffoldEventHistory({
+  const { data: eventHistory, isLoading: eventHistoryLoading } = useScaffoldEventHistory({
     contractName: "CrowdFlixDaoGovernor",
     eventName: "ProposalCreated",
     fromBlock: 0n,
     receiptData: true,
   });
-  console.log(proposalCreatedEvents.data);
-  console.log(typeof proposalCreatedEvents.data);
 
-  useEffect(() => {
-    const fetchProposals = async () => {
-      if (proposalCreatedEvents.data) {
-        const newProposals = proposalCreatedEvents.data.map(event => {
-          // Access event arguments directly
-          const proposalId = event.args.proposalId?.toString();
-          const proposer = event.args.proposer;
-          const targets = event.args.targets?.map(target => target.toString()); // Convert to string[]
-          const values = event.args.values.map(value => formatUnits(value, 18));
-          const signatures = event.args.signatures;
-          const calldatas = event.args.calldatas;
-          const startBlock = event.args.voteStart; // Access directly
-          const endBlock = event.args.voteEnd; // Access directly
-          const description = event.args.description;
+  // Process event history directly
+  const proposals =
+    eventHistory?.map(event => {
+      // Access event arguments directly
+      const proposalId = event.args.proposalId?.toString();
+      const proposer = event.args.proposer;
+      const targets = event.args.targets?.map((target: { toString: () => any }) => target.toString()); // Convert to string[]
+      const values = event.args.values.map((value: bigint) => formatUnits(value, 18)); // Convert to string[]
+      const signatures = event.args.signatures;
+      const calldatas = event.args.calldatas;
+      const startBlock = event.args.voteStart?.toString(); // Convert to string
+      const endBlock = event.args.voteEnd?.toString(); // Convert to string
+      const description = event.args.description;
 
-          return {
-            id: proposalId,
-            proposer,
-            targets,
-            values,
-            signatures,
-            calldatas,
-            startBlock, // Use the correct event argument
-            endBlock, // Use the correct event argument
-            description,
-            state: 0, // Assuming all proposals start in Pending state
-          };
-        });
+      return {
+        id: proposalId,
+        contractAddress: governer?.address as Address, // Assuming governer is available
+        proposer,
+        targets,
+        values,
+        signatures,
+        calldatas,
+        startBlock,
+        endBlock,
+        description,
+        state: 0, // Assuming all proposals start in Pending state
+      };
+    }) || []; // Default to an empty array if eventHistory is not available
 
-        setProposals(newProposals); // Now the types match
-      }
-    };
-
-    fetchProposals();
-  }, [proposalCreatedEvents.data]);
-
+  // Render the component
   return (
     <div className="mt-8">
       <h2 className="text-xl">Proposals</h2>
-      <ul>
-        {proposals.map(proposal => (
-          <li key={proposal.id}>
-            <p>
-              <strong>Proposal ID:</strong> {proposal.id}
-            </p>
-            <p>
-              <strong>Description:</strong> {proposal.description}
-            </p>
-            <p>
-              <strong>State:</strong> {ProposalState[proposal.state]}
-            </p>
-            <p>
-              <strong>Proposer:</strong> {proposal.proposer}
-            </p>
-            <p>
-              <strong>Start Block:</strong> {proposal.startBlock.toString()}
-            </p>
-            <p>
-              <strong>End Block:</strong> {proposal.endBlock.toString()}
-            </p>
-          </li>
-        ))}
-      </ul>
+      <Table>
+        <TableCaption>List of proposals</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ID</TableHead>
+            <TableHead>Description</TableHead>
+            <TableHead>Proposer</TableHead>
+            <TableHead>Start Block</TableHead>
+            <TableHead>End Block</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {proposals.map(proposal => (
+            <TableRow key={proposal.id}>
+              <TableCell>
+                {proposal.id?.substring(0, 4) + "..." + proposal.id?.substring(proposal.id.length - 4)}
+              </TableCell>
+              <TableCell>{proposal.description}</TableCell>
+              <TableCell>{proposal.proposer}</TableCell>
+              <TableCell>{new Date(Number(proposal.startBlock) * 1000).toLocaleString()}</TableCell>
+              <TableCell>{new Date(Number(proposal.endBlock) * 1000).toLocaleString()}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };

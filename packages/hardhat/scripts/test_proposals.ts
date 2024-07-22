@@ -70,6 +70,11 @@ async function createProposals(hre: HardhatRuntimeEnvironment) {
   const startTime = Math.floor(Date.now() / 1000) + 60; // 1 minute from now
   const endTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
 
+  // Add one day to startTime and endTime
+  const oneDayInSeconds = 24 * 60 * 60;
+  const extendedStartTime = startTime + oneDayInSeconds;
+  const extendedEndTime = endTime + oneDayInSeconds;
+
   // Team wallet address (replace with your actual team wallet)
   const teamWallet = "0xF014198122454b5745bb33c5C91bF78A8Ac49DF7";
 
@@ -80,8 +85,8 @@ async function createProposals(hre: HardhatRuntimeEnvironment) {
       project.name, // _name
       project.description, // _description
       fundingGoal, // _fundingGoal
-      startTime, // _startTime
-      endTime, // _endTime
+      extendedStartTime, // _startTime
+      extendedEndTime, // _endTime
       teamWallet, // _teamWallet
       deployer, // _creator
       50, // _profitSharePercentage
