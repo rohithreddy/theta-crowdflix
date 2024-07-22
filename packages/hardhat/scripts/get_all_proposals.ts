@@ -40,6 +40,7 @@ async function getAllProposals(hre: HardhatRuntimeEnvironment) {
     console.log(await crowdFlixDaoGovernor.state(proposalDetails[0]));
     console.log("Proposal ETA");
     console.log(await crowdFlixDaoGovernor.proposalEta(proposalDetails[0]));
+    console.log(await crowdFlixDaoGovernor.proposalVotes());
 
     // Convert proposal deadline into time
     const proposalDeadline = await crowdFlixDaoGovernor.proposalDeadline(proposalDetails[0]);

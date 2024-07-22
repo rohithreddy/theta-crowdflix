@@ -105,23 +105,59 @@ const ProposalsFetching = () => {
               <TableCell>{new Date(Number(proposal.endBlock) * 1000).toLocaleString()}</TableCell>
               {/* <TableCell>{proposal.endBlock}</TableCell> */}
               <TableCell>
-                <Button
-                  className="text-background p-2"
-                  onClick={async () => {
-                    try {
-                      // Call the castVote function with the proposalId and vote (1 for yes, 0 for no)
-                      await castVote({
-                        functionName: "castVote",
-                        args: [BigInt(proposal.id!), 1], // Assuming you want to vote "yes"
-                      });
-                      console.log("Vote cast successfully!");
-                    } catch (e) {
-                      console.error("Error casting vote:", e);
-                    }
-                  }}
-                >
-                  Cast Vote
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    className="text-green-500 p-2"
+                    onClick={async () => {
+                      try {
+                        // Call the castVote function with the proposalId and vote (1 for yes, 0 for no)
+                        await castVote({
+                          functionName: "castVote",
+                          args: [BigInt(proposal.id!), 1], // Assuming you want to vote "yes"
+                        });
+                        console.log("Vote cast successfully!");
+                      } catch (e) {
+                        console.error("Error casting vote:", e);
+                      }
+                    }}
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    className="text-yellow-500 p-2"
+                    onClick={async () => {
+                      try {
+                        // Call the castVote function with the proposalId and vote (1 for yes, 0 for no)
+                        await castVote({
+                          functionName: "castVote",
+                          args: [BigInt(proposal.id!), 2], // Assuming you want to vote "yes"
+                        });
+                        console.log("Vote cast successfully!");
+                      } catch (e) {
+                        console.error("Error casting vote:", e);
+                      }
+                    }}
+                  >
+                    Abstain
+                  </Button>
+                  <Button
+                    className="text-red-500 p-2"
+                    onClick={async () => {
+                      try {
+                        // Call the castVote function with the proposalId and vote (1 for yes, 0 for no)
+                        await castVote({
+                          functionName: "castVote",
+                          args: [BigInt(proposal.id!), 0], // Assuming you want to vote "yes"
+                        });
+                        console.log("Vote cast successfully!");
+                      } catch (e) {
+                        console.error("Error casting vote:", e);
+                      }
+                    }}
+                  >
+                    No
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}

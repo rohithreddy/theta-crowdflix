@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract CrowdFlixFaucet {
     IERC20 public immutable crowdFlixToken;
-    uint256 public claimLimit = 5 * 10 ** 18; // Example limit
+    uint256 public claimLimit = 40 * 10 ** 18; // Example limit
     mapping(address => uint256) public lastClaimTime;
 
     constructor(address _crowdFlixToken) {
