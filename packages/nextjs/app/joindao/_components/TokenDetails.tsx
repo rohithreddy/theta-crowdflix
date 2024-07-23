@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { NumberDisplayToken } from "./utilDisplay";
 import { useAccount } from "wagmi";
-import { Card, CardContent, CardHeader, CardTitle } from "~~/@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
 import { useScaffoldContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 type Props = object;
@@ -39,7 +39,7 @@ const TokenDetails = (props: Props) => {
 
   return (
     <div className="flex items-center flex-col text-center gap-4 mt-8">
-      <h2 className="text-2xl">DAO Details</h2>
+      <h2 className="text-2xl font-semibold">DAO Details</h2>
       <br />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card className="p-4">

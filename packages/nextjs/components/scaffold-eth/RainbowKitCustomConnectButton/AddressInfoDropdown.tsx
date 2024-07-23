@@ -13,7 +13,7 @@ import {
   DocumentDuplicateIcon,
   QrCodeIcon,
 } from "@heroicons/react/24/outline";
-import { Button } from "~~/@/components/ui/button";
+import { Button } from "~~/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -22,13 +22,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~~/@/components/ui/dialog";
+} from "~~/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~~/@/components/ui/dropdown-menu";
+} from "~~/components/ui/dropdown-menu";
 import { BlockieAvatar, isENS } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";

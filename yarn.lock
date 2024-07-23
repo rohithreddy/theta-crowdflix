@@ -2164,7 +2164,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-dialog@npm:^1.1.1":
+"@radix-ui/react-dialog@npm:^1.0.4, @radix-ui/react-dialog@npm:^1.1.1":
   version: 1.1.1
   resolution: "@radix-ui/react-dialog@npm:1.1.1"
   dependencies:
@@ -2312,6 +2312,25 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 6fbc9d1739b3b082412da10359e63967b4f3a60383ebda4c9e56b07a722d29bee53b203b3b1418f88854a29315a7715867133bb149e6e22a027a048cdd20d970
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-label@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@radix-ui/react-label@npm:2.1.0"
+  dependencies:
+    "@radix-ui/react-primitive": 2.0.0
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 462f3b47f43bd69c937e660dee229eb05990441e1b214923cdcf848aea62226e9f1c4673de6664bb4ad66f8a480acdb0f5d2ce4c88c425652b47432876b3f32f
   languageName: node
   linkType: hard
 
@@ -2902,6 +2921,7 @@ __metadata:
     "@radix-ui/react-dialog": ^1.1.1
     "@radix-ui/react-dropdown-menu": ^2.1.1
     "@radix-ui/react-icons": ^1.3.0
+    "@radix-ui/react-label": ^2.1.0
     "@radix-ui/react-navigation-menu": ^1.2.0
     "@radix-ui/react-popover": ^1.1.1
     "@radix-ui/react-slot": ^1.1.0
@@ -2929,7 +2949,7 @@ __metadata:
     eslint-config-prettier: ^9.1.0
     eslint-plugin-prettier: ^5.1.3
     ethers: ^6.13.1
-    lucide-react: ^0.412.0
+    lucide-react: ^0.414.0
     next: ^14.0.4
     next-themes: ^0.3.0
     nprogress: ^0.2.0
@@ -2947,6 +2967,7 @@ __metadata:
     typescript: 5.1.6
     use-debounce: ^8.0.4
     usehooks-ts: ^2.13.0
+    vaul: ^0.9.1
     vercel: ^32.4.1
     viem: 2.13.6
     wagmi: 2.9.8
@@ -10699,12 +10720,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:^0.412.0":
-  version: 0.412.0
-  resolution: "lucide-react@npm:0.412.0"
+"lucide-react@npm:^0.414.0":
+  version: 0.414.0
+  resolution: "lucide-react@npm:0.414.0"
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: b03990d012d3df23c54bdc64031740a74d8809dac57dc5e5486f4ee632c960d1ba1859084e768f97bdf0ca4f0c67f12992284d047e8880f48f9f13d1ff6c38d7
+  checksum: 65d4a6902d875e059d27c474d6d7319258b256240f509379857a48db2469aab40d9483d42d00b4b35ba610a58d9f2c5a21d716f4604e80ab0cdaa8e7203cff14
   languageName: node
   linkType: hard
 
@@ -15286,6 +15307,18 @@ __metadata:
     react:
       optional: true
   checksum: cce2d9212aac9fc4bdeba2d381188cc831cfe8d2d03039024cfcd58ba1801f2a5b14d01c2bb21a2c9f12046d2ede64f1dd887175185f39bee553677a35592c30
+  languageName: node
+  linkType: hard
+
+"vaul@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "vaul@npm:0.9.1"
+  dependencies:
+    "@radix-ui/react-dialog": ^1.0.4
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: 489aeac7c879d0823801a3016ef22e04ee262120555092608d027d9509f92cc97bd87a649c6072d7fd356466444250c82bcbdfe0513ca00383611779deb4d234
   languageName: node
   linkType: hard
 

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import ProposalsFetching from "./ProposalStates";
 import { NumberDisplayToken } from "./utilDisplay";
-import { Card, CardContent, CardHeader, CardTitle } from "~~/@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 
 const GovernerDetails = () => {
@@ -52,7 +52,7 @@ const GovernerDetails = () => {
 
   return (
     <div className="flex flex-col container items-center justify-center mt-8">
-      <h1 className="text-2xl">DAO Governor Details</h1>
+      <h1 className="text-2xl font-semibold">DAO Governor Details</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-4">
         <Card className="p-4">
           <CardHeader>

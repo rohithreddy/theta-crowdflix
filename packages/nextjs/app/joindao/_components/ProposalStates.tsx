@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { formatUnits } from "viem";
 import { Address } from "viem";
-import { Button } from "~~/@/components/ui/button";
+import { Button } from "~~/components/ui/button";
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~~/@/components/ui/table";
+} from "~~/components/ui/table";
 import { useScaffoldContract, useScaffoldEventHistory, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import CreateProposal from "./createProposal";
 
@@ -138,15 +138,15 @@ const ProposalsFetching = () => {
 
   // Render the component
   return (
-    <div className="mt-8 items-center flex flex-col">
-      <div className="flex flex-row ">
+    <div className="mt-8 items-center flex flex-col container">
+      
         <h2 className="text-2xl font-bold">Proposals</h2>
-      </div>
-      <div className="float-right">
+        <div className="ml-auto float-right mt-4">
       <CreateProposal />
       </div>
+      
       <Table>
-        <TableCaption className="text-xl">Details of Proposals</TableCaption>
+        <TableCaption className="text-xl font-semibold">Details of Proposals</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>

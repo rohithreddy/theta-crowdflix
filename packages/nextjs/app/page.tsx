@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~~/@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~~/components/ui/card";
 import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {

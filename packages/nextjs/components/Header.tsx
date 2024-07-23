@@ -7,14 +7,14 @@ import { usePathname } from "next/navigation";
 import { ModeToggle } from "./ThemeToggle";
 import { Bug, CreditCard, DollarSignIcon, Settings, Users, Video } from "lucide-react";
 import { BanknotesIcon, Bars3Icon, BugAntIcon, UserGroupIcon, VideoCameraIcon } from "@heroicons/react/24/outline";
-import { Button } from "~~/@/components/ui/button";
+import { Button } from "~~/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~~/@/components/ui/dropdown-menu";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink } from "~~/@/components/ui/navigation-menu";
+} from "~~/components/ui/dropdown-menu";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink } from "~~/components/ui/navigation-menu";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 

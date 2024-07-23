@@ -1,6 +1,6 @@
 import { Inter as FontSans } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
-import { cn } from "~~/@/lib/utils";
+import { cn } from "~~/app/lib/utils";
 import "~~/app/globals.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";

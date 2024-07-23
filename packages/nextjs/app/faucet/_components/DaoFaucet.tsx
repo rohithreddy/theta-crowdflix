@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { useAccount } from "wagmi";
-import { Button } from "~~/@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~~/@/components/ui/card";
+import { Button } from "~~/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
 import { NumberDisplayToken } from "~~/app/joindao/_components/utilDisplay";
 import { useScaffoldContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
