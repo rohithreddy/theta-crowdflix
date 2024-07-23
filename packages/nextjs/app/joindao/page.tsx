@@ -1,5 +1,5 @@
 import TokenDetails from "./_components/TokenDetails";
-import ProposalsDetails from "./_components/proposalsDetails";
+import GovernerDetails from "./_components/governerDetails";
 import type { NextPage } from "next";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
@@ -23,7 +23,7 @@ const JoinDAO: NextPage = async () => {
         <TokenDetails />
       </div>
       <div>
-        <ProposalsDetails />
+        <GovernerDetails />
       </div>
     </>
   );

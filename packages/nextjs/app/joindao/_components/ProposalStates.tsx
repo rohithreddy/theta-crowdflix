@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { formatUnits } from "viem";
 import { Address } from "viem";
 import { Button } from "~~/@/components/ui/button";
@@ -28,6 +29,7 @@ export type newProposal = {
   endBlock: string; // Changed to string
   description: string;
   state: number;
+  votes: { againstVotes: string; forVotes: string; abstainVotes: string };
 };
 
 // New component for fetching proposals
@@ -61,6 +63,10 @@ const ProposalsFetching = () => {
       const endBlock = event.args.voteEnd?.toString(); // Convert to string
       const description = event.args.description;
 
+      // Fetch vote counts for the proposal
+      // Initialize votes with placeholder values
+      const votes = { againstVotes: "0", forVotes: "0", abstainVotes: "0" };
+
       return {
         id: proposalId,
         contractAddress: governer?.address as Address, // Assuming governer is available
@@ -73,22 +79,51 @@ const ProposalsFetching = () => {
         endBlock,
         description,
         state: 0, // Assuming all proposals start in Pending state
+        votes,
+        // votes: { againstVotes: "0", forVotes: "0", abstainVotes: "0" }, // Initialize votes
       };
     }) || []; // Default to an empty array if eventHistory is not available
 
+  // Fetch vote counts for all proposals
+  const [voteCounts, setVoteCounts] = useState<{
+    [key: string]: { againstVotes: string; forVotes: string; abstainVotes: string };
+  }>({});
+  useEffect(() => {
+    // Only fetch votes if governer is available and proposals have changed
+    if (governer && proposals.length > 0) {
+      const fetchVotesPromises = proposals.map(proposal =>
+        governer.read.proposalVotes([BigInt(proposal.id!)]).then(fetchedVotes => ({
+          [proposal.id!]: {
+            againstVotes: formatUnits(fetchedVotes[0], 18),
+            forVotes: formatUnits(fetchedVotes[1], 18),
+            abstainVotes: formatUnits(fetchedVotes[2], 18),
+          },
+        })),
+      );
+
+      Promise.all(fetchVotesPromises).then(results => {
+        const combinedVoteCounts = results.reduce((acc, result) => ({ ...acc, ...result }), {});
+        setVoteCounts(combinedVoteCounts);
+      });
+    }
+  }, [proposals]); // Only re-run when governer or proposals change
+
   // Render the component
   return (
-    <div className="mt-8">
-      <h2 className="text-xl">Proposals</h2>
+    <div className="mt-8 items-center flex flex-col">
+      <h2 className="text-2xl font-bold">Proposals</h2>
       <Table>
-        <TableCaption>List of proposals</TableCaption>
+        <TableCaption className="text-xl">Details of Proposals</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Proposer</TableHead>
-            <TableHead>Start Block</TableHead>
-            <TableHead>End Block</TableHead>
+            <TableHead>Start Time</TableHead>
+            <TableHead>End Time</TableHead>
+            <TableHead>Against Votes</TableHead>
+            <TableHead>For Votes</TableHead>
+            <TableHead>Abstain Votes</TableHead>
             <TableHead>Vote</TableHead>
           </TableRow>
         </TableHeader>
@@ -104,6 +139,9 @@ const ProposalsFetching = () => {
               {/* <TableCell>{proposal.startBlock}</TableCell> */}
               <TableCell>{new Date(Number(proposal.endBlock) * 1000).toLocaleString()}</TableCell>
               {/* <TableCell>{proposal.endBlock}</TableCell> */}
+              <TableCell>{voteCounts[proposal.id!]?.againstVotes || "0"}</TableCell>
+              <TableCell>{voteCounts[proposal.id!]?.forVotes || "0"}</TableCell>
+              <TableCell>{voteCounts[proposal.id!]?.abstainVotes || "0"}</TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   <Button

@@ -6,12 +6,13 @@ import { NumberDisplayToken } from "./utilDisplay";
 import { Card, CardContent, CardHeader, CardTitle } from "~~/@/components/ui/card";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 
-const ProposalsDetails = () => {
+const GovernerDetails = () => {
   const [proposalCount, setProposalCount] = useState<number>(0);
   const [quorumNumerator, setQuorumNumerator] = useState<number>(0);
   const [name, setName] = useState<string>("");
   const [votingPeriod, setVotingPeriod] = useState<number>(0);
   const [votingDelay, setVotingDelay] = useState<number>(0);
+  const [governorAddress, setGovernorAddress] = useState<string>(""); // Add state for governor address
 
   const { data: governer, isLoading } = useScaffoldContract({
     contractName: "CrowdFlixDaoGovernor",
@@ -43,12 +44,15 @@ const ProposalsDetails = () => {
       governer.read.votingDelay().then(delay => {
         setVotingDelay(Number(delay));
       });
+
+      // Fetch governor address
+      setGovernorAddress(governer.address); // Set the address
     }
   }, [governer, isLoading]);
 
   return (
     <div className="flex flex-col container items-center justify-center mt-8">
-      <h1 className="text-2xl">Proposal Details</h1>
+      <h1 className="text-2xl">DAO Governor Details</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-4">
         <Card className="p-4">
           <CardHeader>
@@ -91,10 +95,18 @@ const ProposalsDetails = () => {
             <p>{votingDelay}</p>
           </CardContent>
         </Card>
+        <Card className="p-4">
+          <CardHeader>
+            <CardTitle>Governor Address</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col mt-2 items-center">
+            <p>{governorAddress}</p>
+          </CardContent>
+        </Card>
       </div>
       <ProposalsFetching />
     </div>
   );
 };
 
-export default ProposalsDetails;
+export default GovernerDetails;

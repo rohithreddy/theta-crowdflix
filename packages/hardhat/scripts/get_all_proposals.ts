@@ -40,16 +40,17 @@ async function getAllProposals(hre: HardhatRuntimeEnvironment) {
     console.log(await crowdFlixDaoGovernor.state(proposalDetails[0]));
     console.log("Proposal ETA");
     console.log(await crowdFlixDaoGovernor.proposalEta(proposalDetails[0]));
-    console.log(await crowdFlixDaoGovernor.proposalVotes());
+    console.log("Proposal VOtes");
+    console.log(await crowdFlixDaoGovernor.proposalVotes(proposalDetails[0]));
 
     // Convert proposal deadline into time
     const proposalDeadline = await crowdFlixDaoGovernor.proposalDeadline(proposalDetails[0]);
     const deadlineDate = new Date(Number(proposalDeadline) * 1000); // Convert BigInt to number and then to milliseconds
     console.log("Proposal Deadline:", deadlineDate.toLocaleString()); // Format the date
 
-    // Decode the description from the hash
-    const proposalDescription = hre.ethers.decodeBytes32String(hre.ethers.stripZerosLeft(descriptionHash));
-    console.log("Proposal Description:", proposalDescription);
+    // // Decode the description from the hash
+    // const proposalDescription = hre.ethers.decodeBytes32String(hre.ethers.stripZerosLeft(descriptionHash));
+    // console.log("Proposal Description:", proposalDescription);
   }
 }
 
