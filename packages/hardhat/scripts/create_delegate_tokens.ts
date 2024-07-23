@@ -15,7 +15,7 @@ async function createDelegateTokens(hre: HardhatRuntimeEnvironment) {
   const crowdFlixDaoGovernor = await hre.ethers.getContract<Contract>("CrowdFlixDaoGovernor", deployer);
 
   // Mint 222 tokens to the admin
-  const mintTx = await crowdFlixToken.mint(deployer, parseEther("222"));
+  const mintTx = await crowdFlixToken.mint(deployer, parseEther("555"));
   await mintTx.wait();
   console.log(`✅ 222 CrowdFlix tokens minted to ${deployer}`);
 

@@ -99,7 +99,7 @@ export const AddressInfoDropdown = ({
                     }, 800);
                   }}
                 >
-                  <div className="flex gap-3 py-3">
+                  <div className="flex gap-3 py-2">
                     <DocumentDuplicateIcon
                       className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
                       aria-hidden="true"
@@ -112,7 +112,7 @@ export const AddressInfoDropdown = ({
             <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
               <Dialog>
                 <DialogTrigger asChild>
-                  <label htmlFor="qrcode-modal" className="flex gap-3 py-3">
+                  <label htmlFor="qrcode-modal" className="flex gap-4 py-2">
                     <QrCodeIcon className="h-6 w-4 ml-2 sm:ml-0" />
                     <span className="whitespace-nowrap">View QR Code</span>
                   </label>
@@ -136,7 +136,7 @@ export const AddressInfoDropdown = ({
               </Dialog>
             </DropdownMenuItem>
             <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
-              <Button variant="ghost" className="flex gap-3 py-3">
+              <Button variant="ghost" className="flex gap-3 ">
                 <ArrowTopRightOnSquareIcon className="h-6 w-4 ml-2 sm:ml-0" />
                 <a
                   target="_blank"

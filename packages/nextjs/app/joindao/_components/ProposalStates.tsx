@@ -140,9 +140,9 @@ const ProposalsFetching = () => {
   return (
     <div className="mt-8 items-center flex flex-col container">
       
-        <h2 className="text-2xl font-bold">Proposals</h2>
-        <div className="ml-auto float-right mt-4">
-      <CreateProposal />
+        <h2 className="text-2xl font-bold p-4">Proposals</h2>
+        <div className="ml-auto float-right -mt-20 py-8">
+        <CreateProposal />
       </div>
       
       <Table>

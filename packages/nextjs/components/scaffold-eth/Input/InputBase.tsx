@@ -1,5 +1,6 @@
 import { ChangeEvent, FocusEvent, ReactNode, useCallback, useEffect, useRef } from "react";
 import { CommonInputProps } from "~~/components/scaffold-eth";
+import { Input } from "~~/components/ui/input";
 
 type InputBaseProps<T> = CommonInputProps<T> & {
   error?: boolean;
@@ -49,8 +50,8 @@ export const InputBase = <T extends { toString: () => string } | undefined = str
   return (
     <div className={`flex border-2 border-base-300 bg-base-200 rounded-full text-accent ${modifier}`}>
       {prefix}
-      <input
-        className="input input-ghost focus-within:border-transparent focus:outline-none focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[2.2rem] px-4 border w-full font-medium placeholder:text-accent/50 text-gray-400"
+      <Input
+        className="focus-within:border-transparent focus:outline-none focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[2.2rem] px-4 border w-full font-medium placeholder:text-accent/50 text-gray-400"
         placeholder={placeholder}
         name={name}
         value={value?.toString()}

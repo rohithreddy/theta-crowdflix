@@ -5,8 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./ThemeToggle";
-import { Bug, CreditCard, DollarSignIcon, Settings, Users, Video } from "lucide-react";
-import { BanknotesIcon, Bars3Icon, BugAntIcon, UserGroupIcon, VideoCameraIcon } from "@heroicons/react/24/outline";
+import { Bug, CreditCard, Rocket, Users, Video, Menu } from "lucide-react";
 import { Button } from "~~/components/ui/button";
 import {
   DropdownMenu,
@@ -25,8 +24,8 @@ const routes = [
   { name: "Debug Contracts", href: "/debug", icon: <Bug className="h-4 w-4" /> }, // Use Lucide Bug icon
   { name: "TheFlix DAO", href: "/joindao", icon: <Users className="h-5 w-5" /> }, // Use Lucide Users icon
   { name: "Theatre", href: "/theatre", icon: <Video className="h-5 w-5" /> }, // Use Lucide Video icon
-  { name: "Flix Starter", href: "/flixstarter", icon: <DollarSignIcon className="h-5 w-5" /> }, // Use Lucide CreditCard icon
-  { name: "Faucet", href: "/faucet", icon: <DollarSignIcon className="h-5 w-5" /> }, // Use Lucide CurrencyDollar icon
+  { name: "Flix Starter", href: "/flixstarter", icon: <Rocket className="h-5 w-5" /> }, // Use Lucide CreditCard icon
+  { name: "Faucet", href: "/faucet", icon: <CreditCard className="h-5 w-5" /> }, // Use Lucide CurrencyDollar icon
 ] as const;
 
 export const Header = () => {
@@ -51,7 +50,7 @@ export const Header = () => {
                 setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
               }}
             >
-              <Bars3Icon className="h-6 w-6" />
+              <Menu className="h-6 w-6" />
             </Button>
           </DropdownMenuTrigger>
           {isDrawerOpen && (
@@ -66,7 +65,7 @@ export const Header = () => {
                       <NavigationMenuLink
                         href={href}
                         className={`${
-                          isActive ? "bg-secondary shadow-md" : ""
+                          isActive ? "bg-foreground/20 shadow-md" : ""
                         } hover:bg-secondary hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
                       >
                         {icon}
@@ -101,8 +100,8 @@ export const Header = () => {
                   <NavigationMenuLink
                     href={href}
                     className={`${
-                      isActive ? "bg-secondary shadow-md" : ""
-                    } hover:bg-secondary hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 rounded-full gap-2 grid grid-flow-col`}
+                      isActive ? "bg-foreground/30 shadow-md" : ""
+                    } hover:bg-foreground/20 hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 rounded-full gap-2 grid grid-flow-col`}
                   >
                     {icon}
                     <span>{name}</span>
@@ -113,7 +112,7 @@ export const Header = () => {
           </NavigationMenu>
         </nav>
       </aside>
-      <aside className="flex items-center mr-4">
+      <aside className="flex items-center justify-between">
         <RainbowKitCustomConnectButton />
         <FaucetButton />
         <ModeToggle />

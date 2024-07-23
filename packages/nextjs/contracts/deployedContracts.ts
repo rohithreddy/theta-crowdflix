@@ -12214,6 +12214,19 @@ const deployedContracts = {
           anonymous: false,
           inputs: [
             {
+              indexed: false,
+              internalType: "address",
+              name: "ticketManagerAddress",
+              type: "address",
+            },
+          ],
+          name: "TicketManagerInitialized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
               indexed: true,
               internalType: "uint256",
               name: "projectId",
@@ -12522,6 +12535,11 @@ const deployedContracts = {
                   name: "status",
                   type: "uint8",
                 },
+                {
+                  internalType: "address",
+                  name: "ticketCollection",
+                  type: "address",
+                },
               ],
               internalType: "struct LaunchPad.Project[]",
               name: "",
@@ -12607,6 +12625,11 @@ const deployedContracts = {
                   internalType: "enum LaunchPad.ProjectStatus",
                   name: "status",
                   type: "uint8",
+                },
+                {
+                  internalType: "address",
+                  name: "ticketCollection",
+                  type: "address",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -12694,6 +12717,11 @@ const deployedContracts = {
                   name: "status",
                   type: "uint8",
                 },
+                {
+                  internalType: "address",
+                  name: "ticketCollection",
+                  type: "address",
+                },
               ],
               internalType: "struct LaunchPad.Project[]",
               name: "",
@@ -12773,6 +12801,11 @@ const deployedContracts = {
                   internalType: "enum LaunchPad.ProjectStatus",
                   name: "status",
                   type: "uint8",
+                },
+                {
+                  internalType: "address",
+                  name: "ticketCollection",
+                  type: "address",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -12873,6 +12906,11 @@ const deployedContracts = {
                   name: "status",
                   type: "uint8",
                 },
+                {
+                  internalType: "address",
+                  name: "ticketCollection",
+                  type: "address",
+                },
               ],
               internalType: "struct LaunchPad.Project[]",
               name: "",
@@ -12922,6 +12960,19 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_ticketManagerAddress",
+              type: "address",
+            },
+          ],
+          name: "initializeTicketManager",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -13051,6 +13102,11 @@ const deployedContracts = {
               name: "status",
               type: "uint8",
             },
+            {
+              internalType: "address",
+              name: "ticketCollection",
+              type: "address",
+            },
           ],
           stateMutability: "view",
           type: "function",
@@ -13105,6 +13161,19 @@ const deployedContracts = {
               internalType: "bool",
               name: "",
               type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "ticketManager",
+          outputs: [
+            {
+              internalType: "contract ITicketManager",
+              name: "",
+              type: "address",
             },
           ],
           stateMutability: "view",

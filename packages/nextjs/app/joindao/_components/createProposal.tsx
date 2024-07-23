@@ -17,15 +17,14 @@ import { Textarea } from "~~/components/ui/textarea";
 import { useAccount } from "wagmi";
 import { formatUnits, encodeFunctionData } from "viem";
 import { Label } from "~~/components/ui/label";
-import { DateTimePicker } from "~~/components/ui/datetime-picker";
 
 const CreateProposal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [fundingGoal, setFundingGoal] = useState("");
-  const [startTime, setStartTime] = useState<Date | undefined>(undefined); // Store startTime as Date
-  const [endTime, setEndTime] = useState<Date | undefined>(undefined); // Store endTime as Date
+  const [startTime, setStartTime] = useState(""); // Store startTime as Date
+  const [endTime, setEndTime] = useState(""); // Store endTime as Date
   const [teamWallet, setTeamWallet] = useState("");
   const [category, setCategory] = useState("");
   const [profitSharePercentage, setProfitSharePercentage] = useState(""); // Add state for profitSharePercentage
@@ -43,9 +42,9 @@ const CreateProposal = () => {
     if (!launchPadInfo || !governer || !userAddress) return;
 
     // Convert startTime and endTime to Unix timestamps
-    const extendedStartTime = startTime ? Math.floor(startTime.getTime() / 1000) : 0;
-    const extendedEndTime = endTime ? Math.floor(endTime.getTime() / 1000) : 0;
-    const fundingGoalBigInt = BigInt(fundingGoal);
+    const extendedStartTime = startTime ? Math.floor(Date.parse(startTime) / 1000) : 0;
+    const extendedEndTime = endTime ? Math.floor(Date.parse(endTime) / 1000) : 0;
+    const fundingGoalBigInt = BigInt(Number(fundingGoal) * 10 ** 18);
     const profitSharePercentageBigInt = BigInt(profitSharePercentage); // Convert profitSharePercentage to BigInt
 
     const createLaunchPadCampaignCallData = encodeFunctionData({
@@ -132,16 +131,40 @@ const CreateProposal = () => {
               onChange={(e) => setFundingGoal(e.target.value)}
             />
           </div>
-          <div className="flex flex-col gap-3 lg:flex-row">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="startTime" className="text-right">
+              Start Time
+            </Label>
+            <Input
+              id="startTime"
+              type="datetime-local"
+              className="col-span-3"
+              value={startTime} // Format date for input
+              onChange={(e) => setStartTime(e.target.value)} // Convert input to Date
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="endTime" className="text-right">
+              End Time
+            </Label>
+            <Input
+              id="endTime"
+              type="datetime-local"
+              className="col-span-3"
+              value={endTime} // Format date for input
+              onChange={(e) => setEndTime(e.target.value)} // Convert input to Date
+            />
+          </div>
+          {/* <div className="flex flex-col gap-3 lg:flex-row">
           <div className="flex flex-col gap-2">
           <Label>Start Time</Label>
-          <DateTimePicker hourCycle={24} value={startTime} onChange={setStartTime} />
+          <Input type="datetime-local" className="w-max py-6" />
           </div>
           <div className="flex flex-col gap-2">
-          <Label>End</Label>
-          <DateTimePicker hourCycle={24} value={endTime} onChange={setEndTime} />
+          <Label>End Time</Label>
+          <Input type="datetime-local" className="w-max py-6" />
           </div>
-          </div>
+          </div> */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="teamWallet" className="text-right">
               Team Wallet Address

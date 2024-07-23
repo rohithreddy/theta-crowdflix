@@ -142,9 +142,13 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   // Mint 10 million CROWDFLIX tokens to CrowdFlixFaucet
   await crowdFlixToken
-    .mint(await crowdFlixFaucet.getAddress(), parseEther("1000")) // thousand tokens
+    .mint(await crowdFlixFaucet.getAddress(), parseEther("10000")) // thousand tokens
     .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
     .catch(err => console.log(err));
+
+  // Initialize the TicketManager on the LaunchPad contract
+  await launchPad.initializeTicketManager(await ticketManager.getAddress());
+  console.log("TicketManager initialized on LaunchPad");
 
   // crowdFlixVault.grantRole(crowdFlixVault.TICKET_MANAGER_ROLE, await ticketManager.getAddress())
   // // await masterTicket.initialize(

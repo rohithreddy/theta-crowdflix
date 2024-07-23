@@ -3,6 +3,7 @@ import { TransactionBase, TransactionReceipt, formatEther, isAddress, isHex } fr
 import { ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
 import { Address } from "~~/components/scaffold-eth";
 import { replacer } from "~~/utils/scaffold-eth/common";
+import { Button } from "~~/components/ui/button";
 
 type DisplayContent =
   | string
@@ -64,9 +65,9 @@ const NumberDisplay = ({ value }: { value: bigint }) => {
         className="tooltip tooltip-secondary font-sans ml-2"
         data-tip={isEther ? "Multiply by 1e18" : "Divide by 1e18"}
       >
-        <button className="btn btn-ghost btn-circle btn-xs" onClick={() => setIsEther(!isEther)}>
+        <Button variant={"ghost"} className="rounded-md" onClick={() => setIsEther(!isEther)}>
           <ArrowsRightLeftIcon className="h-3 w-3 opacity-65" />
-        </button>
+        </Button>
       </span>
     </div>
   );

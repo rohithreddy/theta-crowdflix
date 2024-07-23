@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { CommonInputProps, InputBase, IntegerVariant, isValidInteger } from "~~/components/scaffold-eth";
+import { Button } from "~~/components/ui/button";
 
 type IntegerInputProps = CommonInputProps<string | bigint> & {
   variant?: IntegerVariant;
@@ -49,13 +50,13 @@ export const IntegerInput = ({
             className="space-x-4 flex tooltip tooltip-top tooltip-secondary before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
             data-tip="Multiply by 1e18 (wei)"
           >
-            <button
+            <Button
               className={`${disabled ? "cursor-not-allowed" : "cursor-pointer"} font-semibold px-4 text-accent`}
               onClick={multiplyBy1e18}
               disabled={disabled}
             >
               ∗
-            </button>
+            </Button>
           </div>
         )
       }

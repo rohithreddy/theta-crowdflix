@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./ITicketManager.sol"; // Import ITicketManager
 
 contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE"); // Renamed DAO_GOVERNER_ROLE to PROPOSER_ROLE
@@ -36,6 +37,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         uint256 profitSharePercentage; // Percentage of profits to distribute to contributors
         string category; // Added category
         ProjectStatus status; // Added project status
+        address ticketCollection; // Add ticket collection address
     }
 
     mapping(uint256 => Project) public projects;
@@ -46,20 +48,30 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     // Track investments
     mapping(uint256 => mapping(address => uint256)) public projectInvestments;
 
+    // Address of the TicketManager contract
+    ITicketManager public ticketManager; // Use the interface
+
     event ProjectCreated(uint256 indexed projectId, string name, uint256 fundingGoal, uint256 startTime, uint256 endTime, address teamWallet, address creator, uint256 profitSharePercentage, string category);
     event Contributed(uint256 indexed projectId, address indexed contributor, uint256 amount);
     event Withdrawn(uint256 indexed projectId, address indexed recipient, uint256 amount);
     event ProjectFinalized(uint256 indexed projectId, bool success);
     event ProfitSharePercentageUpdated(uint256 indexed projectId, uint256 newPercentage);
     event TicketsSoldUpdated(uint256 indexed projectId, uint256 newTicketsSold);
+    event TicketManagerInitialized(address ticketManagerAddress); // Event for TicketManager initialization
 
     constructor(IERC20 _fundingToken, address _initialAdmin, address _initialProposer, address _initialPauser) {
-    fundingToken = _fundingToken;
-    _grantRole(DEFAULT_ADMIN_ROLE, _initialAdmin);
-    _grantRole(PROPOSER_ROLE, _initialProposer); // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
-    _grantRole(PAUSER_ROLE, _initialPauser);
-}
+        fundingToken = _fundingToken;
+        _grantRole(DEFAULT_ADMIN_ROLE, _initialAdmin);
+        _grantRole(PROPOSER_ROLE, _initialProposer); // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
+        _grantRole(PAUSER_ROLE, _initialPauser);
+    }
 
+    // Function to initialize the TicketManager contract
+    function initializeTicketManager(address _ticketManagerAddress) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(address(ticketManager) == address(0), "TicketManager already initialized");
+        ticketManager = ITicketManager(_ticketManagerAddress);
+        emit TicketManagerInitialized(_ticketManagerAddress);
+    }
 
     function createProject(
         string memory _name,
@@ -76,6 +88,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         require(_endTime > _startTime, "End time must be after start time");
         require(_teamWallet != address(0), "Team wallet cannot be zero address"); // Check teamWallet is not zero address
         require(_profitSharePercentage <= 90, "Profit share percentage cannot exceed 90%");
+        require(address(ticketManager) != address(0), "TicketManager not initialized"); // Check if TicketManager is initialized
 
         uint256 projectId = projectCount;
         projects[projectId] = Project({
@@ -91,7 +104,8 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
             creator: _creator, // Store the creator address
             profitSharePercentage: _profitSharePercentage, // Assign profitSharePercentage
             category: _category, // Assign category
-            status: ProjectStatus.InProgress // Set initial status to InProgress
+            status: ProjectStatus.InProgress, // Set initial status to InProgress
+            ticketCollection: address(0) // Initialize ticketCollection to 0
         });
 
         projectCount++;
@@ -135,10 +149,12 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         emit Withdrawn(_projectId, project.teamWallet, amount);
     }
 
-    function finalizeProject(uint256 _projectId) public onlyRole(PROPOSER_ROLE) { // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
+    function finalizeProject(uint256 _projectId) public { // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
         Project storage project = projects[_projectId];
         require(project.isActive, "Project is not active");
         require(block.timestamp > project.endTime, "Project has not ended yet");
+        require(msg.sender == project.creator, "Only the project creator can finalize");
+        require(address(ticketManager) != address(0), "TicketManager not initialized"); // Check if TicketManager is initialized
 
         project.isActive = false;
         bool success = project.totalFunded >= project.fundingGoal;
@@ -152,6 +168,16 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
             payable(project.teamWallet).transfer(amount);
 
             emit Withdrawn(_projectId, project.teamWallet, amount);
+
+            // Create ticket collection for the successful project using the interface
+            project.ticketCollection = ticketManager.createTicketCollection(
+                _projectId, // Use the project ID for the ticket collection
+                string(abi.encodePacked(project.name, " Tickets")), // Use project name for ticket collection name
+                "FLIXTKT", // Use a standard symbol for tickets
+                11 ether, // Set the ticket price (adjust as needed)
+                project.category, // Use the project category
+                project.name // Use the project name for the ticket collection title
+            );
         } else {
             project.status = ProjectStatus.Fail;
             // Iterate through contributors using the array
