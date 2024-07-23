@@ -17,15 +17,15 @@ import { Textarea } from "~~/components/ui/textarea";
 import { useAccount } from "wagmi";
 import { formatUnits, encodeFunctionData } from "viem";
 import { Label } from "~~/components/ui/label";
-import DTPicker from "~~/components/ui/dt-picker"; // Import the DateTimePicker component
+import { DateTimePicker } from "~~/components/ui/datetime-picker";
 
 const CreateProposal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [fundingGoal, setFundingGoal] = useState("");
-  const [startTime, setStartTime] = useState<Date | null>(null); // Store startTime as Date
-  const [endTime, setEndTime] = useState<Date | null>(null); // Store endTime as Date
+  const [startTime, setStartTime] = useState<Date | undefined>(undefined); // Store startTime as Date
+  const [endTime, setEndTime] = useState<Date | undefined>(undefined); // Store endTime as Date
   const [teamWallet, setTeamWallet] = useState("");
   const [category, setCategory] = useState("");
   const [profitSharePercentage, setProfitSharePercentage] = useState(""); // Add state for profitSharePercentage
@@ -132,27 +132,15 @@ const CreateProposal = () => {
               onChange={(e) => setFundingGoal(e.target.value)}
             />
           </div>
-          <div >
-            <Label htmlFor="startTime" className="text-right">
-              Start Time
-            </Label>
-            <DTPicker
-              onDateChange={(date) => setStartTime(date)}
-              onTimeChange={(time) => setStartTime(time)}
-              setStartTime={setStartTime}
-              setEndTime={setEndTime}
-            />
+          <div className="flex flex-col gap-3 lg:flex-row">
+          <div className="flex flex-col gap-2">
+          <Label>Start Time</Label>
+          <DateTimePicker hourCycle={24} value={startTime} onChange={setStartTime} />
           </div>
-          <div >
-            <Label htmlFor="endTime" className="text-right">
-              End Time
-            </Label>
-            <DTPicker
-              onDateChange={(date) => setEndTime(date)}
-              onTimeChange={(time) => setEndTime(time)}
-              setStartTime={setStartTime}
-              setEndTime={setEndTime}
-            />
+          <div className="flex flex-col gap-2">
+          <Label>End</Label>
+          <DateTimePicker hourCycle={24} value={endTime} onChange={setEndTime} />
+          </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="teamWallet" className="text-right">

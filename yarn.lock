@@ -3006,7 +3006,7 @@ __metadata:
     qrcode.react: ^3.1.0
     react: ^18.2.0
     react-copy-to-clipboard: ^5.1.0
-    react-day-picker: ^9.0.3
+    react-day-picker: 8.10.1
     react-dom: ^18.2.0
     react-hot-toast: ^2.4.0
     tailwind-merge: ^2.4.0
@@ -12754,14 +12754,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-day-picker@npm:^9.0.3":
-  version: 9.0.3
-  resolution: "react-day-picker@npm:9.0.3"
-  dependencies:
-    date-fns: ^3.6.0
+"react-day-picker@npm:8.10.1":
+  version: 8.10.1
+  resolution: "react-day-picker@npm:8.10.1"
   peerDependencies:
-    react: ">=16.8.0"
-  checksum: 04ab66438031a539fc37c4e088fe7cb7e2102c5721563dbb69b47ade7cad98baaad6acb6dbd9bed89b0e25271b3f0faa2e1884df97c6e86946382c0463b92382
+    date-fns: ^2.28.0 || ^3.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: daf7fb5aad1e355df9149e954fafc2cd40ceb90de799db4f36ef86d24729aaecfdf022fa9e63f24d093d81dc2beb60f65ae796741dff0f7305a2af80b333fb4c
   languageName: node
   linkType: hard
 
