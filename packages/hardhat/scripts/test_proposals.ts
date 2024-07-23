@@ -70,8 +70,8 @@ async function createProposals(hre: HardhatRuntimeEnvironment) {
   const startTime = Math.floor(Date.now() / 1000) + 60; // 1 minute from now
   const endTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
 
-  // Add one day to startTime and endTime
-  const oneDayInSeconds = 24 * 60 * 60;
+  // Add 3 day to startTime and endTime
+  const oneDayInSeconds = 24 * 60 * 60 * 3;
   const extendedStartTime = startTime + oneDayInSeconds;
   const extendedEndTime = endTime + oneDayInSeconds;
 

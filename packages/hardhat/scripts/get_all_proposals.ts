@@ -2,7 +2,6 @@ import "@nomicfoundation/hardhat-ethers";
 import { Contract } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import hre from "hardhat";
-// import { parseBytes32String } from "ethers/lib/utils";
 
 /**
  * This script retrieves all proposals from the CrowdFlixDaoGovernor contract.
@@ -20,37 +19,43 @@ async function getAllProposals(hre: HardhatRuntimeEnvironment) {
   // Iterate through each proposal and retrieve its details
   for (let i = 0; i < proposalCount; i++) {
     const proposalDetails = await crowdFlixDaoGovernor.proposalDetailsAt(i);
-    const [targets, values, calldatas, descriptionHash] = await crowdFlixDaoGovernor.proposalDetails(
-      proposalDetails[0],
-    );
-    console.log("Targets");
-    console.log(targets);
-    console.log("Values");
-    console.log(values);
-    console.log("Calldatas");
-    console.log(calldatas);
-    console.log("Description Hash");
-    console.log(descriptionHash);
-    console.log("=+++++++++++++++++++++++++=");
-    console.log(proposalDetails);
+    const proposalId = proposalDetails[0];
+
     console.log(`\nProposal ${i + 1}:`);
-    console.log("Proposal Details");
-    console.log(proposalDetails);
-    console.log("Proposal State");
-    console.log(await crowdFlixDaoGovernor.state(proposalDetails[0]));
-    console.log("Proposal ETA");
-    console.log(await crowdFlixDaoGovernor.proposalEta(proposalDetails[0]));
-    console.log("Proposal VOtes");
-    console.log(await crowdFlixDaoGovernor.proposalVotes(proposalDetails[0]));
+    console.log("ProposalID");
+    console.log(proposalId);
+    console.log("Proposal State:", await crowdFlixDaoGovernor.state(proposalId));
+    console.log("Proposal Votes:", await crowdFlixDaoGovernor.proposalVotes(proposalId));
 
-    // Convert proposal deadline into time
-    const proposalDeadline = await crowdFlixDaoGovernor.proposalDeadline(proposalDetails[0]);
-    const deadlineDate = new Date(Number(proposalDeadline) * 1000); // Convert BigInt to number and then to milliseconds
-    console.log("Proposal Deadline:", deadlineDate.toLocaleString()); // Format the date
-
-    // // Decode the description from the hash
-    // const proposalDescription = hre.ethers.decodeBytes32String(hre.ethers.stripZerosLeft(descriptionHash));
-    // console.log("Proposal Description:", proposalDescription);
+    // Map the state to a human-readable description
+    const state = await crowdFlixDaoGovernor.state(proposalId);
+    let stateDescription = "";
+    switch (state) {
+      case 0n:
+        stateDescription = "Pending";
+        break;
+      case 1n:
+        stateDescription = "Active";
+        break;
+      case 2n:
+        stateDescription = "Canceled";
+        break;
+      case 3n:
+        stateDescription = "Queued";
+        break;
+      case 4n:
+        stateDescription = "Succeeded";
+        break;
+      case 5n:
+        stateDescription = "Expired";
+        break;
+      case 6n:
+        stateDescription = "Executed";
+        break;
+      default:
+        stateDescription = "Unknown";
+    }
+    console.log("Proposal State Description:", stateDescription);
   }
 }
 

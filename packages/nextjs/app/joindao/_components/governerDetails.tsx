@@ -42,7 +42,7 @@ const GovernerDetails = () => {
 
       // Fetch votingDelay
       governer.read.votingDelay().then(delay => {
-        setVotingDelay(Number(delay));
+        setVotingDelay(Number(delay) + 10);
       });
 
       // Fetch governor address
@@ -75,7 +75,7 @@ const GovernerDetails = () => {
             <CardTitle>Voting Period</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col mt-2 items-center">
-            <p>{votingPeriod}</p>
+            <p>{votingPeriod} seconds = {votingPeriod / 60 / 60 / 24} days </p>
           </CardContent>
         </Card>
         <Card className="p-4">
@@ -92,7 +92,7 @@ const GovernerDetails = () => {
             <CardTitle>Voting Delay</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col mt-2 items-center">
-            <p>{votingDelay}</p>
+            <p>{votingDelay} seconds</p>
           </CardContent>
         </Card>
         <Card className="p-4">

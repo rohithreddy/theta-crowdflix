@@ -88,7 +88,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     args: [
       cflixTokenAddress, //token
       deployer, //admin
-      await crowdFlixDaoGovernor.getAddress(), //dao gov role
+      timelock_address, //dao gov role
       deployer, //pauser role
     ],
     log: true,
