@@ -11,28 +11,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~~/components/ui/dialog";
-import { useScaffoldContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { useScaffoldContract, useScaffoldWriteContract, useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { Input } from "~~/components/ui/input";
 import { Textarea } from "~~/components/ui/textarea";
 import { useAccount } from "wagmi";
-import { formatUnits } from "viem";
+import { formatUnits, encodeFunctionData } from "viem";
 import { Label } from "~~/components/ui/label";
+import DTPicker from "~~/components/ui/dt-picker"; // Import the DateTimePicker component
 
 const CreateProposal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [fundingGoal, setFundingGoal] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startTime, setStartTime] = useState<Date | null>(null); // Store startTime as Date
+  const [endTime, setEndTime] = useState<Date | null>(null); // Store endTime as Date
   const [teamWallet, setTeamWallet] = useState("");
   const [category, setCategory] = useState("");
+  const [profitSharePercentage, setProfitSharePercentage] = useState(""); // Add state for profitSharePercentage
 
-  const { data: launchPad, isLoading } = useScaffoldContract({
-    contractName: "LaunchPad",
-  });
-
-  const { data: governer, isLoading: governerLoading } = useScaffoldContract({
+  const { data: launchPadInfo } = useDeployedContractInfo("LaunchPad");
+  const { data: governer, isLoading } = useScaffoldContract({
     contractName: "CrowdFlixDaoGovernor",
   });
 
@@ -41,29 +40,35 @@ const CreateProposal = () => {
   const { writeContractAsync: govWriter } = useScaffoldWriteContract("CrowdFlixDaoGovernor");
 
   const handleSubmit = async () => {
-    if (!launchPad || !governer) return;
+    if (!launchPadInfo || !governer || !userAddress) return;
 
-    const extendedStartTime = BigInt(startTime);
-    const extendedEndTime = BigInt(endTime);
+    // Convert startTime and endTime to Unix timestamps
+    const extendedStartTime = startTime ? Math.floor(startTime.getTime() / 1000) : 0;
+    const extendedEndTime = endTime ? Math.floor(endTime.getTime() / 1000) : 0;
     const fundingGoalBigInt = BigInt(fundingGoal);
+    const profitSharePercentageBigInt = BigInt(profitSharePercentage); // Convert profitSharePercentage to BigInt
 
-    const createLaunchPadCampaignCallData = launchPad.interface.encodeFunctionData("createProject", [
-      projectName, // _name
-      projectDescription, // _description
-      fundingGoalBigInt, // _fundingGoal
-      extendedStartTime, // _startTime
-      extendedEndTime, // _endTime
-      teamWallet, // _teamWallet
-      userAddress, // _creator
-      50, // _profitSharePercentage
-      category, // _category
-    ]);
+    const createLaunchPadCampaignCallData = encodeFunctionData({
+      abi: launchPadInfo.abi,
+      functionName: "createProject",
+      args: [
+        projectName, // _name
+        projectDescription, // _description
+        fundingGoalBigInt, // _fundingGoal
+        BigInt(extendedStartTime), // _startTime
+        BigInt(extendedEndTime), // _endTime
+        teamWallet as `0x${string}`, // _teamWallet - Ensure it's a valid address
+        userAddress, // _creator - Ensure it's a valid address
+        profitSharePercentageBigInt, // _profitSharePercentage
+        category, // _category
+      ],
+    });
 
-    const launchPadAddress = await launchPad.address
+    const launchPadAddress = launchPadInfo.address;
     const proposalDescription = `Proposal to launch ${projectName} category ${category} on CrowdFlix`;
 
     try {
-      await govWriter({
+      const proposal_txn = await govWriter({
         functionName: "propose",
         args: [
           [launchPadAddress], //targets
@@ -72,7 +77,7 @@ const CreateProposal = () => {
           proposalDescription,
         ],
       });
-      console.log(`✅ Proposal created for ${projectName} with transaction hash: ${proposal.hash}`);
+      console.log(`✅ Proposal created for ${projectName} with transaction hash: ${proposal_txn}`);
       console.log(`Proposal description: ${proposalDescription}`);
       setIsOpen(false);
     } catch (e) {
@@ -85,7 +90,7 @@ const CreateProposal = () => {
       <DialogTrigger asChild>
         <Button className="text-background p-2">Create a New Proposal</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px]"> {/* Increased max-width */}
         <DialogHeader>
           <DialogTitle>Create a New Proposal</DialogTitle>
           <DialogDescription>
@@ -127,28 +132,26 @@ const CreateProposal = () => {
               onChange={(e) => setFundingGoal(e.target.value)}
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div >
             <Label htmlFor="startTime" className="text-right">
-              Start Time (Unix Timestamp)
+              Start Time
             </Label>
-            <Input
-              id="startTime"
-              defaultValue={startTime}
-              className="col-span-3"
-              type="number"
-              onChange={(e) => setStartTime(e.target.value)}
+            <DTPicker
+              onDateChange={(date) => setStartTime(date)}
+              onTimeChange={(time) => setStartTime(time)}
+              setStartTime={setStartTime}
+              setEndTime={setEndTime}
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div >
             <Label htmlFor="endTime" className="text-right">
-              End Time (Unix Timestamp)
+              End Time
             </Label>
-            <Input
-              id="endTime"
-              defaultValue={endTime}
-              className="col-span-3"
-              type="number"
-              onChange={(e) => setEndTime(e.target.value)}
+            <DTPicker
+              onDateChange={(date) => setEndTime(date)}
+              onTimeChange={(time) => setEndTime(time)}
+              setStartTime={setStartTime}
+              setEndTime={setEndTime}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -171,6 +174,18 @@ const CreateProposal = () => {
               defaultValue={category}
               className="col-span-3"
               onChange={(e) => setCategory(e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="profitSharePercentage" className="text-right">
+              Profit Share Percentage
+            </Label>
+            <Input
+              id="profitSharePercentage"
+              defaultValue={profitSharePercentage}
+              className="col-span-3"
+              type="number"
+              onChange={(e) => setProfitSharePercentage(e.target.value)}
             />
           </div>
         </div>
