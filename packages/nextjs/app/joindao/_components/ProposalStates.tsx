@@ -49,64 +49,55 @@ const ProposalsFetching = () => {
   // Access the writeContractAsync function from the hook
   const { writeContractAsync: castVote } = useScaffoldWriteContract("CrowdFlixDaoGovernor");
 
-  // Process event history directly
-  const proposals =
-    eventHistory?.map(event => {
-      // Access event arguments directly
-      const proposalId = event.args.proposalId?.toString();
-      const proposer = event.args.proposer;
-      const targets = event.args.targets?.map((target: { toString: () => any }) => target.toString()); // Convert to string[]
-      const values = event.args.values.map((value: bigint) => formatUnits(value, 18)); // Convert to string[]
-      const signatures = event.args.signatures;
-      const calldatas = event.args.calldatas;
-      const startBlock = event.args.voteStart?.toString(); // Convert to string
-      const endBlock = event.args.voteEnd?.toString(); // Convert to string
-      const description = event.args.description;
+  // State to store proposals with fetched votes
+  const [proposals, setProposals] = useState<any[]>([]);
 
-      // Fetch vote counts for the proposal
-      // Initialize votes with placeholder values
-      const votes = { againstVotes: "0", forVotes: "0", abstainVotes: "0" };
-
-      return {
-        id: proposalId,
-        contractAddress: governer?.address as Address, // Assuming governer is available
-        proposer,
-        targets,
-        values,
-        signatures,
-        calldatas,
-        startBlock,
-        endBlock,
-        description,
-        state: 0, // Assuming all proposals start in Pending state
-        votes,
-        // votes: { againstVotes: "0", forVotes: "0", abstainVotes: "0" }, // Initialize votes
-      };
-    }) || []; // Default to an empty array if eventHistory is not available
-
-  // Fetch vote counts for all proposals
-  const [voteCounts, setVoteCounts] = useState<{
-    [key: string]: { againstVotes: string; forVotes: string; abstainVotes: string };
-  }>({});
+  // Fetch proposals and votes when eventHistory is available
   useEffect(() => {
-    // Only fetch votes if governer is available and proposals have changed
-    if (governer && proposals.length > 0) {
-      const fetchVotesPromises = proposals.map(proposal =>
-        governer.read.proposalVotes([BigInt(proposal.id!)]).then(fetchedVotes => ({
-          [proposal.id!]: {
-            againstVotes: formatUnits(fetchedVotes[0], 18),
-            forVotes: formatUnits(fetchedVotes[1], 18),
-            abstainVotes: formatUnits(fetchedVotes[2], 18),
-          },
-        })),
-      );
+    if (eventHistory && governer) {
+      const fetchProposals = async () => {
+        const fetchedProposals = await Promise.all(
+          eventHistory.map(async event => {
+            // Access event arguments directly
+            const proposalId = event.args.proposalId?.toString();
+            const proposer = event.args.proposer;
+            const targets = event.args.targets?.map((target: { toString: () => any }) => target.toString()); // Convert to string[]
+            const values = event.args.values.map((value: bigint) => formatUnits(value, 18)); // Convert to string[]
+            const signatures = event.args.signatures;
+            const calldatas = event.args.calldatas;
+            const startBlock = event.args.voteStart?.toString(); // Convert to string
+            const endBlock = event.args.voteEnd?.toString(); // Convert to string
+            const description = event.args.description;
 
-      Promise.all(fetchVotesPromises).then(results => {
-        const combinedVoteCounts = results.reduce((acc, result) => ({ ...acc, ...result }), {});
-        setVoteCounts(combinedVoteCounts);
-      });
+            // Fetch votes directly
+            const fetchedVotes = await governer.read.proposalVotes([BigInt(event.args.proposalId!)]);
+            const votes = {
+              againstVotes: formatUnits(fetchedVotes[0], 18),
+              forVotes: formatUnits(fetchedVotes[1], 18),
+              abstainVotes: formatUnits(fetchedVotes[2], 18),
+            };
+
+            return {
+              id: proposalId,
+              contractAddress: governer?.address as Address, // Assuming governer is available
+              proposer,
+              targets,
+              values,
+              signatures,
+              calldatas,
+              startBlock,
+              endBlock,
+              description,
+              state: 0, // Assuming all proposals start in Pending state
+              votes,
+            };
+          }),
+        );
+        setProposals(fetchedProposals);
+      };
+      fetchProposals();
     }
-  }, [proposals]); // Only re-run when governer or proposals change
+  }, [eventHistory]);
 
   // Render the component
   return (
@@ -136,12 +127,10 @@ const ProposalsFetching = () => {
               <TableCell>{proposal.description}</TableCell>
               <TableCell>{proposal.proposer}</TableCell>
               <TableCell>{new Date(Number(proposal.startBlock) * 1000).toLocaleString()}</TableCell>
-              {/* <TableCell>{proposal.startBlock}</TableCell> */}
               <TableCell>{new Date(Number(proposal.endBlock) * 1000).toLocaleString()}</TableCell>
-              {/* <TableCell>{proposal.endBlock}</TableCell> */}
-              <TableCell>{voteCounts[proposal.id!]?.againstVotes || "0"}</TableCell>
-              <TableCell>{voteCounts[proposal.id!]?.forVotes || "0"}</TableCell>
-              <TableCell>{voteCounts[proposal.id!]?.abstainVotes || "0"}</TableCell>
+              <TableCell>{proposal.votes?.againstVotes}</TableCell>
+              <TableCell>{proposal.votes?.forVotes}</TableCell>
+              <TableCell>{proposal.votes?.abstainVotes}</TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   <Button
