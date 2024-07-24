@@ -27,10 +27,11 @@ type ProjectProps = {
 
 const ProjectCard = ({ project }: ProjectProps) => {
   const { address: userAddress } = useAccount();
-  const { writeContractAsync: contribute } = useScaffoldWriteContract("LaunchPad");
-  const { writeContractAsync: token } = useScaffoldWriteContract("CrowdFlixToken");
+  const { writeContractAsync: launchPad } = useScaffoldWriteContract("LaunchPad");
+  const { writeContractAsync: flixToken } = useScaffoldWriteContract("CrowdFlixToken");
   const { data: pad } = useDeployedContractInfo("LaunchPad");
   const [amount, setAmount] = useState("");
+  console.log(launchPad)
 
   return (
     <Card className="p-4">
@@ -102,11 +103,11 @@ const ProjectCard = ({ project }: ProjectProps) => {
             if (!userAddress || !amount) return;
             try {
               //add flixToken.write.allowance method here
-              await token({
+              await flixToken({
                 functionName: "approve",
-                args: [pad.address, BigInt(Number(amount) * 10 ** 18)],
+                args: [pad?.address, BigInt(Number(amount) * 10 ** 18)],
               });
-              await contribute({
+              const ctxn =  await launchPad({
                 functionName: "contribute",
                 args: [BigInt(project.index), BigInt(Number(amount) * 10 ** 18)],
               });
@@ -126,7 +127,7 @@ const ProjectCard = ({ project }: ProjectProps) => {
             onClick={async () => {
               if (!userAddress) return;
               try {
-                await contribute({
+                await launchPad({
                   functionName: "finalizeProject",
                   args: [BigInt(project.index)],
                 });

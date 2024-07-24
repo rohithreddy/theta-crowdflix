@@ -17,6 +17,7 @@ import { Textarea } from "~~/components/ui/textarea";
 import { useAccount } from "wagmi";
 import { formatUnits, encodeFunctionData } from "viem";
 import { Label } from "~~/components/ui/label";
+import { notification } from "~~/utils/scaffold-eth";
 
 const CreateProposal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +68,7 @@ const CreateProposal = () => {
     const proposalDescription = `Proposal to launch ${projectName} category ${category} on CrowdFlix`;
 
     try {
-      const proposal_txn = await govWriter({
+      const txhash = await govWriter({
         functionName: "propose",
         args: [
           [launchPadAddress], //targets
@@ -76,16 +77,15 @@ const CreateProposal = () => {
           proposalDescription,
         ],
       });
-      console.log(`✅ Proposal created for ${projectName} with transaction hash: ${proposal_txn}`);
-      console.log(`Proposal description: ${proposalDescription}`);
+      notification.success(`✅ Proposal created for ${projectName} with transaction hash: ${txhash}`);
       setIsOpen(false);
-    } catch (e) {
-      console.error("Error creating proposal:", e);
+    } catch (e:any) {
+      notification.error("Error creating proposal:", e.toString());
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="text-background p-2">Create a New Proposal</Button>
       </DialogTrigger>

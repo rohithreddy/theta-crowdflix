@@ -67,13 +67,11 @@ async function createProposals(hre: HardhatRuntimeEnvironment) {
 
   // Set a common funding goal and time frame for all proposals
   const fundingGoal = parseEther("100");
-  const startTime = Math.floor(Date.now() / 1000) + 60; // 1 minute from now
-  const endTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
 
-  // Add 3 day to startTime and endTime
-  const oneDayInSeconds = 24 * 60 * 60 * 3;
-  const extendedStartTime = startTime + oneDayInSeconds;
-  const extendedEndTime = endTime + oneDayInSeconds;
+  // Calculate start and end times 4 days in the future
+  const fourDaysInSeconds = 4 * 24 * 60 * 60;
+  const startTime = Math.floor(Date.now() / 1000) + fourDaysInSeconds + 60; // 1 minute after 4 days
+  const endTime = Math.floor(Date.now() / 1000) + fourDaysInSeconds + 3600; // 1 hour after 4 days
 
   // Team wallet address (replace with your actual team wallet)
   const teamWallet = "0xF014198122454b5745bb33c5C91bF78A8Ac49DF7";
@@ -85,8 +83,8 @@ async function createProposals(hre: HardhatRuntimeEnvironment) {
       project.name, // _name
       project.description, // _description
       fundingGoal, // _fundingGoal
-      extendedStartTime, // _startTime
-      extendedEndTime, // _endTime
+      startTime, // _startTime
+      endTime, // _endTime
       teamWallet, // _teamWallet
       deployer, // _creator
       50, // _profitSharePercentage

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { formatUnits } from "viem";
 import { Address } from "viem";
 import { Button } from "~~/components/ui/button";
+import { useAccount } from "wagmi";
 import {
   Table,
   TableBody,
@@ -49,8 +50,7 @@ const ProposalsFetching = () => {
 
   // Access the writeContractAsync function from the hook
   const { writeContractAsync: govWriter } = useScaffoldWriteContract("CrowdFlixDaoGovernor"); // Renamed to govWriter
-  const { writeContractAsync: queueProposal } = useScaffoldWriteContract("CrowdFlixDaoGovernor");
-  const { writeContractAsync: executeProposal } = useScaffoldWriteContract("CrowdFlixDaoGovernor");
+  const { address: connectedAddress } = useAccount();
 
   // State to store proposals with fetched votes
   const [proposals, setProposals] = useState<any[]>([]);
@@ -79,6 +79,11 @@ const ProposalsFetching = () => {
               forVotes: formatUnits(fetchedVotes[1], 18),
               abstainVotes: formatUnits(fetchedVotes[2], 18),
             };
+            let userHasVoted = false;
+            if (connectedAddress) {
+              userHasVoted = await governer.read.hasVoted([BigInt(event.args.proposalId!), connectedAddress ]);
+            }
+            
 
             // Fetch proposal state
             const proposalState = await governer.read.state([BigInt(event.args.proposalId!)]);
@@ -127,6 +132,7 @@ const ProposalsFetching = () => {
               description,
               state: stateText, // Set the state
               votes,
+              userHasVoted,
             };
           }),
         );
@@ -182,7 +188,7 @@ const ProposalsFetching = () => {
               <TableCell>
                 <div className="flex flex-col gap-2 grid-cols-2">
                   {/* First row of buttons */}
-                  {proposal.state === "Active - 1" && (
+                  {proposal.state === "Active - 1" && !proposal.userHasVoted && (
                     <div className="flex flex-row gap-2">
                       <Button
                         className="text-green-500 p-2"
@@ -239,43 +245,36 @@ const ProposalsFetching = () => {
                   )}
                   {/* Second row of buttons */}
                   <div className="flex flex-row gap-2">
-                    {proposal.state === "Succeeded - 4" && (
+                    {(proposal.state === "Succeeded - 4" || proposal.state === "Queued - 5") && (
                       <Button
                         className="text-background p-2"
                         onClick={async () => {
                           try {
-                            await queueProposal({
-                              functionName: "queue",
-                              args: [BigInt(proposal.id!)],
-                            });
-                            console.log("Proposal queued successfully!");
+                            if (proposal.state === "Succeeded - 4") {
+                              await govWriter({
+                                functionName: "queue",
+                                args: [BigInt(proposal.id!)],
+                              });
+                              console.log("Proposal queued successfully!");
+                            } else if (proposal.state === "Queued - 5") {
+                              await govWriter({
+                                functionName: "execute",
+                                args: [BigInt(proposal.id!)],
+                              });
+                              console.log("Proposal executed successfully!");
+                            }
                           } catch (e) {
-                            console.error("Error queueing proposal:", e);
+                            console.error("Error queueing/executing proposal:", e);
                           }
                         }}
                       >
-                        Queue
-                      </Button>
-                    )}
-                    {proposal.state === "Queued - 5" && (
-                      <Button
-                        className="text-background p-2"
-                        onClick={async () => {
-                          try {
-                            await executeProposal({
-                              functionName: "execute",
-                              args: [BigInt(proposal.id!)],
-                            });
-                            console.log("Proposal executed successfully!");
-                          } catch (e) {
-                            console.error("Error executing proposal:", e);
-                          }
-                        }}
-                      >
-                        Execute
+                        {proposal.state === "Succeeded - 4" ? "Queue" : "Execute"}
                       </Button>
                     )}
                   </div>
+                  {proposal.userHasVoted && (
+                    <p className="text-center">Your vote is cast</p>
+                  )}
                 </div>
               </TableCell>
             </TableRow>

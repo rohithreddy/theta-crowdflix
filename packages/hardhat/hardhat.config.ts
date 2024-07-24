@@ -45,7 +45,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       mining: {
-        auto: true,
+        // auto: true,
         // interval: 5000,
       },
     },
