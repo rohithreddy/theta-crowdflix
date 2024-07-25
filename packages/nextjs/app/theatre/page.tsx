@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
+import TicketSales from "./_components/TicketSaleCard";
 
 export const metadata = getMetadata({
   title: "Flix Theatre",
@@ -14,6 +15,9 @@ const Theatre: NextPage = () => {
         <p className="text-neutral">
           Buy your NFT Tickets to watch the latest execlusive Movies / TV Shows / Documentaries / Music
         </p>
+      </div>
+      <div className="container">
+      <TicketSales />
       </div>
     </>
   );
