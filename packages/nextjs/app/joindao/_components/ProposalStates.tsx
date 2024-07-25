@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import CreateProposal from "./createProposal";
 import { formatUnits } from "viem";
 import { Address } from "viem";
-import { Button } from "~~/components/ui/button";
 import { useAccount } from "wagmi";
+import { Address as AddressDisplay } from "~~/components/scaffold-eth";
+import { Button } from "~~/components/ui/button";
 import {
   Table,
   TableBody,
@@ -16,8 +18,6 @@ import {
   TableRow,
 } from "~~/components/ui/table";
 import { useScaffoldContract, useScaffoldEventHistory, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
-import CreateProposal from "./createProposal";
-import { Address as AddressDisplay } from "~~/components/scaffold-eth";
 
 // Define your types
 export type newProposal = {
@@ -82,9 +82,8 @@ const ProposalsFetching = () => {
             };
             let userHasVoted = false;
             if (connectedAddress) {
-              userHasVoted = await governer.read.hasVoted([BigInt(event.args.proposalId!), connectedAddress ]);
+              userHasVoted = await governer.read.hasVoted([BigInt(event.args.proposalId!), connectedAddress]);
             }
-            
 
             // Fetch proposal state
             const proposalState = await governer.read.state([BigInt(event.args.proposalId!)]);
@@ -146,12 +145,11 @@ const ProposalsFetching = () => {
   // Render the component
   return (
     <div className="mt-8 items-center flex flex-col container">
-      
-        <h2 className="text-2xl font-bold p-4">Proposals</h2>
-        <div className="ml-auto float-right -mt-20 py-8">
+      <h2 className="text-2xl font-bold p-4">Proposals</h2>
+      <div className="ml-auto float-right -mt-20 py-8">
         <CreateProposal />
       </div>
-      
+
       <Table>
         <TableCaption className="text-xl font-semibold">Details of Proposals</TableCaption>
         <TableHeader>
@@ -177,11 +175,17 @@ const ProposalsFetching = () => {
                 {proposal.id?.substring(0, 4) + "..." + proposal.id?.substring(proposal.id.length - 4)}
               </TableCell>
               <TableCell>{proposal.description}</TableCell>
-              <TableCell><AddressDisplay address={proposal.proposer} /></TableCell>
+              <TableCell>
+                <AddressDisplay address={proposal.proposer} />
+              </TableCell>
               {/* <TableCell>{proposal.startBlock}</TableCell> */}
               {/* <TableCell>{proposal.endBlock}</TableCell> */}
-              <TableCell>{new Date(Number(proposal.startBlock) * 1000).toLocaleString()} ({proposal.startBlock})</TableCell>
-              <TableCell>{new Date(Number(proposal.endBlock) * 1000).toLocaleString()} ({proposal.endBlock})</TableCell>
+              <TableCell>
+                {new Date(Number(proposal.startBlock) * 1000).toLocaleString()} ({proposal.startBlock})
+              </TableCell>
+              <TableCell>
+                {new Date(Number(proposal.endBlock) * 1000).toLocaleString()} ({proposal.endBlock})
+              </TableCell>
               <TableCell>{proposal.votes?.forVotes}</TableCell>
               <TableCell>{proposal.votes?.abstainVotes}</TableCell>
               <TableCell>{proposal.votes?.againstVotes}</TableCell>
@@ -254,13 +258,15 @@ const ProposalsFetching = () => {
                             if (proposal.state === "Succeeded - 4") {
                               await govWriter({
                                 functionName: "queue",
-                                args: [BigInt(proposal.id!)],
+                                //@ts-ignore next-line
+                                args: [BigInt(proposal.id)],
                               });
                               console.log("Proposal queued successfully!");
                             } else if (proposal.state === "Queued - 5") {
                               await govWriter({
                                 functionName: "execute",
-                                args: [BigInt(proposal.id!)],
+                                //@ts-ignore next-line
+                                args: [BigInt(proposal.id)],
                               });
                               console.log("Proposal executed successfully!");
                             }
@@ -273,9 +279,7 @@ const ProposalsFetching = () => {
                       </Button>
                     )}
                   </div>
-                  {proposal.userHasVoted && (
-                    <p className="text-center">Your vote is cast</p>
-                  )}
+                  {proposal.userHasVoted && <p className="text-center">Your vote is cast</p>}
                 </div>
               </TableCell>
             </TableRow>

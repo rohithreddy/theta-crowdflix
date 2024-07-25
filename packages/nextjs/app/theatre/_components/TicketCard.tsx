@@ -1,21 +1,22 @@
-"use client"
-import React from 'react'
-import { formatUnits, parseEther } from 'viem';
-import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
-import { useScaffoldReadContract, useScaffoldWriteContract } from '~~/hooks/scaffold-eth';
-import { Button } from "~~/components/ui/button";
+"use client";
+
+import React from "react";
+import { formatUnits, parseEther } from "viem";
 import { useAccount } from "wagmi";
-import { notification } from '~~/utils/scaffold-eth';
+import { Button } from "~~/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { notification } from "~~/utils/scaffold-eth";
 
 type TicketProps = {
   ticket: {
-    ticketContract: `0x${string}`;
+    ticketContract: string;
     projectId: bigint;
     price: bigint;
     category: string;
     title: string;
     ticketsSold: bigint;
-    index : number
+    index: number;
   };
 };
 
@@ -62,7 +63,7 @@ const TicketCard = ({ ticket }: TicketProps) => {
                   value: parseEther(formatUnits(ticket.price, 18)), // Pass the price in ETH
                 });
                 notification.success("Ticket purchased successfully!");
-              } catch (e:any) {
+              } catch (e: any) {
                 notification.error("Error purchasing ticket:", e.toString());
               }
             }}
