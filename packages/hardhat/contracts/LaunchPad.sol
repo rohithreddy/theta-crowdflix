@@ -6,12 +6,14 @@ pragma solidity ^0.8.20;
 
 
 /// @custom:security-contact crash@web108.xyz
+import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./ITicketManager.sol"; // Import ITicketManager
+import "./CrowdFlixVault.sol"; // Import CrowdFlixVault
 
 contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE"); // Renamed DAO_GOVERNER_ROLE to PROPOSER_ROLE
@@ -48,8 +50,10 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     // Track investments
     mapping(uint256 => mapping(address => uint256)) public projectInvestments;
 
+
     // Address of the TicketManager contract
     ITicketManager public ticketManager; // Use the interface
+    CrowdFlixVault public crowdFlixVault; // Add CrowdFlixVault instance
 
     event ProjectCreated(uint256 indexed projectId, string name, uint256 fundingGoal, uint256 startTime, uint256 endTime, address teamWallet, address creator, uint256 profitSharePercentage, string category);
     event Contributed(uint256 indexed projectId, address indexed contributor, uint256 amount);
@@ -58,6 +62,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     event ProfitSharePercentageUpdated(uint256 indexed projectId, uint256 newPercentage);
     event TicketsSoldUpdated(uint256 indexed projectId, uint256 newTicketsSold);
     event TicketManagerInitialized(address ticketManagerAddress); // Event for TicketManager initialization
+    event CrowdFlixVaultInitialized(address crowdFlixVaultAddress); // Event for CrowdFlixVault initialization
 
     constructor(IERC20 _fundingToken, address _initialAdmin, address _initialProposer, address _initialPauser) {
         fundingToken = _fundingToken;
@@ -71,6 +76,13 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         require(address(ticketManager) == address(0), "TicketManager already initialized");
         ticketManager = ITicketManager(_ticketManagerAddress);
         emit TicketManagerInitialized(_ticketManagerAddress);
+    }
+
+    // Function to initialize the CrowdFlixVault contract
+    function initializeCrowdFlixVault(address _crowdFlixVaultAddress) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(address(crowdFlixVault) == address(0), "CrowdFlixVault already initialized");
+        crowdFlixVault = CrowdFlixVault(_crowdFlixVaultAddress);
+        emit CrowdFlixVaultInitialized(_crowdFlixVaultAddress);
     }
 
     function createProject(
@@ -89,6 +101,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         require(_teamWallet != address(0), "Team wallet cannot be zero address"); // Check teamWallet is not zero address
         require(_profitSharePercentage <= 90, "Profit share percentage cannot exceed 90%");
         require(address(ticketManager) != address(0), "TicketManager not initialized"); // Check if TicketManager is initialized
+        require(address(crowdFlixVault) != address(0), "CrowdFlixVault not initialized"); // Check if CrowdFlixVault is initialized
 
         uint256 projectId = projectCount;
         projects[projectId] = Project({
@@ -126,6 +139,10 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         // Update project investments
         projectInvestments[_projectId][msg.sender] += _amount;
 
+        // Update shares
+        crowdFlixVault.contributeAndUpdateShares(_projectId, msg.sender, _amount);
+
+
         // Add contributor address to the array if not already present
         if (project.contributors.length == 0 || project.contributors[project.contributors.length - 1] != msg.sender) {
             project.contributors.push(msg.sender);
@@ -134,65 +151,54 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         emit Contributed(_projectId, msg.sender, _amount);
     }
 
-    function withdraw(uint256 _projectId) public {
-        Project storage project = projects[_projectId];
-        require(!project.isActive, "Project is still active");
-        require(project.totalFunded >= project.fundingGoal, "Funding goal not reached");
-        require(msg.sender == project.creator, "Only the project creator can withdraw");
+   function finalizeProject(uint256 _projectId, uint256 _ticketPrice) public { 
+    Project storage project = projects[_projectId];
+    require(project.isActive, "Project is not active");
+    require(block.timestamp > project.endTime, "Project has not ended yet");
+    require(msg.sender == project.creator, "Only the project creator can finalize");
+    require(address(ticketManager) != address(0), "TicketManager not initialized"); 
+    require(project.status == ProjectStatus.InProgress, "Project is already finalized"); 
 
-        uint256 amount = project.totalFunded;
-        project.totalFunded = 0;
+    project.isActive = false;
 
-        // Transfer remaining funds to team wallet
-        payable(project.teamWallet).transfer(amount);
+    bool success = project.totalFunded >= project.fundingGoal;
+    console.log(success);
+    if (success) {
+        console.log("Inside the success block");
+        project.status = ProjectStatus.Success;
+        // Transfer remaining funds to team wallet using the ERC20 contract
+        fundingToken.transfer(project.teamWallet, project.totalFunded); 
 
-        emit Withdrawn(_projectId, project.teamWallet, amount);
-    }
+        emit Withdrawn(_projectId, project.teamWallet, project.totalFunded);
 
-    function finalizeProject(uint256 _projectId) public { // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
-        Project storage project = projects[_projectId];
-        require(project.isActive, "Project is not active");
-        require(block.timestamp > project.endTime, "Project has not ended yet");
-        require(msg.sender == project.creator, "Only the project creator can finalize");
-        require(address(ticketManager) != address(0), "TicketManager not initialized"); // Check if TicketManager is initialized
+        console.log("Tokens WIthdrawn");
 
-        project.isActive = false;
-        bool success = project.totalFunded >= project.fundingGoal;
-
-        if (success) {
-            project.status = ProjectStatus.Success;
-            uint256 amount = project.totalFunded;
-            project.totalFunded = 0;
-
-            // Transfer remaining funds to team wallet
-            payable(project.teamWallet).transfer(amount);
-
-            emit Withdrawn(_projectId, project.teamWallet, amount);
-
-            // Create ticket collection for the successful project using the interface
-            project.ticketCollection = ticketManager.createTicketCollection(
-                _projectId, // Use the project ID for the ticket collection
-                string(abi.encodePacked(project.name, " Tickets")), // Use project name for ticket collection name
-                "FLIXTKT", // Use a standard symbol for tickets
-                11 ether, // Set the ticket price (adjust as needed)
-                project.category, // Use the project category
-                project.name // Use the project name for the ticket collection title
-            );
-        } else {
-            project.status = ProjectStatus.Fail;
-            // Iterate through contributors using the array
-            for (uint256 i = 0; i < project.contributors.length; i++) {
-                address contributorAddress = project.contributors[i];
-                if (projectInvestments[_projectId][contributorAddress] > 0) {
-                    uint256 refundAmount = projectInvestments[_projectId][contributorAddress];
-                    projectInvestments[_projectId][contributorAddress] = 0;
-                    payable(contributorAddress).transfer(refundAmount);
-                }
+        // Create ticket collection for the successful project using the interface
+        projects[_projectId].ticketCollection = ticketManager.createTicketCollection(
+            _projectId, 
+            string(abi.encodePacked(project.name, " Tickets")), 
+            "FLIXTKT", 
+            _ticketPrice, // Pass the ticket price as a parameter
+            project.category, 
+            project.name 
+        );
+    } else {
+        project.status = ProjectStatus.Fail;
+        // Iterate through contributors using the array
+        for (uint256 i = 0; i < project.contributors.length; i++) {
+            address contributorAddress = project.contributors[i];
+            if (projectInvestments[_projectId][contributorAddress] > 0) {
+                uint256 refundAmount = projectInvestments[_projectId][contributorAddress];
+                projectInvestments[_projectId][contributorAddress] = 0;
+                fundingToken.transfer(contributorAddress, refundAmount); // Use fundingToken.transfer for refunds
             }
         }
-
-        emit ProjectFinalized(_projectId, success);
     }
+
+    emit ProjectFinalized(_projectId, success);
+}
+
+
 
     function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
@@ -337,6 +343,16 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         return failedProjects;
     }
 
+    // Function to get the total funds raised for a project
+    function totalFunded(uint256 _projectId) public view returns (uint256) {
+        return projects[_projectId].totalFunded;
+    }
+
+    // Function to get the ticket collection address for a project
+    function getTicketCollectionAddress(uint256 _projectId) public view returns (address) {
+        return projects[_projectId].ticketCollection;
+    }
+    
     // Receive function to handle direct ETH transfers
     receive() external payable {
         // You can add logic here to handle direct ETH transfers,

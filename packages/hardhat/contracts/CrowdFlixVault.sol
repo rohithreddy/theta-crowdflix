@@ -4,33 +4,43 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol"; // Import IERC721
+import "./LaunchPad.sol"; // Import LaunchPad contract
 
 contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
     bytes32 public constant TICKET_MANAGER_ROLE = keccak256("TICKET_MANAGER_ROLE"); 
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE"); 
 
     struct ProjectVault {
-        uint256 totalShares; 
-        mapping(address => uint256) balances;
+        uint256 totalFunds; // Track total funds for the project
         bool isOpen; 
     }
 
     mapping(uint256 => ProjectVault) public projectVaults;
+    mapping(uint256 => mapping(address => uint256)) public investorShares; // Track shares for each project and investor
+    mapping(uint256 => mapping(address => uint256)) public withdrawnShares; // Track withdrawn shares for each project and investor
 
-    event FundsDeposited(uint256 indexed projectId, address indexed contributor, uint256 amount, uint256 sharesMinted);
-    event FundsWithdrawn(uint256 indexed projectId, address indexed contributor, uint256 amount, uint256 sharesBurned);
+    // Track total shares for each project
+    mapping(uint256 => uint256) public totalShares;
+
+    LaunchPad public launchPad; // Add LaunchPad instance
+
+    event FundsDeposited(uint256 indexed projectId, uint256 amount);
+    event FundsWithdrawn(uint256 indexed projectId, address indexed contributor, uint256 amount);
     event VaultClosed(uint256 indexed projectId);
 
-    constructor(address _initialManager, address _initialPauser) {
+    constructor(address _initialManager, address _initialPauser, address _launchPadAddress) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(TICKET_MANAGER_ROLE, _initialManager);
         _grantRole(PAUSER_ROLE, _initialPauser);
+        launchPad = LaunchPad(payable(_launchPadAddress)); // Initialize LaunchPad instance
     }
 
     // --- Core Vault Functionality ---
 
-    function depositFunds(uint256 _projectId, address _contributor, uint256 _amount) 
+    function depositFunds(uint256 _projectId) 
         external 
+        payable 
         onlyRole(TICKET_MANAGER_ROLE) 
         nonReentrant 
         whenNotPaused 
@@ -38,39 +48,56 @@ contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
         ProjectVault storage vault = projectVaults[_projectId];
         require(vault.isOpen, "Vault is closed for this project");
 
-        uint256 sharesToMint = vault.totalShares == 0
-            ? _amount // Initial deposit, 1:1 mapping for simplicity
-            : (_amount * vault.totalShares) / address(this).balance;
+        vault.totalFunds += msg.value; // Update total funds
 
-        vault.balances[_contributor] += sharesToMint;
-        vault.totalShares += sharesToMint;
-
-        (bool success, ) = payable(address(this)).call{value: _amount}(""); 
-        require(success, "Deposit transfer failed");
-
-        emit FundsDeposited(_projectId, _contributor, _amount, sharesToMint);
+        emit FundsDeposited(_projectId, msg.value);
     }
 
     function withdrawFunds(uint256 _projectId) external nonReentrant whenNotPaused {
         ProjectVault storage vault = projectVaults[_projectId];
         require(vault.isOpen, "Vault is closed for this project");
 
-        uint256 userShares = vault.balances[msg.sender];
+        uint256 userShares = investorShares[_projectId][msg.sender];
         require(userShares > 0, "No shares to withdraw");
 
-        uint256 withdrawalAmount = (userShares * address(this).balance) / vault.totalShares;
+        // Calculate withdrawn shares
+        uint256 withdrawn = withdrawnShares[_projectId][msg.sender];
 
-        vault.balances[msg.sender] = 0;
-        vault.totalShares -= userShares;
+        // Ensure user has not withdrawn more than their invested shares
+        require(userShares - withdrawn > 0, "You have already withdrawn all your shares");
 
+        // Get the ticket collection address
+        address ticketCollection = launchPad.getTicketCollectionAddress(_projectId);
+
+        // Get tickets sold from NFT supply
+        uint256 ticketsSold = IERC721(ticketCollection).balanceOf(ticketCollection);
+
+        // Calculate unlocked shares based on ticket sales
+        uint256 unlockedShares = (userShares * ticketsSold) / totalShares[_projectId];
+
+        // Calculate withdrawal amount based on unlocked shares and project's total funds
+        uint256 withdrawalAmount = (unlockedShares * vault.totalFunds) / totalShares[_projectId]; 
+
+        // Ensure sufficient funds
+        require(withdrawalAmount <= vault.totalFunds, "Insufficient funds in the vault");
+
+        // Update total funds in the vault
+        vault.totalFunds -= withdrawalAmount; 
+
+        // Transfer funds to the user
         (bool success, ) = payable(msg.sender).call{value: withdrawalAmount}("");
         require(success, "Withdrawal transfer failed");
 
-        emit FundsWithdrawn(_projectId, msg.sender, withdrawalAmount, userShares);
+        // Update withdrawn shares
+        withdrawnShares[_projectId][msg.sender] += unlockedShares;
+
+        emit FundsWithdrawn(_projectId, msg.sender, withdrawalAmount);
     }
 
+
     function createProjectVault(uint256 _projectId) external onlyRole(TICKET_MANAGER_ROLE) {
-        require(projectVaults[_projectId].totalShares == 0, "Vault already exists for this project");
+        console.log("Project Vault Inside createProjectVault"); 
+        require(!projectVaults[_projectId].isOpen, "Vault already exists for this project"); // Check if vault is open
         projectVaults[_projectId].isOpen = true; 
     }
 
@@ -88,4 +115,33 @@ contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
     function unpause() external onlyRole(PAUSER_ROLE) {
         _unpause();
     }
+
+    // --- Additional Functions ---
+
+    // Function to get the total funds in a project vault
+    function getTotalFunds(uint256 _projectId) public view returns (uint256) {
+        return projectVaults[_projectId].totalFunds;
+    }
+
+    // Function to check if a project vault is open
+    function isVaultOpen(uint256 _projectId) public view returns (bool) {
+        return projectVaults[_projectId].isOpen;
+    }
+    
+    // In CrowdFlixVault.sol
+    function contributeAndUpdateShares(uint256 _projectId, address _contributor, uint256 _amount) external {
+        require(msg.sender == address(launchPad), "Only LaunchPad can update shares");
+
+        // Update shares
+        investorShares[_projectId][_contributor] += _amount;
+
+        // Update total shares for the project
+        totalShares[_projectId] += _amount;
+
+        // Update total funds in the project vault
+        projectVaults[_projectId].totalFunds += _amount;
+
+        emit FundsDeposited(_projectId, _amount);
+    }
+
 }

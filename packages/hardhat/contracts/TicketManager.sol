@@ -46,7 +46,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
 
     constructor(address _ticketImplementation, address launchPadAddress, address _crowdFlixVaultAddress) {
         ticketImplementation = _ticketImplementation;
-        CrowdFlixVault(_crowdFlixVaultAddress);
+        crowdFlixVault = CrowdFlixVault(_crowdFlixVaultAddress);
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(LAUNCHPAD_ROLE, launchPadAddress);
         _grantRole(PAUSER_ROLE, msg.sender);
@@ -56,7 +56,8 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
     function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price, string memory _category, string memory _title) public onlyRole(LAUNCHPAD_ROLE) whenNotPaused returns (address) {
         // Create a new clone of the ERC721 ticket implementation
         address ticketContract = Clones.clone(ticketImplementation);
-
+        // console.log("Ticket Contract", ticketContract);
+        // console.log("Reached ticketCollection ");
         // Store the ticket collection information
         ticketCollections[_projectId] = TicketCollection({
             ticketContract: ticketContract,
@@ -66,23 +67,28 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
             title: _title,
             ticketsSold: 0 // Initialize ticketsSold to 0
         });
+        // console.log("After ticket collections");
 
         // Initialize the cloned contract
         // Cast to MasterTicket and call initialize
         MasterTicket(ticketContract).initialize(address(this), _name, _symbol, _price); // Initialize with TicketManager address and price
-
+        // console.log("After ticker collectoon Initializable");
         // Increment the collection count
         collectionCount++;
 
         // Add the collection address to the array
         collectionAddresses.push(ticketContract);
 
+        // console.log("Pusged to to collectionAddresses");
+
         CrowdFlixVault(crowdFlixVault).createProjectVault(_projectId);
+
+        // console.log("INIT Project vault");
 
         // Emit an event to signal the creation of the ticket collection
         emit TicketCollectionCreated(_projectId, ticketContract, _price);
 
-        return ticketContract;
+        return address(ticketContract);
     }
 
     // Function to get the ticket contract address for a given project ID
@@ -116,7 +122,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         TicketCollection storage collection = ticketCollections[_projectId];
 
         // Check if the payment is sufficient
-        require(msg.value >= collection.price, "Insufficient payment");
+        require(msg.value == collection.price, "Insufficient payment");
 
         // Cast the ticket contract address to MasterTicket (make it payable)
         MasterTicket ticketContract = MasterTicket(collection.ticketContract); 
@@ -130,7 +136,8 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         // Update total tickets sold
         totalTicketsSold++;
 
-        CrowdFlixVault(crowdFlixVault).depositFunds(_projectId, msg.sender, collection.price);
+        // Send the funds to the CrowdFlixVault
+        crowdFlixVault.depositFunds{value: msg.value}(_projectId);
 
         // Forward the payment to the payment contract
         // payable(collection.paymentContract).transfer(msg.value);
