@@ -17,6 +17,7 @@ import {
 } from "~~/components/ui/table";
 import { useScaffoldContract, useScaffoldEventHistory, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import CreateProposal from "./createProposal";
+import { Address as AddressDisplay } from "~~/components/scaffold-eth";
 
 // Define your types
 export type newProposal = {
@@ -158,8 +159,8 @@ const ProposalsFetching = () => {
             <TableHead>ID</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Proposer</TableHead>
-            <TableHead>Start Block</TableHead>
-            <TableHead>End Block</TableHead>
+            {/* <TableHead>Start Block</TableHead> */}
+            {/* <TableHead>End Block</TableHead> */}
             <TableHead>Start Time</TableHead>
             <TableHead>End Time</TableHead>
             <TableHead>For Votes</TableHead>
@@ -176,11 +177,11 @@ const ProposalsFetching = () => {
                 {proposal.id?.substring(0, 4) + "..." + proposal.id?.substring(proposal.id.length - 4)}
               </TableCell>
               <TableCell>{proposal.description}</TableCell>
-              <TableCell>{proposal.proposer}</TableCell>
-              <TableCell>{proposal.startBlock}</TableCell>
-              <TableCell>{proposal.endBlock}</TableCell>
-              <TableCell>{new Date(Number(proposal.startBlock) * 1000).toLocaleString()}</TableCell>
-              <TableCell>{new Date(Number(proposal.endBlock) * 1000).toLocaleString()}</TableCell>
+              <TableCell><AddressDisplay address={proposal.proposer} /></TableCell>
+              {/* <TableCell>{proposal.startBlock}</TableCell> */}
+              {/* <TableCell>{proposal.endBlock}</TableCell> */}
+              <TableCell>{new Date(Number(proposal.startBlock) * 1000).toLocaleString()} ({proposal.startBlock})</TableCell>
+              <TableCell>{new Date(Number(proposal.endBlock) * 1000).toLocaleString()} ({proposal.endBlock})</TableCell>
               <TableCell>{proposal.votes?.forVotes}</TableCell>
               <TableCell>{proposal.votes?.abstainVotes}</TableCell>
               <TableCell>{proposal.votes?.againstVotes}</TableCell>

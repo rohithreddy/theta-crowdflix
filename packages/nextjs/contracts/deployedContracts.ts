@@ -10420,6 +10420,11 @@ const deployedContracts = {
               name: "_initialPauser",
               type: "address",
             },
+            {
+              internalType: "address",
+              name: "_launchPadAddress",
+              type: "address",
+            },
           ],
           stateMutability: "nonpayable",
           type: "constructor",
@@ -10470,21 +10475,9 @@ const deployedContracts = {
               type: "uint256",
             },
             {
-              indexed: true,
-              internalType: "address",
-              name: "contributor",
-              type: "address",
-            },
-            {
               indexed: false,
               internalType: "uint256",
               name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "sharesMinted",
               type: "uint256",
             },
           ],
@@ -10510,12 +10503,6 @@ const deployedContracts = {
               indexed: false,
               internalType: "uint256",
               name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "sharesBurned",
               type: "uint256",
             },
           ],
@@ -10695,6 +10682,29 @@ const deployedContracts = {
               name: "_projectId",
               type: "uint256",
             },
+            {
+              internalType: "address",
+              name: "_contributor",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "contributeAndUpdateShares",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
           ],
           name: "createProjectVault",
           outputs: [],
@@ -10708,20 +10718,10 @@ const deployedContracts = {
               name: "_projectId",
               type: "uint256",
             },
-            {
-              internalType: "address",
-              name: "_contributor",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
           ],
           name: "depositFunds",
           outputs: [],
-          stateMutability: "nonpayable",
+          stateMutability: "payable",
           type: "function",
         },
         {
@@ -10738,6 +10738,25 @@ const deployedContracts = {
               internalType: "bytes32",
               name: "",
               type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "getTotalFunds",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
             },
           ],
           stateMutability: "view",
@@ -10786,6 +10805,62 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "investorShares",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "isVaultOpen",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "launchPad",
+          outputs: [
+            {
+              internalType: "contract LaunchPad",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "pause",
           outputs: [],
@@ -10817,7 +10892,7 @@ const deployedContracts = {
           outputs: [
             {
               internalType: "uint256",
-              name: "totalShares",
+              name: "totalFunds",
               type: "uint256",
             },
             {
@@ -10885,6 +10960,25 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "totalShares",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "unpause",
           outputs: [],
@@ -10902,6 +10996,30 @@ const deployedContracts = {
           name: "withdrawFunds",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "withdrawnShares",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
       ],
@@ -12029,6 +12147,19 @@ const deployedContracts = {
             {
               indexed: false,
               internalType: "address",
+              name: "crowdFlixVaultAddress",
+              type: "address",
+            },
+          ],
+          name: "CrowdFlixVaultInitialized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
               name: "account",
               type: "address",
             },
@@ -12391,6 +12522,19 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "crowdFlixVault",
+          outputs: [
+            {
+              internalType: "contract CrowdFlixVault",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "uint256",
@@ -12443,6 +12587,11 @@ const deployedContracts = {
             {
               internalType: "uint256",
               name: "_projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_ticketPrice",
               type: "uint256",
             },
           ],
@@ -12923,6 +13072,25 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "getTicketCollectionAddress",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "bytes32",
               name: "role",
               type: "bytes32",
@@ -12960,6 +13128,19 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_crowdFlixVaultAddress",
+              type: "address",
+            },
+          ],
+          name: "initializeCrowdFlixVault",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -13180,13 +13361,6 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [],
-          name: "unpause",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
           inputs: [
             {
               internalType: "uint256",
@@ -13194,7 +13368,20 @@ const deployedContracts = {
               type: "uint256",
             },
           ],
-          name: "withdraw",
+          name: "totalFunded",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "unpause",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",

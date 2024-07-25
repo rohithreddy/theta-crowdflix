@@ -22,6 +22,8 @@ type ProjectProps = {
     category: string;
     profitSharePercentage: bigint;
     index: number;
+    creator: string;
+    isActive: boolean;
   };
 };
 
@@ -31,61 +33,69 @@ const ProjectCard = ({ project }: ProjectProps) => {
   const { writeContractAsync: flixToken } = useScaffoldWriteContract("CrowdFlixToken");
   const { data: pad } = useDeployedContractInfo("LaunchPad");
   const [amount, setAmount] = useState("");
-  console.log(launchPad)
+  const [ticketPrice, setTicketPrice] = useState(""); // State for ticket price
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 h-full flex flex-col">
       <CardHeader>
         <CardTitle>Name : {project.name}</CardTitle>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 gap-4 mt-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <p className="font-semibold">Description:</p>
+      <CardContent className="grid grid-cols-1 gap-4 mt-2 flex-grow">
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Description:</p>
           <p>{project.description}</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <p className="font-semibold">Funding Goal:</p>
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Creator:</p>
+          <p className="break-words">{project.creator}</p>
+        </div>
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Funding Goal:</p>
           <p>
             {formatUnits(project.fundingGoal, 18)} CFLIX (
             {formatUnits(project.totalFunded, 18)} CFLIX raised)
           </p>
         </div>
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Active:</p>
+          <p>{project.isActive ? "Yes" : "No"}</p>
+        </div>
         {/* Calculate and display excess funds */}
         {project.totalFunded > project.fundingGoal && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <p className="font-semibold">Excess Funds:</p>
+          <div className="grid-cols-2 gap-2">
+            <p className="font-semibold mb-2">Excess Funds:</p>
             <p>
               {formatUnits(project.totalFunded - project.fundingGoal, 18)} CFLIX
             </p>
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <p className="font-semibold">Start Time:</p>
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Start Time:</p>
           <p>
-            {new Date(Number(project.startTime) * 1000).toLocaleString()}
+            {new Date(Number(project.startTime) * 1000).toLocaleString()} ({project.startTime.toString()})
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <p className="font-semibold">End Time:</p>
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">End Time:</p>
           <p>
-            {new Date(Number(project.endTime) * 1000).toLocaleString()}
+            {new Date(Number(project.endTime) * 1000).toLocaleString()} ({project.endTime.toString()})
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <p className="font-semibold">Team Wallet:</p>
-          <p className="break-words">{project.teamWallet}</p> {/* Added break-words */}
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Team Wallet:</p>
+          <p className="break-words">{project.teamWallet}</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <p className="font-semibold">Category:</p>
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Category:</p>
           <p>{project.category}</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <p className="font-semibold">Profit Share Percentage:</p>
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Profit Share Percentage:</p>
           <p>{project.profitSharePercentage.toString()} %</p>
         </div>
         {/* Add input for amount */}
-        <div className="grid grid-cols-4 items-center gap-4 mt-4">
-          <Label htmlFor={`amount-${project.index}`} className="text-right">
+        <div className="grid-cols-4 items-center gap-4 mt-4">
+          <Label htmlFor={`amount-${project.index}`} className="font-semibold mb-2">
             Amount (CFLIX)
           </Label>
           <Input
@@ -97,48 +107,69 @@ const ProjectCard = ({ project }: ProjectProps) => {
           />
         </div>
         {/* Add button to contribute */}
-        <Button
-          className="text-background p-2 mt-4"
-          onClick={async () => {
-            if (!userAddress || !amount) return;
-            try {
-              //add flixToken.write.allowance method here
-              await flixToken({
-                functionName: "approve",
-                args: [pad?.address, BigInt(Number(amount) * 10 ** 18)],
-              });
-              const ctxn =  await launchPad({
-                functionName: "contribute",
-                args: [BigInt(project.index), BigInt(Number(amount) * 10 ** 18)],
-              });
-              console.log("Contribution successful!");
-              setAmount(""); // Clear the input after contribution
-            } catch (e) {
-              console.error("Error contributing:", e);
-            }
-          }}
-        >
-          Contribute
-        </Button>
-        {/* Add button to finalize the project */}
-        {project.totalFunded >= project.fundingGoal && (
+        <div className="flex justify-center mt-auto">
           <Button
-            className="text-background p-2 mt-4"
+            className="text-background p-2"
             onClick={async () => {
-              if (!userAddress) return;
+              if (!userAddress || !amount) return;
               try {
-                await launchPad({
-                  functionName: "finalizeProject",
-                  args: [BigInt(project.index)],
+                //add flixToken.write.allowance method here
+                await flixToken({
+                  functionName: "approve",
+                  args: [pad?.address, BigInt(Number(amount) * 10 ** 18)],
                 });
-                console.log("Project finalized successfully!");
+                const ctxn = await launchPad({
+                  functionName: "contribute",
+                  args: [BigInt(project.index), BigInt(Number(amount) * 10 ** 18)],
+                });
+                console.log("Contribution successful!");
+                setAmount(""); // Clear the input after contribution
               } catch (e) {
-                console.error("Error finalizing project:", e);
+                console.error("Error contributing:", e);
               }
             }}
           >
-            Finalize Project
+            Contribute
           </Button>
+        </div>
+        {/* Add button to finalize the project */}
+        {project.totalFunded >= project.fundingGoal && (
+          <div className="flex justify-center mt-auto items-center container flex-row">
+            {/* Show ticket price input and Finalize Project button only if the user is the creator */}
+            {userAddress === project.creator && (
+              <div>
+                <div className="grid-cols-2 items-center gap-4 mt-4">
+                  <Label htmlFor={`ticketPrice-${project.index}`} className="font-semibold mb-2">
+                    Ticket Price (ETH)
+                  </Label>
+                  <Input
+                    id={`ticketPrice-${project.index}`}
+                    defaultValue={ticketPrice}
+                    className="col-span-3"
+                    type="number"
+                    onChange={(e) => setTicketPrice(e.target.value)}
+                  />
+                </div>
+                <Button
+                  className="text-background p-2"
+                  onClick={async () => {
+                    if (!userAddress || !ticketPrice) return; // Check if ticketPrice is provided
+                    try {
+                      await launchPad({
+                        functionName: "finalizeProject",
+                        args: [BigInt(project.index), BigInt(Number(ticketPrice) * 10 ** 18)], // Pass ticketPrice in wei
+                      });
+                      console.log("Project finalized successfully!");
+                    } catch (e) {
+                      console.error("Error finalizing project:", e);
+                    }
+                  }}
+                >
+                  Finalize Project
+                </Button>
+              </div>
+            )}
+          </div>
         )}
       </CardContent>
     </Card>
