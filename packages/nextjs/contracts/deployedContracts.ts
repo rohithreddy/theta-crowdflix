@@ -1184,50 +1184,33 @@ const deployedContracts = {
         multicall: "@openzeppelin/contracts/utils/Multicall.sol",
         canCall: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         cancel: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        consumeScheduledOp:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        consumeScheduledOp: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         execute: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         expiration: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         getAccess: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         getNonce: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getRoleAdmin:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getRoleGrantDelay:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getRoleGuardian:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getSchedule:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getTargetAdminDelay:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getTargetFunctionRole:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getRoleAdmin: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getRoleGrantDelay: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getRoleGuardian: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getSchedule: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getTargetAdminDelay: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getTargetFunctionRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         grantRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         hasRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        hashOperation:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        isTargetClosed:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        hashOperation: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        isTargetClosed: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         labelRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         minSetback: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        renounceRole:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        renounceRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         revokeRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         schedule: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setGrantDelay:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setRoleAdmin:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setRoleGuardian:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setTargetAdminDelay:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setTargetClosed:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setTargetFunctionRole:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        updateAuthority:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setGrantDelay: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setRoleAdmin: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setRoleGuardian: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setTargetAdminDelay: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setTargetClosed: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setTargetFunctionRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        updateAuthority: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
       },
     },
     CrowdFlixDaoGovernor: {
@@ -2984,105 +2967,56 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        BALLOT_TYPEHASH:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        CLOCK_MODE:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        COUNTING_MODE:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        EXTENDED_BALLOT_TYPEHASH:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        cancel:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVote:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVoteBySig:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVoteWithReason:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVoteWithReasonAndParams:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVoteWithReasonAndParamsBySig:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        clock:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        eip712Domain:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        execute:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        getVotes:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        getVotesWithParams:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        hasVoted:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        hashProposal:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        BALLOT_TYPEHASH: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        CLOCK_MODE: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        COUNTING_MODE: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        EXTENDED_BALLOT_TYPEHASH: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        cancel: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVote: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteBySig: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteWithReason: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteWithReasonAndParams: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteWithReasonAndParamsBySig: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        clock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        eip712Domain: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        execute: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        getVotes: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        getVotesWithParams: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        hasVoted: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        hashProposal: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
         name: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        nonces:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        onERC1155BatchReceived:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        onERC1155Received:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        onERC721Received:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalDeadline:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalEta:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalNeedsQueuing:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalProposer:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalSnapshot:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalThreshold:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        propose:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        queue:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        quorum:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        relay:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        state:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        supportsInterface:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        version:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        votingDelay:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        votingPeriod:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        setProposalThreshold:
-          "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
-        setVotingDelay:
-          "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
-        setVotingPeriod:
-          "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
-        proposalVotes:
-          "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol",
-        proposalCount:
-          "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
-        proposalDetails:
-          "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
-        proposalDetailsAt:
-          "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
-        token:
-          "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        quorumDenominator:
-          "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        quorumNumerator:
-          "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        updateQuorumNumerator:
-          "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        timelock:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        updateTimelock:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        nonces: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        onERC1155BatchReceived: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        onERC1155Received: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        onERC721Received: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalDeadline: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalEta: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalNeedsQueuing: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalProposer: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalSnapshot: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalThreshold: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        propose: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        queue: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        quorum: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        relay: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        state: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        supportsInterface: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        version: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        votingDelay: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        votingPeriod: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        setProposalThreshold: "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
+        setVotingDelay: "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
+        setVotingPeriod: "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
+        proposalVotes: "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol",
+        proposalCount: "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
+        proposalDetails: "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
+        proposalDetailsAt: "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
+        token: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        quorumDenominator: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        quorumNumerator: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        updateQuorumNumerator: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        timelock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        updateTimelock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
       },
     },
     CrowdFlixToken: {
@@ -4153,58 +4087,35 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        allowance:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        approve:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        balanceOf:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        decimals:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        allowance: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        approve: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        balanceOf: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        decimals: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         name: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         symbol: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        totalSupply:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        transfer:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        transferFrom:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        totalSupply: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        transfer: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        transferFrom: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         burn: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        burnFrom:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        paused:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
+        burnFrom: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+        paused: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
         authority: "@openzeppelin/contracts/access/manager/AccessManaged.sol",
-        isConsumingScheduledOp:
-          "@openzeppelin/contracts/access/manager/AccessManaged.sol",
-        setAuthority:
-          "@openzeppelin/contracts/access/manager/AccessManaged.sol",
-        DOMAIN_SEPARATOR:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        eip712Domain:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        isConsumingScheduledOp: "@openzeppelin/contracts/access/manager/AccessManaged.sol",
+        setAuthority: "@openzeppelin/contracts/access/manager/AccessManaged.sol",
+        DOMAIN_SEPARATOR: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        eip712Domain: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         nonces: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        permit:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        CLOCK_MODE:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        checkpoints:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        permit: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        CLOCK_MODE: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        checkpoints: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         clock: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        delegate:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        delegateBySig:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        delegates:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        getPastTotalSupply:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        getPastVotes:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        getVotes:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        numCheckpoints:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        delegate: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        delegateBySig: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        delegates: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        getPastTotalSupply: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        getPastVotes: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        getVotes: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        numCheckpoints: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
       },
     },
     LaunchPad: {
@@ -4729,10 +4640,8 @@ const deployedContracts = {
       inheritedFunctions: {
         paused: "@openzeppelin/contracts/utils/Pausable.sol",
         authority: "@openzeppelin/contracts/access/manager/AccessManaged.sol",
-        isConsumingScheduledOp:
-          "@openzeppelin/contracts/access/manager/AccessManaged.sol",
-        setAuthority:
-          "@openzeppelin/contracts/access/manager/AccessManaged.sol",
+        isConsumingScheduledOp: "@openzeppelin/contracts/access/manager/AccessManaged.sol",
+        setAuthority: "@openzeppelin/contracts/access/manager/AccessManaged.sol",
       },
     },
     Timelock: {
@@ -6912,50 +6821,33 @@ const deployedContracts = {
         multicall: "@openzeppelin/contracts/utils/Multicall.sol",
         canCall: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         cancel: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        consumeScheduledOp:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        consumeScheduledOp: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         execute: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         expiration: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         getAccess: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         getNonce: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getRoleAdmin:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getRoleGrantDelay:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getRoleGuardian:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getSchedule:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getTargetAdminDelay:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        getTargetFunctionRole:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getRoleAdmin: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getRoleGrantDelay: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getRoleGuardian: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getSchedule: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getTargetAdminDelay: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        getTargetFunctionRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         grantRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         hasRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        hashOperation:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        isTargetClosed:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        hashOperation: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        isTargetClosed: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         labelRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         minSetback: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        renounceRole:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        renounceRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         revokeRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
         schedule: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setGrantDelay:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setRoleAdmin:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setRoleGuardian:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setTargetAdminDelay:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setTargetClosed:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        setTargetFunctionRole:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
-        updateAuthority:
-          "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setGrantDelay: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setRoleAdmin: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setRoleGuardian: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setTargetAdminDelay: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setTargetClosed: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        setTargetFunctionRole: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
+        updateAuthority: "@openzeppelin/contracts/access/manager/IAccessManager.sol",
       },
     },
     YourContract: {
@@ -8936,109 +8828,58 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        BALLOT_TYPEHASH:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        CLOCK_MODE:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        COUNTING_MODE:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        EXTENDED_BALLOT_TYPEHASH:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        cancel:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVote:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVoteBySig:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVoteWithReason:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVoteWithReasonAndParams:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        castVoteWithReasonAndParamsBySig:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        clock:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        eip712Domain:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        execute:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        getVotes:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        getVotesWithParams:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        hasVoted:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        hashProposal:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        BALLOT_TYPEHASH: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        CLOCK_MODE: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        COUNTING_MODE: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        EXTENDED_BALLOT_TYPEHASH: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        cancel: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVote: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteBySig: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteWithReason: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteWithReasonAndParams: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        castVoteWithReasonAndParamsBySig: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        clock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        eip712Domain: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        execute: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        getVotes: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        getVotesWithParams: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        hasVoted: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        hashProposal: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
         name: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        nonces:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        onERC1155BatchReceived:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        onERC1155Received:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        onERC721Received:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalDeadline:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalEta:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalNeedsQueuing:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalProposer:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalSnapshot:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        proposalThreshold:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        propose:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        queue:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        quorum:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        relay:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        state:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        supportsInterface:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        version:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        votingDelay:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        votingPeriod:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        setProposalThreshold:
-          "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
-        setVotingDelay:
-          "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
-        setVotingPeriod:
-          "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
-        proposalVotes:
-          "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol",
-        proposalCount:
-          "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
-        proposalDetails:
-          "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
-        proposalDetailsAt:
-          "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
-        token:
-          "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        lateQuorumVoteExtension:
-          "@openzeppelin/contracts/governance/extensions/GovernorPreventLateQuorum.sol",
-        setLateQuorumVoteExtension:
-          "@openzeppelin/contracts/governance/extensions/GovernorPreventLateQuorum.sol",
-        quorumDenominator:
-          "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        quorumNumerator:
-          "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        updateQuorumNumerator:
-          "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
-        timelock:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
-        updateTimelock:
-          "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        nonces: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        onERC1155BatchReceived: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        onERC1155Received: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        onERC721Received: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalDeadline: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalEta: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalNeedsQueuing: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalProposer: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalSnapshot: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        proposalThreshold: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        propose: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        queue: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        quorum: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        relay: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        state: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        supportsInterface: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        version: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        votingDelay: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        votingPeriod: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        setProposalThreshold: "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
+        setVotingDelay: "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
+        setVotingPeriod: "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol",
+        proposalVotes: "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol",
+        proposalCount: "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
+        proposalDetails: "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
+        proposalDetailsAt: "@openzeppelin/contracts/governance/extensions/GovernorStorage.sol",
+        token: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        lateQuorumVoteExtension: "@openzeppelin/contracts/governance/extensions/GovernorPreventLateQuorum.sol",
+        setLateQuorumVoteExtension: "@openzeppelin/contracts/governance/extensions/GovernorPreventLateQuorum.sol",
+        quorumDenominator: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        quorumNumerator: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        updateQuorumNumerator: "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol",
+        timelock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
+        updateTimelock: "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol",
       },
     },
     CrowdFlixFaucet: {
@@ -10349,27 +10190,18 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        allowance:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        approve:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        balanceOf:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        decimals:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        allowance: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        approve: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        balanceOf: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        decimals: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         name: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         symbol: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        totalSupply:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        transfer:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        transferFrom:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        totalSupply: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        transfer: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        transferFrom: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         burn: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        burnFrom:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        paused:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
+        burnFrom: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+        paused: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
         DEFAULT_ADMIN_ROLE: "@openzeppelin/contracts/access/AccessControl.sol",
         getRoleAdmin: "@openzeppelin/contracts/access/AccessControl.sol",
         grantRole: "@openzeppelin/contracts/access/AccessControl.sol",
@@ -10377,32 +10209,20 @@ const deployedContracts = {
         renounceRole: "@openzeppelin/contracts/access/AccessControl.sol",
         revokeRole: "@openzeppelin/contracts/access/AccessControl.sol",
         supportsInterface: "@openzeppelin/contracts/access/AccessControl.sol",
-        DOMAIN_SEPARATOR:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        eip712Domain:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        DOMAIN_SEPARATOR: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        eip712Domain: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         nonces: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        permit:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        CLOCK_MODE:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        checkpoints:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        permit: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        CLOCK_MODE: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        checkpoints: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
         clock: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        delegate:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        delegateBySig:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        delegates:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        getPastTotalSupply:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        getPastVotes:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        getVotes:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
-        numCheckpoints:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        delegate: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        delegateBySig: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        delegates: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        getPastTotalSupply: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        getPastVotes: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        getVotes: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
+        numCheckpoints: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol",
       },
     },
     CrowdFlixVault: {
@@ -10690,6 +10510,11 @@ const deployedContracts = {
             {
               internalType: "uint256",
               name: "_amount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "profitSharePercentage",
               type: "uint256",
             },
           ],
@@ -12041,14 +11866,10 @@ const deployedContracts = {
         hasRole: "@openzeppelin/contracts/access/AccessControl.sol",
         renounceRole: "@openzeppelin/contracts/access/AccessControl.sol",
         revokeRole: "@openzeppelin/contracts/access/AccessControl.sol",
-        supportsInterface:
-          "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
-        onERC721Received:
-          "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
-        onERC1155BatchReceived:
-          "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
-        onERC1155Received:
-          "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
+        supportsInterface: "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
+        onERC721Received: "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
+        onERC1155BatchReceived: "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
+        onERC1155Received: "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
       },
     },
     LaunchPad: {

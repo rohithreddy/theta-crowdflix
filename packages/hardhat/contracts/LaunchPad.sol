@@ -140,7 +140,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         projectInvestments[_projectId][msg.sender] += _amount;
 
         // Update shares
-        crowdFlixVault.contributeAndUpdateShares(_projectId, msg.sender, _amount);
+        crowdFlixVault.contributeAndUpdateShares(_projectId, msg.sender, _amount, project.profitSharePercentage);
 
 
         // Add contributor address to the array if not already present

@@ -3,6 +3,7 @@
 import React from "react";
 import { formatUnits, parseEther } from "viem";
 import { useAccount } from "wagmi";
+import { Address } from "~~/components/scaffold-eth";
 import { Button } from "~~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
@@ -32,7 +33,9 @@ const TicketCard = ({ ticket }: TicketProps) => {
       <CardContent className="grid grid-cols-1 gap-4 mt-2 flex-grow">
         <div className="grid-cols-2 gap-2">
           <p className="font-semibold mb-2">Ticket Contract:</p>
-          <p className="break-words">{ticket.ticketContract}</p>
+          <p className="break-words">
+            <Address address={ticket.ticketContract as `0x${string}`} />
+          </p>
         </div>
         <div className="grid-cols-2 gap-2">
           <p className="font-semibold mb-2">Project ID:</p>

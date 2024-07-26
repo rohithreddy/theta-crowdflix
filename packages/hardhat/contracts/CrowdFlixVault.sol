@@ -54,45 +54,58 @@ contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
     }
 
     function withdrawFunds(uint256 _projectId) external nonReentrant whenNotPaused {
-        ProjectVault storage vault = projectVaults[_projectId];
-        require(vault.isOpen, "Vault is closed for this project");
+    ProjectVault storage vault = projectVaults[_projectId];
+    require(vault.isOpen, "Vault is closed for this project");
 
-        uint256 userShares = investorShares[_projectId][msg.sender];
-        require(userShares > 0, "No shares to withdraw");
+    uint256 userShares = investorShares[_projectId][msg.sender];
+    require(userShares > 0, "No shares to withdraw");
 
-        // Calculate withdrawn shares
-        uint256 withdrawn = withdrawnShares[_projectId][msg.sender];
+    console.log("userShares");  
+    console.log(userShares);
 
-        // Ensure user has not withdrawn more than their invested shares
-        require(userShares - withdrawn > 0, "You have already withdrawn all your shares");
+    // Calculate withdrawn shares
+    uint256 withdrawn = withdrawnShares[_projectId][msg.sender];
 
-        // Get the ticket collection address
-        address ticketCollection = launchPad.getTicketCollectionAddress(_projectId);
+    // Ensure user has not withdrawn more than their invested shares
+    require(userShares - withdrawn > 0, "You have already withdrawn all your shares");
 
-        // Get tickets sold from NFT supply
-        uint256 ticketsSold = IERC721(ticketCollection).balanceOf(ticketCollection);
+    // Get the ticket collection address
+    address ticketCollection = launchPad.getTicketCollectionAddress(_projectId);
+    console.log("Ticket Collection"); 
+    console.log(ticketCollection);
 
-        // Calculate unlocked shares based on ticket sales
-        uint256 unlockedShares = (userShares * ticketsSold) / totalShares[_projectId];
+    // Get tickets sold from NFT supply
+    uint256 ticketsSold = IERC721(ticketCollection).totalSupply();
 
-        // Calculate withdrawal amount based on unlocked shares and project's total funds
-        uint256 withdrawalAmount = (unlockedShares * vault.totalFunds) / totalShares[_projectId]; 
+    console.log("ticketsSold");
+    console.log(ticketsSold);
 
-        // Ensure sufficient funds
-        require(withdrawalAmount <= vault.totalFunds, "Insufficient funds in the vault");
+    // **Calculate unlocked shares based on the ratio of user shares to total shares**
+    uint256 unlockedShares = (userShares * ticketsSold) / totalShares[_projectId];
+    
+    console.log("unlockedShares");
+    console.log(unlockedShares);
 
-        // Update total funds in the vault
-        vault.totalFunds -= withdrawalAmount; 
+    // Calculate withdrawal amount based on unlocked shares and project's total funds
+    uint256 withdrawalAmount = (unlockedShares * vault.totalFunds) / totalShares[_projectId]; 
 
-        // Transfer funds to the user
-        (bool success, ) = payable(msg.sender).call{value: withdrawalAmount}("");
-        require(success, "Withdrawal transfer failed");
+    console.log("WithDrawal Amount");
+    console.log(withdrawalAmount);
 
-        // Update withdrawn shares
-        withdrawnShares[_projectId][msg.sender] += unlockedShares;
+    // Ensure sufficient funds
+    require(withdrawalAmount <= vault.totalFunds, "Insufficient funds in the vault");
 
-        emit FundsWithdrawn(_projectId, msg.sender, withdrawalAmount);
-    }
+    // Update total funds in the vault
+    vault.totalFunds -= withdrawalAmount; 
+
+    // Transfer funds to the user using the `transfer` function
+    payable(msg.sender).transfer(withdrawalAmount);
+
+    // Update withdrawn shares
+    withdrawnShares[_projectId][msg.sender] += unlockedShares;
+
+    emit FundsWithdrawn(_projectId, msg.sender, withdrawalAmount);
+}
 
 
     function createProjectVault(uint256 _projectId) external onlyRole(TICKET_MANAGER_ROLE) {
@@ -129,14 +142,19 @@ contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
     }
     
     // In CrowdFlixVault.sol
-    function contributeAndUpdateShares(uint256 _projectId, address _contributor, uint256 _amount) external {
+    function contributeAndUpdateShares(uint256 _projectId, address _contributor, uint256 _amount, uint256 profitSharePercentage) external {
         require(msg.sender == address(launchPad), "Only LaunchPad can update shares");
 
+        // Get the profit share percentage for the project
+
+        // Calculate the shares for the contributor based on the profit share percentage
+        uint256 contributorShares = (_amount * profitSharePercentage) / 100;
+
         // Update shares
-        investorShares[_projectId][_contributor] += _amount;
+        investorShares[_projectId][_contributor] += contributorShares;
 
         // Update total shares for the project
-        totalShares[_projectId] += _amount;
+        totalShares[_projectId] += contributorShares;
 
         // Update total funds in the project vault
         projectVaults[_projectId].totalFunds += _amount;
