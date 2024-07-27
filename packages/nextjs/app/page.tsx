@@ -4,8 +4,8 @@ import Link from "next/link";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~~/components/ui/card";
 import { Address } from "~~/components/scaffold-eth";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~~/components/ui/card";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
@@ -22,40 +22,31 @@ const Home: NextPage = () => {
             <p className="my-2 font-medium">Connected Address:</p>
             <Address address={connectedAddress} />
           </div>
-          <p className="text-center text-lg">
-            Imagine a Decentralized Future where ...{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              Netflix is Owned and Operated BY PEOPLE
-            </code>
+          <br />
+          <p className="text-center text-lg leading-relaxed">
+            Imagine a future where you&apos;re not just a viewer, but an{" "}
+            <span className="text-primary font-bold">owner</span>. <br />
+            <br />A future where platforms like Netflix are powered by the{" "}
+            <span className="text-primary font-bold">community</span>, and profits are shared fairly with everyone who
+            contributes.
           </p>
-          <p className="text-center text-lg">
-            And also{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              Profits are Shared
-            </code>{" "}
-            by{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              People
-            </code>
+          <br />
+          <p className="text-center text-lg leading-relaxed">
+            Crowd Flix is building that future, a decentralized platform built on the{" "}
+            <span className="text-primary font-bold">Theta Edge Cloud</span> and{" "}
+            <span className="text-primary font-bold">Theta Blockchain</span>.
+            <br />
+            <br />
+            We&apos;re still in beta, so use at your own risk, but we&apos;re excited to share this vision with you.
           </p>
-          <p className="text-center text-lg">We are in Beta for now. Use at your own risk.</p>
-          <p className="text-center text-lg">
-            Also we are stuck between Choosing the name{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              Crowd Flix
-            </code>
-            <span> / </span>{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              the FLIX
-            </code>
+          <br />
+          <p className="text-center text-lg leading-relaxed">
+            We&apos;re also exploring different names, so let us know what you think: Crowd Flix or the FLIX?
           </p>
-          <p className="text-center text-lg">
-            Powered by{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              <a href="https://www.thetaedgecloud.com/">Theta Edge Cloud </a>
-              <span> & </span>
-              <a href="https://www.thetaedgecloud.com/">Theta Block Chain</a>
-            </code>
+          <br />
+          <p className="text-center text-lg leading-relaxed">
+            Join us on this journey to revolutionize entertainment and empower the{" "}
+            <span className="text-primary font-bold">community</span>.
           </p>
         </div>
 
