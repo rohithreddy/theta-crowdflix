@@ -67,7 +67,10 @@ export const AddressInfoDropdown = ({
         <div className="relative">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="pl-0 pr-2 shadow-md !h-auto flex flex-row">
+              <Button
+                variant="secondary"
+                className="pl-0 pr-2 bg-foreground/20 hover:bg-foreground/40 !h-auto flex flex-row"
+              >
                 <BlockieAvatar address={checkSumAddress} size={30} ensImage={ensAvatar} />
                 <span className="ml-2 mr-1">
                   {isENS(displayName) ? displayName : checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4)}

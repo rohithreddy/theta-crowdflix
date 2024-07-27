@@ -21,7 +21,7 @@ import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
 const routes = [
   { name: "Home", href: "/", icon: "" },
-  { name: "Debug Contracts", href: "/debug", icon: <Bug className="h-4 w-4" /> }, // Use Lucide Bug icon
+  // { name: "Debug Contracts", href: "/debug", icon: <Bug className="h-4 w-4" /> }, // Use Lucide Bug icon
   { name: "TheFlix DAO", href: "/joindao", icon: <Users className="h-5 w-5" /> }, // Use Lucide Users icon
   { name: "Flix Starter", href: "/flixstarter", icon: <Rocket className="h-5 w-5" /> }, // Use Lucide CreditCard icon
   { name: "Theatre", href: "/theatre", icon: <Video className="h-5 w-5" /> }, // Use Lucide Video icon
@@ -39,7 +39,7 @@ export const Header = () => {
   const pathname = usePathname();
 
   return (
-    <header className="sticky lg:static top-0 flex justify-around shadow-md shadow-secondary px-0 sm:px-2">
+    <header className="sticky lg:static top-0 flex container justify-around shadow-md shadow-secondary px-0 sm:px-2">
       <aside className="lg:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -82,7 +82,7 @@ export const Header = () => {
       <aside className="flex items-center gap-2 ml-4 mr-6 shrink-0">
         <Link href="/" passHref className="flex flex-row p-2 gap-4">
           <div className="flex relative w-10 h-10">
-            <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
+            <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.png" />
           </div>
           <div className="flex flex-col">
             <span className="font-bold leading-tight">CrowdFlix</span>

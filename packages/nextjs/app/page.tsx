@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
+// import Link from "next/link";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~~/components/ui/card";
+
+// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~~/components/ui/card";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
@@ -29,8 +29,18 @@ const Home: NextPage = () => {
           <br />
           <p className="text-center text-lg leading-relaxed">
             Crowd Flix is building that future, a decentralized platform built on the{" "}
-            <span className="text-primary font-bold">Theta Edge Cloud</span> and{" "}
-            <span className="text-primary font-bold">Theta Blockchain</span>.
+            <span className="text-blue-700 font-bold ">
+              <a href="https://www.thetaedgecloud.com/" target="_blank" rel="noopener noreferrer">
+                Theta Edge Cloud
+              </a>
+            </span>{" "}
+            and{" "}
+            <span className="text-blue-700 font-bold">
+              <a href="https://thetatoken.org/ " target="_blank" rel="noopener noreferrer">
+                Theta Blockchain
+              </a>
+            </span>
+            .
             <br />
             <br />
             We&apos;re still in beta, so use at your own risk, but we&apos;re excited to share this vision with you.
