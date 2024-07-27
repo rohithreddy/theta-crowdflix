@@ -367,7 +367,12 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     function getTicketCollectionAddress(uint256 _projectId) public view returns (address) {
         return projects[_projectId].ticketCollection;
     }
-    
+
+    // Function to get contributors for a project ID
+    function getContributors(uint256 _projectId) public view returns (address[] memory) {
+        return projects[_projectId].contributors;
+    }
+
     // Receive function to handle direct ETH transfers
     receive() external payable {
         // You can add logic here to handle direct ETH transfers,

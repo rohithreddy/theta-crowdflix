@@ -10864,6 +10864,30 @@ const deployedContracts = {
               type: "address",
             },
           ],
+          name: "withdrawableEth",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
           name: "withdrawnShares",
           outputs: [
             {
@@ -12476,6 +12500,25 @@ const deployedContracts = {
               internalType: "contract IERC20",
               name: "",
               type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "getContributors",
+          outputs: [
+            {
+              internalType: "address[]",
+              name: "",
+              type: "address[]",
             },
           ],
           stateMutability: "view",
