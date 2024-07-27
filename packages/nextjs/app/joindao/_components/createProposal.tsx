@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { encodeFunctionData, formatUnits } from "viem";
+import { useAccount } from "wagmi";
 import { Button } from "~~/components/ui/button";
 import {
   Dialog,
@@ -11,12 +13,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~~/components/ui/dialog";
-import { useScaffoldContract, useScaffoldWriteContract, useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { Input } from "~~/components/ui/input";
-import { Textarea } from "~~/components/ui/textarea";
-import { useAccount } from "wagmi";
-import { formatUnits, encodeFunctionData } from "viem";
 import { Label } from "~~/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "~~/components/ui/select";
+import { Textarea } from "~~/components/ui/textarea";
+import { useDeployedContractInfo, useScaffoldContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
 
 const CreateProposal = () => {
@@ -27,7 +36,7 @@ const CreateProposal = () => {
   const [startTime, setStartTime] = useState(""); // Store startTime as Date
   const [endTime, setEndTime] = useState(""); // Store endTime as Date
   const [teamWallet, setTeamWallet] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("movie"); // Default category to "movie"
   const [profitSharePercentage, setProfitSharePercentage] = useState(""); // Add state for profitSharePercentage
 
   const { data: launchPadInfo } = useDeployedContractInfo("LaunchPad");
@@ -79,7 +88,7 @@ const CreateProposal = () => {
       });
       notification.success(`✅ Proposal created for ${projectName} with transaction hash: ${txhash}`);
       setIsOpen(false);
-    } catch (e:any) {
+    } catch (e: any) {
       notification.error("Error creating proposal:", e.toString());
     }
   };
@@ -89,12 +98,12 @@ const CreateProposal = () => {
       <DialogTrigger asChild>
         <Button className="text-background p-2">Create a New Proposal</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]"> {/* Increased max-width */}
+      <DialogContent className="sm:max-w-[600px]">
+        {" "}
+        {/* Increased max-width */}
         <DialogHeader>
           <DialogTitle>Create a New Proposal</DialogTitle>
-          <DialogDescription>
-            Create a proposal to launch a new project on CrowdFlix.
-          </DialogDescription>
+          <DialogDescription>Create a proposal to launch a new project on CrowdFlix.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -105,7 +114,7 @@ const CreateProposal = () => {
               id="projectName"
               defaultValue={projectName}
               className="col-span-3"
-              onChange={(e) => setProjectName(e.target.value)}
+              onChange={e => setProjectName(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -116,19 +125,19 @@ const CreateProposal = () => {
               id="projectDescription"
               defaultValue={projectDescription}
               className="col-span-3"
-              onChange={(e) => setProjectDescription(e.target.value)}
+              onChange={e => setProjectDescription(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="fundingGoal" className="text-right">
-              Funding Goal (ETH)
+              Funding Goal (CFLIX tokens)
             </Label>
             <Input
               id="fundingGoal"
               defaultValue={fundingGoal}
               className="col-span-3"
               type="number"
-              onChange={(e) => setFundingGoal(e.target.value)}
+              onChange={e => setFundingGoal(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -140,7 +149,7 @@ const CreateProposal = () => {
               type="datetime-local"
               className="col-span-3"
               value={startTime} // Format date for input
-              onChange={(e) => setStartTime(e.target.value)} // Convert input to Date
+              onChange={e => setStartTime(e.target.value)} // Convert input to Date
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -152,7 +161,7 @@ const CreateProposal = () => {
               type="datetime-local"
               className="col-span-3"
               value={endTime} // Format date for input
-              onChange={(e) => setEndTime(e.target.value)} // Convert input to Date
+              onChange={e => setEndTime(e.target.value)} // Convert input to Date
             />
           </div>
           {/* <div className="flex flex-col gap-3 lg:flex-row">
@@ -173,19 +182,29 @@ const CreateProposal = () => {
               id="teamWallet"
               defaultValue={teamWallet}
               className="col-span-3"
-              onChange={(e) => setTeamWallet(e.target.value)}
+              onChange={e => setTeamWallet(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">
               Category
             </Label>
-            <Input
-              id="category"
-              defaultValue={category}
-              className="col-span-3"
-              onChange={(e) => setCategory(e.target.value)}
-            />
+            <div className="col-span-3">
+              <Select value={category} onValueChange={value => setCategory(value)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Categories</SelectLabel>
+                    <SelectItem value="movie">Movie</SelectItem>
+                    <SelectItem value="documentary">Documentary</SelectItem>
+                    <SelectItem value="shortfilm">Short Film</SelectItem>
+                    <SelectItem value="series">Series</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="profitSharePercentage" className="text-right">
@@ -196,13 +215,17 @@ const CreateProposal = () => {
               defaultValue={profitSharePercentage}
               className="col-span-3"
               type="number"
-              onChange={(e) => setProfitSharePercentage(e.target.value)}
+              onChange={e => setProfitSharePercentage(e.target.value)}
             />
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleSubmit} className="text-background p-2">Submit</Button>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
+          <Button onClick={handleSubmit} className="text-background p-2">
+            Submit
+          </Button>
+          <Button variant="outline" onClick={() => setIsOpen(false)}>
+            Cancel
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
