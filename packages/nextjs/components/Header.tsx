@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./ThemeToggle";
-import { Bug, CreditCard, Rocket, Users, Video, Menu } from "lucide-react";
+import { Bug, CreditCard, Menu, Rocket, Users, Video } from "lucide-react";
+import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { Button } from "~~/components/ui/button";
 import {
   DropdownMenu,
@@ -14,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "~~/components/ui/dropdown-menu";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink } from "~~/components/ui/navigation-menu";
-import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
 // Import Lucide icons
@@ -23,8 +23,8 @@ const routes = [
   { name: "Home", href: "/", icon: "" },
   { name: "Debug Contracts", href: "/debug", icon: <Bug className="h-4 w-4" /> }, // Use Lucide Bug icon
   { name: "TheFlix DAO", href: "/joindao", icon: <Users className="h-5 w-5" /> }, // Use Lucide Users icon
-  { name: "Theatre", href: "/theatre", icon: <Video className="h-5 w-5" /> }, // Use Lucide Video icon
   { name: "Flix Starter", href: "/flixstarter", icon: <Rocket className="h-5 w-5" /> }, // Use Lucide CreditCard icon
+  { name: "Theatre", href: "/theatre", icon: <Video className="h-5 w-5" /> }, // Use Lucide Video icon
   { name: "Faucet", href: "/faucet", icon: <CreditCard className="h-5 w-5" /> }, // Use Lucide CurrencyDollar icon
 ] as const;
 
