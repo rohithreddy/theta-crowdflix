@@ -10245,6 +10245,11 @@ const deployedContracts = {
               name: "_launchPadAddress",
               type: "address",
             },
+            {
+              internalType: "address",
+              name: "_ticketManagerAddress",
+              type: "address",
+            },
           ],
           stateMutability: "nonpayable",
           type: "constructor",
@@ -10278,6 +10283,11 @@ const deployedContracts = {
         {
           inputs: [],
           name: "ExpectedPause",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "MathOverflowedMulDiv",
           type: "error",
         },
         {
@@ -10544,7 +10554,7 @@ const deployedContracts = {
               type: "uint256",
             },
           ],
-          name: "depositFunds",
+          name: "depositSaleFunds",
           outputs: [],
           stateMutability: "payable",
           type: "function",
@@ -10717,7 +10727,12 @@ const deployedContracts = {
           outputs: [
             {
               internalType: "uint256",
-              name: "totalFunds",
+              name: "raisedFunds",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "ticketSales",
               type: "uint256",
             },
             {
@@ -10779,6 +10794,19 @@ const deployedContracts = {
               internalType: "bool",
               name: "",
               type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "ticketManager",
+          outputs: [
+            {
+              internalType: "contract ITicketManager",
+              name: "",
+              type: "address",
             },
           ],
           stateMutability: "view",
@@ -11979,6 +12007,25 @@ const deployedContracts = {
           anonymous: false,
           inputs: [
             {
+              indexed: true,
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "daoProposalId",
+              type: "uint256",
+            },
+          ],
+          name: "DaoProposalIdSet",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
               indexed: false,
               internalType: "address",
               name: "account",
@@ -12510,6 +12557,16 @@ const deployedContracts = {
                   name: "ticketCollection",
                   type: "address",
                 },
+                {
+                  internalType: "uint256",
+                  name: "projectId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "daoProposalId",
+                  type: "uint256",
+                },
               ],
               internalType: "struct LaunchPad.Project[]",
               name: "",
@@ -12600,6 +12657,16 @@ const deployedContracts = {
                   internalType: "address",
                   name: "ticketCollection",
                   type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "projectId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "daoProposalId",
+                  type: "uint256",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -12692,6 +12759,16 @@ const deployedContracts = {
                   name: "ticketCollection",
                   type: "address",
                 },
+                {
+                  internalType: "uint256",
+                  name: "projectId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "daoProposalId",
+                  type: "uint256",
+                },
               ],
               internalType: "struct LaunchPad.Project[]",
               name: "",
@@ -12776,6 +12853,16 @@ const deployedContracts = {
                   internalType: "address",
                   name: "ticketCollection",
                   type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "projectId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "daoProposalId",
+                  type: "uint256",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -12880,6 +12967,16 @@ const deployedContracts = {
                   internalType: "address",
                   name: "ticketCollection",
                   type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "projectId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "daoProposalId",
+                  type: "uint256",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -13109,6 +13206,16 @@ const deployedContracts = {
               name: "ticketCollection",
               type: "address",
             },
+            {
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "daoProposalId",
+              type: "uint256",
+            },
           ],
           stateMutability: "view",
           type: "function",
@@ -13145,6 +13252,24 @@ const deployedContracts = {
             },
           ],
           name: "revokeRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_daoProposalId",
+              type: "uint256",
+            },
+          ],
+          name: "setDaoProposalId",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -13703,6 +13828,25 @@ const deployedContracts = {
               internalType: "address",
               name: "",
               type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "getTicketsSold",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
             },
           ],
           stateMutability: "view",

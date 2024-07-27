@@ -1,8 +1,29 @@
 // /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
 "use client";
 
-import { useDeployedContractInfo, useScaffoldContract, useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import ProjectCard from "./ProjectCard";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
+// /home/crash/code/builds/theta_hack/cflix/packages/nextjs/app/flixstarter/page.tsx
+
 // import ProjectCard from "./_components/ProjectCard";
 
 const LaunchPadDetails = () => {
@@ -11,8 +32,8 @@ const LaunchPadDetails = () => {
     functionName: "getProjectsInProgress",
   });
 
-  console.log("LaunchPad Projects")
-  console.log(launchPadProjects)
+  console.log("LaunchPad Projects");
+  console.log(launchPadProjects);
 
   return (
     <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 items-center justify-around">
@@ -20,7 +41,10 @@ const LaunchPadDetails = () => {
         <p>Loading projects...</p>
       ) : (
         launchPadProjects?.map((project, index) => (
-          <ProjectCard key={index} project={{ ...project, index }} />
+          <ProjectCard
+            key={project.projectId}
+            project={{ ...project, contributors: project.contributors.map(c => c as `0x${string}`) }}
+          />
         ))
       )}
     </div>

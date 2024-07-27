@@ -22,6 +22,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     enum ProjectStatus {
         InProgress,
         Success,
+        Finalized,
         Fail
     }
 
@@ -40,6 +41,8 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         string category; // Added category
         ProjectStatus status; // Added project status
         address ticketCollection; // Add ticket collection address
+        uint256 projectId; // Added project ID
+        uint256 daoProposalId; // Added DAO proposal ID
     }
 
     mapping(uint256 => Project) public projects;
@@ -63,6 +66,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     event TicketsSoldUpdated(uint256 indexed projectId, uint256 newTicketsSold);
     event TicketManagerInitialized(address ticketManagerAddress); // Event for TicketManager initialization
     event CrowdFlixVaultInitialized(address crowdFlixVaultAddress); // Event for CrowdFlixVault initialization
+    event DaoProposalIdSet(uint256 indexed projectId, uint256 daoProposalId); // Event for setting DAO proposal ID
 
     constructor(IERC20 _fundingToken, address _initialAdmin, address _initialProposer, address _initialPauser) {
         fundingToken = _fundingToken;
@@ -103,7 +107,9 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         require(address(ticketManager) != address(0), "TicketManager not initialized"); // Check if TicketManager is initialized
         require(address(crowdFlixVault) != address(0), "CrowdFlixVault not initialized"); // Check if CrowdFlixVault is initialized
 
+        // Auto-increment project ID
         uint256 projectId = projectCount;
+
         projects[projectId] = Project({
             name: _name,
             description: _description,
@@ -118,7 +124,9 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
             profitSharePercentage: _profitSharePercentage, // Assign profitSharePercentage
             category: _category, // Assign category
             status: ProjectStatus.InProgress, // Set initial status to InProgress
-            ticketCollection: address(0) // Initialize ticketCollection to 0
+            ticketCollection: address(0), // Initialize ticketCollection to 0
+            projectId: projectId, // Assign project ID
+            daoProposalId: 0 // Initialize daoProposalId to 0
         });
 
         projectCount++;
@@ -165,7 +173,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     console.log(success);
     if (success) {
         console.log("Inside the success block");
-        project.status = ProjectStatus.Success;
+        project.status = ProjectStatus.Finalized;
         // Transfer remaining funds to team wallet using the ERC20 contract
         fundingToken.transfer(project.teamWallet, project.totalFunded); 
 
@@ -236,6 +244,13 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         require(project.startTime >= block.timestamp, "Start time must be in the future");
         require(project.endTime > project.startTime, "End time must be after start time");
         require(project.teamWallet != address(0), "Team wallet cannot be zero address");
+    }
+
+    // Function to set or update the DAO proposal ID for a project
+    function setDaoProposalId(uint256 _projectId, uint256 _daoProposalId) public onlyRole(PROPOSER_ROLE) {
+        require(_projectId < projectCount, "Invalid project ID");
+        projects[_projectId].daoProposalId = _daoProposalId;
+        emit DaoProposalIdSet(_projectId, _daoProposalId);
     }
 
     // Function to get projects by address

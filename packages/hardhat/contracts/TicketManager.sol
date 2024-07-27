@@ -137,7 +137,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         totalTicketsSold++;
 
         // Send the funds to the CrowdFlixVault
-        crowdFlixVault.depositFunds{value: msg.value}(_projectId);
+        crowdFlixVault.depositSaleFunds{value: msg.value}(_projectId);
 
         // Forward the payment to the payment contract
         // payable(collection.paymentContract).transfer(msg.value);
@@ -170,6 +170,11 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         }
 
         return collections;
+    }
+
+    // Function to get the number of tickets sold for a given project ID
+    function getTicketsSold(uint256 _projectId) public view returns (uint256) {
+        return ticketCollections[_projectId].ticketsSold;
     }
 
     receive() external payable {}

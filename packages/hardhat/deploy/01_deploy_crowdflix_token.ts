@@ -25,11 +25,14 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const deployerSigner = await ethers.getSigner(deployer); // Get the signer for the deployer account
 
   console.log("Deploying contracts with the account:", deployer);
+  const ticketManagerAddress = await getExpectedContractAddress(deployerSigner, 6);
   const dao_governor_address = await getExpectedContractAddress(deployerSigner, 2);
   const timelock_address = await getExpectedContractAddress(deployerSigner, 1);
   const token_address = await getExpectedContractAddress(deployerSigner, 0);
   const { deploy } = hre.deployments;
+
   // Deploy CrowdFlixToken
+  console.log("Deploying CrowdFlixToken...");
   await deploy("CrowdFlixToken", {
     from: deployer,
     // Contract constructor arguments
@@ -45,6 +48,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const cflixTokenAddress = await crowdFlixToken.getAddress();
 
   // Deploy TimeLockController
+  console.log("Deploying TimeLockController...");
   const proposers = [deployer, timelock_address, dao_governor_address];
   const executors = [deployer, timelock_address, dao_governor_address];
 
@@ -60,6 +64,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("The expected timelock address is", timelock_address);
 
   // Deploy CrowdFlixDaoGovernor
+  console.log("Deploying CrowdFlixDaoGovernor...");
   const args = [
     "Crowd Flix DAO",
     cflixTokenAddress,
@@ -82,7 +87,9 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const crowdFlixDaoGovernor = await hre.ethers.getContract<Contract>("CrowdFlixDaoGovernor", deployer);
   console.log("Deployed Governer successfully", await crowdFlixDaoGovernor.getAddress());
   console.log("expected dao governor address iS :D ", dao_governor_address);
+
   // Deploy LaunchPad
+  console.log("Deploying LaunchPad...");
   await deploy("LaunchPad", {
     from: deployer,
     args: [
@@ -99,8 +106,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const launchPad = await hre.ethers.getContract<Contract>("LaunchPad", deployer);
   console.log("Launchpad Deployed at address", await launchPad.getAddress());
 
+  // Deploy MasterTicket
   console.log("Deploying MasterTicket...");
-
   const MasterTicket = await hre.ethers.getContractFactory("MasterTicket");
   const masterTicket = await MasterTicket.deploy();
   // await masterTicket.deployed();
@@ -108,9 +115,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   // // Initialize MasterTicket
 
   console.log("MasterTicket deployed to:", await masterTicket.getAddress());
+
+  // Deploy CrowdFlixVault
+  console.log("Deploying CrowdFlixVault...");
   const crowdFlixVaultDeployment = await deploy("CrowdFlixVault", {
     from: deployer,
-    args: [deployer, deployer, await launchPad.getAddress()], // Set initial roles (consider multi-sig or DAO later)
+    args: [deployer, deployer, await launchPad.getAddress(), ticketManagerAddress], // Set initial roles (consider multi-sig or DAO later)
     log: true,
     autoMine: true,
   });
@@ -118,6 +128,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("CrowdFlixVault deployed to:", crowdFlixVaultDeployment.address);
 
   // Deploy TicketManager
+  console.log("Deploying TicketManager...");
   await deploy("TicketManager", {
     from: deployer,
     args: [await masterTicket.getAddress(), await launchPad.getAddress(), await crowdFlixVault.getAddress()],
@@ -130,6 +141,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("GRANTED TICKET MANAGER ROLE to=> " + (await ticketManager.getAddress()));
 
   // Deploy CrowdFlixFaucet
+  console.log("Deploying CrowdFlixFaucet...");
   await deploy("CrowdFlixFaucet", {
     from: deployer,
     args: [cflixTokenAddress], // Pass the CrowdFlixToken address
@@ -141,16 +153,19 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("CrowdFlixFaucet Deployed at address", await crowdFlixFaucet.getAddress());
 
   // Mint 10 million CROWDFLIX tokens to CrowdFlixFaucet
+  console.log("Minting CROWDFLIX tokens to CrowdFlixFaucet...");
   await crowdFlixToken
     .mint(await crowdFlixFaucet.getAddress(), parseEther("10000")) // thousand tokens
     .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
     .catch(err => console.log(err));
 
   // Initialize the TicketManager on the LaunchPad contract
+  console.log("Initializing TicketManager on LaunchPad...");
   await launchPad.initializeTicketManager(await ticketManager.getAddress());
   console.log("TicketManager initialized on LaunchPad");
 
   // Initialize the CrowdFlixVault on the LaunchPad contract
+  console.log("Initializing CrowdFlixVault on LaunchPad...");
   await launchPad.initializeCrowdFlixVault(await crowdFlixVault.getAddress());
   console.log("CrowdFlixVault initialized on LaunchPad");
 

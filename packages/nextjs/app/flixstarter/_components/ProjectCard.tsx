@@ -35,15 +35,19 @@ type ProjectProps = {
     name: string;
     description: string;
     fundingGoal: bigint;
-    totalFunded: bigint;
     startTime: bigint;
     endTime: bigint;
     teamWallet: string;
-    category: string;
-    profitSharePercentage: bigint;
-    index: number;
-    creator: string;
+    totalFunded: bigint;
     isActive: boolean;
+    contributors: `0x${string}`[];
+    creator: string;
+    profitSharePercentage: bigint;
+    category: string;
+    status: number;
+    ticketCollection: string;
+    projectId: bigint;
+    daoProposalId: bigint;
   };
 };
 
@@ -110,6 +114,14 @@ const ProjectCard = ({ project }: ProjectProps) => {
           <p className="font-semibold mb-2">Profit Share Percentage:</p>
           <p>{project.profitSharePercentage.toString()} %</p>
         </div>
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Status:</p>
+          <p>{project.status}</p>
+        </div>
+        <div className="grid-cols-2 gap-2">
+          <p className="font-semibold mb-2">Ticket Collection:</p>
+          <p className="break-words">{project.ticketCollection}</p>
+        </div>
         {project.totalFunded < project.fundingGoal && (
           <span className="ml-2">
             ({formatUnits(project.fundingGoal - project.totalFunded, 18)} CFLIX needed to reach the funding goal)
@@ -117,11 +129,11 @@ const ProjectCard = ({ project }: ProjectProps) => {
         )}
         {/* Add input for amount */}
         <div className="grid-cols-4 items-center gap-4 mt-4">
-          <Label htmlFor={`amount-${project.index}`} className="font-semibold mb-2">
+          <Label htmlFor={`amount-${project.projectId}`} className="font-semibold mb-2">
             Amount (CFLIX)
           </Label>
           <Input
-            id={`amount-${project.index}`}
+            id={`amount-${project.projectId}`}
             defaultValue={amount}
             className="col-span-3"
             type="number"
@@ -144,7 +156,7 @@ const ProjectCard = ({ project }: ProjectProps) => {
                 });
                 const ctxn = await launchPad({
                   functionName: "contribute",
-                  args: [BigInt(project.index), BigInt(Number(amount) * 10 ** 18)],
+                  args: [BigInt(project.projectId), BigInt(Number(amount) * 10 ** 18)],
                 });
                 console.log("Contribution successful!");
                 setAmount(""); // Clear the input after contribution
@@ -164,11 +176,11 @@ const ProjectCard = ({ project }: ProjectProps) => {
             {userAddress === project.creator && (
               <div>
                 <div className="grid-cols-4 items-center gap-4 mt-4">
-                  <Label htmlFor={`ticketPrice-${project.index}`} className="font-semibold mb-2">
+                  <Label htmlFor={`ticketPrice-${project.projectId}`} className="font-semibold mb-2">
                     Ticket Price (ETH)
                   </Label>
                   <Input
-                    id={`ticketPrice-${project.index}`}
+                    id={`ticketPrice-${project.projectId}`}
                     defaultValue={ticketPrice}
                     className="col-span-3"
                     type="number"
@@ -183,7 +195,7 @@ const ProjectCard = ({ project }: ProjectProps) => {
                       try {
                         await launchPad({
                           functionName: "finalizeProject",
-                          args: [BigInt(project.index), BigInt(Number(ticketPrice) * 10 ** 18)], // Pass ticketPrice in wei
+                          args: [BigInt(project.projectId), BigInt(Number(ticketPrice) * 10 ** 18)], // Pass ticketPrice in wei
                         });
                         console.log("Project finalized successfully!");
                       } catch (e) {

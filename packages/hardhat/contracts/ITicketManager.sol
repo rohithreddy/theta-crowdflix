@@ -10,4 +10,7 @@ interface ITicketManager {
         string memory _category,
         string memory _title
     ) external returns (address);
+
+    // Add the getTicketsSold function to the interface
+    function getTicketsSold(uint256 _projectId) external view returns (uint256);
 }
