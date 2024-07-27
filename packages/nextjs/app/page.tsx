@@ -18,10 +18,6 @@ const Home: NextPage = () => {
             <span className="block text-2xl mb-2">Welcome to</span>
             <span className="block text-4xl font-bold">Crowd Flix</span>
           </h1>
-          <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address address={connectedAddress} />
-          </div>
           <br />
           <p className="text-center text-lg leading-relaxed">
             Imagine a future where you&apos;re not just a viewer, but an{" "}
@@ -48,9 +44,15 @@ const Home: NextPage = () => {
             Join us on this journey to revolutionize entertainment and empower the{" "}
             <span className="text-primary font-bold">community</span>.
           </p>
+          <br />
+          <br />
+          <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
+            <p className="my-2 font-medium">Connected Address:</p>
+            <Address address={connectedAddress} format="long" disableAddressLink />
+          </div>
         </div>
 
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
+        {/* <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
           <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
             <Card className="max-w-xs">
               <CardHeader>
@@ -85,7 +87,7 @@ const Home: NextPage = () => {
               </CardContent>
             </Card>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
