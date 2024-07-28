@@ -82,7 +82,9 @@ const GovernerDetails = () => {
             <CardTitle className="text-center">Voting Period</CardTitle> {/* Center the CardTitle */}
           </CardHeader>
           <CardContent className="flex flex-col mt-2 items-center justify-center">
-            <p className="font-bold text-xl">
+            <p className="font-bold text-xl text-center">
+              {" "}
+              {/* Add text-center to the p tag */}
               {votingPeriod / 60 / 60 / 24} days <br />
               {votingPeriod} seconds
             </p>

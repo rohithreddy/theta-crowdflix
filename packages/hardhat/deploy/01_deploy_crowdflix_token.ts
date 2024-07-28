@@ -97,6 +97,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
       deployer, //admin
       timelock_address, //dao gov role
       deployer, //pauser role
+      deployer, //team ops role
     ],
     log: true,
     // autoMine: true, // can be passed to the deploy function to make the deployment process faster on local networks by

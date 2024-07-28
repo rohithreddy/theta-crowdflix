@@ -14,9 +14,13 @@ const JoinDAO: NextPage = async () => {
       <div className="text-center mt-8 bg-secondary p-10">
         <h1 className="text-4xl my-0">Crowd Flix DAO</h1>
         <p className="text-neutral">
-          You can vote and decide on the media projects / teams you love
-          <br /> Build the{" "}
-          <code className="italic bg-base-300 text-base font-bold [word-spacing:-0.5rem] px-1">Future</code>
+          DAO Members(CFLIX Token Holders) can vote and decide
+          <br />
+          on the media projects they want to turn into reality.
+          <br />
+          Approved projects can raise Funds via Crowd Funding in Flix Starter
+          <br /> Be Part of the{" "}
+          <code className="italic bg-base-300 text-blue-700 font-bold [word-spacing:-0.5rem] px-1">Future</code>
         </p>
       </div>
       <div>

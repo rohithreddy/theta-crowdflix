@@ -44,10 +44,12 @@ type ProjectProps = {
     creator: string;
     profitSharePercentage: bigint;
     category: string;
-    status: number;
     ticketCollection: string;
     projectId: bigint;
     daoProposalId: bigint;
+    teaserURI: string;
+    isFinalized: boolean;
+    teamKycVerified: boolean;
   };
 };
 
@@ -115,13 +117,14 @@ const ProjectCard = ({ project }: ProjectProps) => {
           <p>{project.profitSharePercentage.toString()} %</p>
         </div>
         <div className="grid-cols-2 gap-2">
-          <p className="font-semibold mb-2">Status:</p>
-          <p>{project.status}</p>
+          <p className="font-semibold mb-2">Team KYC Verified:</p>
+          <p>{project.teamKycVerified ? "Yes" : "No"}</p>
+          {/* <p>{getStatusText(project.status)}</p> Display status text */}
         </div>
-        <div className="grid-cols-2 gap-2">
+        {/* <div className="grid-cols-2 gap-2">
           <p className="font-semibold mb-2">Ticket Collection:</p>
           <p className="break-words">{project.ticketCollection}</p>
-        </div>
+        </div> */}
         {project.totalFunded < project.fundingGoal && (
           <span className="ml-2">
             ({formatUnits(project.fundingGoal - project.totalFunded, 18)} CFLIX needed to reach the funding goal)

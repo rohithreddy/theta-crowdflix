@@ -1,30 +1,18 @@
 // SPDX-License-Identifier: MIT
-
-// Compatible with OpenZeppelin Contracts ^5.0.0
-
 pragma solidity ^0.8.20;
 
-
-/// @custom:security-contact crash@web108.xyz
 import "hardhat/console.sol";
-
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "./ITicketManager.sol"; // Import ITicketManager
-import "./CrowdFlixVault.sol"; // Import CrowdFlixVault
+import "./ITicketManager.sol";
+import "./CrowdFlixVault.sol";
 
 contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
-    bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE"); // Renamed DAO_GOVERNER_ROLE to PROPOSER_ROLE
+    bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-
-    enum ProjectStatus {
-        InProgress,
-        Success,
-        Finalized,
-        Fail
-    }
+    bytes32 public constant TEAM_OPS_ROLE = keccak256("TEAM_OPS_ROLE"); // New role for KYC checks
 
     struct Project {
         string name;
@@ -32,58 +20,65 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         uint256 fundingGoal;
         uint256 startTime;
         uint256 endTime;
-        address teamWallet; // Added teamWallet variable
+        address teamWallet;
         uint256 totalFunded;
-        bool isActive;
-        address[] contributors; // Array to store contributor addresses
-        address creator; // Added project creator address
-        uint256 profitSharePercentage; // Percentage of profits to distribute to contributors
-        string category; // Added category
-        ProjectStatus status; // Added project status
-        address ticketCollection; // Add ticket collection address
-        uint256 projectId; // Added project ID
-        uint256 daoProposalId; // Added DAO proposal ID
-        string teaserURI; // Added teaserURI
+        bool isActive; // Added isActive flag
+        address[] contributors;
+        address creator;
+        uint256 profitSharePercentage;
+        string category;
+        address ticketCollection;
+        uint256 projectId;
+        uint256 daoProposalId;
+        string teaserURI;
+        bool isFinalized; // Added to track if the project has been finalized
+        bool teamKycVerified; // New field for KYC status
     }
 
     mapping(uint256 => Project) public projects;
     uint256 public projectCount;
-
     IERC20 public fundingToken;
-
-    // Track investments
     mapping(uint256 => mapping(address => uint256)) public projectInvestments;
 
+    ITicketManager public ticketManager;
+    CrowdFlixVault public crowdFlixVault;
 
-    // Address of the TicketManager contract
-    ITicketManager public ticketManager; // Use the interface
-    CrowdFlixVault public crowdFlixVault; // Add CrowdFlixVault instance
+    event ProjectCreated(
+        uint256 indexed projectId,
+        string name,
+        uint256 fundingGoal,
+        uint256 startTime,
+        uint256 endTime,
+        address teamWallet,
+        address creator,
+        uint256 profitSharePercentage,
+        string category
+    );
 
-    event ProjectCreated(uint256 indexed projectId, string name, uint256 fundingGoal, uint256 startTime, uint256 endTime, address teamWallet, address creator, uint256 profitSharePercentage, string category);
     event Contributed(uint256 indexed projectId, address indexed contributor, uint256 amount);
     event Withdrawn(uint256 indexed projectId, address indexed recipient, uint256 amount);
     event ProjectFinalized(uint256 indexed projectId, bool success);
-    event ProfitSharePercentageUpdated(uint256 indexed projectId, uint256 newPercentage);
-    event TicketsSoldUpdated(uint256 indexed projectId, uint256 newTicketsSold);
-    event TicketManagerInitialized(address ticketManagerAddress); // Event for TicketManager initialization
-    event CrowdFlixVaultInitialized(address crowdFlixVaultAddress); // Event for CrowdFlixVault initialization
-    event DaoProposalIdSet(uint256 indexed projectId, uint256 daoProposalId); // Event for setting DAO proposal ID
+    event TicketManagerInitialized(address ticketManagerAddress);
+    event CrowdFlixVaultInitialized(address crowdFlixVaultAddress);
+    event DaoProposalIdSet(uint256 indexed projectId, uint256 daoProposalId);
+    event ProjectPaused(uint256 indexed projectId);
+    event ProjectUnpaused(uint256 indexed projectId);
+    event TeamKYCChecked(uint256 indexed projectId, bool status); // New event for KYC status change
 
-    constructor(IERC20 _fundingToken, address _initialAdmin, address _initialProposer, address _initialPauser) {
+    constructor(IERC20 _fundingToken, address _initialAdmin, address _initialProposer, address _initialPauser, address _initialTeamOps) {
         fundingToken = _fundingToken;
         _grantRole(DEFAULT_ADMIN_ROLE, _initialAdmin);
-        _grantRole(PROPOSER_ROLE, _initialProposer); // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
+        _grantRole(PROPOSER_ROLE, _initialProposer);
         _grantRole(PAUSER_ROLE, _initialPauser);
+        _grantRole(TEAM_OPS_ROLE, _initialTeamOps); // Grant TEAM_OPS role to the initial address
     }
 
-    // Function to initialize the TicketManager contract
     function initializeTicketManager(address _ticketManagerAddress) public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(address(ticketManager) == address(0), "TicketManager already initialized");
         ticketManager = ITicketManager(_ticketManagerAddress);
         emit TicketManagerInitialized(_ticketManagerAddress);
     }
 
-    // Function to initialize the CrowdFlixVault contract
     function initializeCrowdFlixVault(address _crowdFlixVaultAddress) public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(address(crowdFlixVault) == address(0), "CrowdFlixVault already initialized");
         crowdFlixVault = CrowdFlixVault(_crowdFlixVaultAddress);
@@ -96,22 +91,20 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         uint256 _fundingGoal,
         uint256 _startTime,
         uint256 _endTime,
-        address _teamWallet, // Added teamWallet parameter
+        address _teamWallet,
         address _creator,
-        uint256 _profitSharePercentage, // Added profitSharePercentage parameter
-        string memory _category, // Added category parameter
-        string memory _teaserURI // Added teaserURI parameter
-    ) public onlyRole(PROPOSER_ROLE) { // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
+        uint256 _profitSharePercentage,
+        string memory _category,
+        string memory _teaserURI
+    ) public onlyRole(PROPOSER_ROLE) {
         require(_startTime >= block.timestamp, "Start time must be in the future");
         require(_endTime > _startTime, "End time must be after start time");
-        require(_teamWallet != address(0), "Team wallet cannot be zero address"); // Check teamWallet is not zero address
+        require(_teamWallet != address(0), "Team wallet cannot be zero address");
         require(_profitSharePercentage <= 90, "Profit share percentage cannot exceed 90%");
-        require(address(ticketManager) != address(0), "TicketManager not initialized"); // Check if TicketManager is initialized
-        require(address(crowdFlixVault) != address(0), "CrowdFlixVault not initialized"); // Check if CrowdFlixVault is initialized
+        require(address(ticketManager) != address(0), "TicketManager not initialized");
+        require(address(crowdFlixVault) != address(0), "CrowdFlixVault not initialized");
 
-        // Auto-increment project ID
         uint256 projectId = projectCount;
-
         projects[projectId] = Project({
             name: _name,
             description: _description,
@@ -119,17 +112,18 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
             startTime: _startTime,
             endTime: _endTime,
             totalFunded: 0,
-            isActive: true,
-            teamWallet: _teamWallet, // Assign teamWallet
-            contributors: new address[](0), // Initialize contributors array
-            creator: _creator, // Store the creator address
-            profitSharePercentage: _profitSharePercentage, // Assign profitSharePercentage
-            category: _category, // Assign category
-            status: ProjectStatus.InProgress, // Set initial status to InProgress
-            ticketCollection: address(0), // Initialize ticketCollection to 0
-            projectId: projectId, // Assign project ID
-            daoProposalId: 0, // Initialize daoProposalId to 0
-            teaserURI: _teaserURI // Assign teaserURI
+            isActive: true, // Initialize isActive as true
+            teamWallet: _teamWallet,
+            contributors: new address[](0),
+            creator: _creator,
+            profitSharePercentage: _profitSharePercentage,
+            category: _category,
+            ticketCollection: address(0),
+            projectId: projectId,
+            daoProposalId: 0,
+            teaserURI: _teaserURI,
+            isFinalized: false, // Initialize as not finalized
+            teamKycVerified: false // Initialize KYC status as not checked
         });
 
         projectCount++;
@@ -139,22 +133,16 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
 
     function contribute(uint256 _projectId, uint256 _amount) public whenNotPaused {
         Project storage project = projects[_projectId];
-        require(project.isActive, "Project is not active");
+        require(project.isActive, "Project is not active"); // Added isActive check
         require(block.timestamp >= project.startTime, "Project has not started yet");
         require(block.timestamp <= project.endTime, "Project has ended");
         require(_amount > 0, "Amount must be greater than 0");
 
         fundingToken.transferFrom(msg.sender, address(this), _amount);
         project.totalFunded += _amount;
-
-        // Update project investments
         projectInvestments[_projectId][msg.sender] += _amount;
-
-        // Update shares
         crowdFlixVault.contributeAndUpdateShares(_projectId, msg.sender, _amount, project.profitSharePercentage);
 
-
-        // Add contributor address to the array if not already present
         if (project.contributors.length == 0 || project.contributors[project.contributors.length - 1] != msg.sender) {
             project.contributors.push(msg.sender);
         }
@@ -162,54 +150,55 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         emit Contributed(_projectId, msg.sender, _amount);
     }
 
-   function finalizeProject(uint256 _projectId, uint256 _ticketPrice) public { 
-    Project storage project = projects[_projectId];
-    require(project.isActive, "Project is not active");
-    require(block.timestamp > project.endTime, "Project has not ended yet");
-    require(msg.sender == project.creator, "Only the project creator can finalize");
-    require(address(ticketManager) != address(0), "TicketManager not initialized"); 
-    require(project.status == ProjectStatus.InProgress, "Project is already finalized"); 
+    function finalizeProject(uint256 _projectId, uint256 _ticketPrice) public {
+        Project storage project = projects[_projectId];
+        require(project.isActive, "Project is not active"); // Added isActive check
+        require(block.timestamp > project.endTime, "Project has not ended yet");
+        require(msg.sender == project.creator, "Only the project creator can finalize");
+        require(!project.isFinalized, "Project is already finalized");
 
-    project.isActive = false;
+        project.isActive = false; // Set isActive to false
+        project.isFinalized = true; // Mark the project as finalized
+        bool success = project.totalFunded >= project.fundingGoal;
 
-    bool success = project.totalFunded >= project.fundingGoal;
-    console.log(success);
-    if (success) {
-        console.log("Inside the success block");
-        project.status = ProjectStatus.Finalized;
-        // Transfer remaining funds to team wallet using the ERC20 contract
-        fundingToken.transfer(project.teamWallet, project.totalFunded); 
-
-        emit Withdrawn(_projectId, project.teamWallet, project.totalFunded);
-
-        console.log("Tokens WIthdrawn");
-
-        // Create ticket collection for the successful project using the interface
-        projects[_projectId].ticketCollection = ticketManager.createTicketCollection(
-            _projectId, 
-            string(abi.encodePacked(project.name, " Tickets")), 
-            "FLIXTKT", 
-            _ticketPrice, // Pass the ticket price as a parameter
-            project.category, 
-            project.name 
-        );
-    } else {
-        project.status = ProjectStatus.Fail;
-        // Iterate through contributors using the array
-        for (uint256 i = 0; i < project.contributors.length; i++) {
-            address contributorAddress = project.contributors[i];
-            if (projectInvestments[_projectId][contributorAddress] > 0) {
-                uint256 refundAmount = projectInvestments[_projectId][contributorAddress];
-                projectInvestments[_projectId][contributorAddress] = 0;
-                fundingToken.transfer(contributorAddress, refundAmount); // Use fundingToken.transfer for refunds
+        if (success) {
+            project.ticketCollection = ticketManager.createTicketCollection(
+                _projectId,
+                string(abi.encodePacked(project.name, " Tickets")),
+                "FLIXTKT",
+                _ticketPrice,
+                project.category,
+                project.name
+            );
+            fundingToken.transfer(project.teamWallet, project.totalFunded);
+        } else {
+            for (uint256 i = 0; i < project.contributors.length; i++) {
+                address contributorAddress = project.contributors[i];
+                if (projectInvestments[_projectId][contributorAddress] > 0) {
+                    uint256 refundAmount = projectInvestments[_projectId][contributorAddress];
+                    projectInvestments[_projectId][contributorAddress] = 0;
+                    fundingToken.transfer(contributorAddress, refundAmount);
+                    emit Withdrawn(_projectId, contributorAddress, refundAmount);
+                }
             }
         }
+
+        emit ProjectFinalized(_projectId, success);
     }
 
-    emit ProjectFinalized(_projectId, success);
-}
+    function withdrawFunds(uint256 _projectId) public {
+        Project storage project = projects[_projectId];
+        // Removed the requirement for project.isFinalized
+        require(projectInvestments[_projectId][msg.sender] > 0, "No funds to withdraw");
+        // Check if the project is active based on start and end dates
+        require(block.timestamp < project.startTime || block.timestamp > project.endTime, "Project is still active");
 
+        uint256 amount = projectInvestments[_projectId][msg.sender];
+        projectInvestments[_projectId][msg.sender] = 0; // Reset the contributor's investment
+        fundingToken.transfer(msg.sender, amount); // Transfer the funds back to the contributor
 
+        emit Withdrawn(_projectId, msg.sender, amount);
+    }
 
     function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
@@ -219,7 +208,6 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         _unpause();
     }
 
-    // Function to edit an existing project
     function editProject(
         uint256 _projectId,
         string memory _newName,
@@ -229,13 +217,12 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         uint256 _newEndTime,
         address _newTeamWallet,
         string memory _newCategory,
-        string memory _newTeaserURI // Added newTeaserURI parameter
+        string memory _newTeaserURI
     ) public {
         require(_projectId < projectCount, "Invalid project ID");
         Project storage project = projects[_projectId];
         require(msg.sender == project.creator, "Only the project creator can edit");
 
-        // Update project details
         project.name = _newName;
         project.description = _newDescription;
         project.fundingGoal = _newFundingGoal;
@@ -243,22 +230,19 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         project.endTime = _newEndTime;
         project.teamWallet = _newTeamWallet;
         project.category = _newCategory;
-        project.teaserURI = _newTeaserURI; // Update teaserURI
+        project.teaserURI = _newTeaserURI;
 
-        // Ensure new start and end times are valid
         require(project.startTime >= block.timestamp, "Start time must be in the future");
         require(project.endTime > project.startTime, "End time must be after start time");
         require(project.teamWallet != address(0), "Team wallet cannot be zero address");
     }
 
-    // Function to set or update the DAO proposal ID for a project
     function setDaoProposalId(uint256 _projectId, uint256 _daoProposalId) public onlyRole(PROPOSER_ROLE) {
         require(_projectId < projectCount, "Invalid project ID");
         projects[_projectId].daoProposalId = _daoProposalId;
         emit DaoProposalIdSet(_projectId, _daoProposalId);
     }
 
-    // Function to get projects by address
     function getProjectsByAddress(address _address) public view returns (Project[] memory) {
         uint256 count = 0;
         for (uint256 i = 0; i < projectCount; i++) {
@@ -279,7 +263,6 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         return projectsByAddress;
     }
 
-    // Function to get projects by category
     function getProjectsByCategory(string memory _category) public view returns (Project[] memory) {
         uint256 count = 0;
         for (uint256 i = 0; i < projectCount; i++) {
@@ -300,11 +283,10 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         return projectsByCategory;
     }
 
-    // Function to get projects in progress
     function getProjectsInProgress() public view returns (Project[] memory) {
         uint256 count = 0;
         for (uint256 i = 0; i < projectCount; i++) {
-            if (projects[i].status == ProjectStatus.InProgress) {
+            if (block.timestamp >= projects[i].startTime && block.timestamp <= projects[i].endTime && projects[i].isActive) {
                 count++;
             }
         }
@@ -312,7 +294,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         Project[] memory inProgressProjects = new Project[](count);
         uint256 index = 0;
         for (uint256 i = 0; i < projectCount; i++) {
-            if (projects[i].status == ProjectStatus.InProgress) {
+            if (block.timestamp >= projects[i].startTime && block.timestamp <= projects[i].endTime && projects[i].isActive) {
                 inProgressProjects[index] = projects[i];
                 index++;
             }
@@ -321,11 +303,10 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         return inProgressProjects;
     }
 
-    // Function to get successful projects
     function getSuccessfulProjects() public view returns (Project[] memory) {
         uint256 count = 0;
         for (uint256 i = 0; i < projectCount; i++) {
-            if (projects[i].status == ProjectStatus.Success) {
+            if (!projects[i].isFinalized && projects[i].totalFunded >= projects[i].fundingGoal) {
                 count++;
             }
         }
@@ -333,7 +314,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         Project[] memory successfulProjects = new Project[](count);
         uint256 index = 0;
         for (uint256 i = 0; i < projectCount; i++) {
-            if (projects[i].status == ProjectStatus.Success) {
+            if (!projects[i].isFinalized && projects[i].totalFunded >= projects[i].fundingGoal) {
                 successfulProjects[index] = projects[i];
                 index++;
             }
@@ -342,11 +323,30 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         return successfulProjects;
     }
 
-    // Function to get failed projects
+    function getUpcomingProjects() public view returns (Project[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (block.timestamp < projects[i].startTime && projects[i].isActive) {
+                count++;
+            }
+        }
+
+        Project[] memory upcomingProjects = new Project[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (block.timestamp < projects[i].startTime && projects[i].isActive) {
+                upcomingProjects[index] = projects[i];
+                index++;
+            }
+        }
+
+        return upcomingProjects;
+    }
+
     function getFailedProjects() public view returns (Project[] memory) {
         uint256 count = 0;
         for (uint256 i = 0; i < projectCount; i++) {
-            if (projects[i].status == ProjectStatus.Fail) {
+            if (block.timestamp > projects[i].endTime && projects[i].totalFunded < projects[i].fundingGoal) {
                 count++;
             }
         }
@@ -354,7 +354,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         Project[] memory failedProjects = new Project[](count);
         uint256 index = 0;
         for (uint256 i = 0; i < projectCount; i++) {
-            if (projects[i].status == ProjectStatus.Fail) {
+            if (block.timestamp > projects[i].endTime && projects[i].totalFunded < projects[i].fundingGoal) {
                 failedProjects[index] = projects[i];
                 index++;
             }
@@ -363,25 +363,68 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         return failedProjects;
     }
 
-    // Function to get the total funds raised for a project
+    function getFinalizedProjects() public view returns (Project[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].isFinalized) {
+                count++;
+            }
+        }
+
+        Project[] memory finalizedProjects = new Project[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < projectCount; i++) {
+            if (projects[i].isFinalized) {
+                finalizedProjects[index] = projects[i];
+                index++;
+            }
+        }
+
+        return finalizedProjects;
+    }
+
     function totalFunded(uint256 _projectId) public view returns (uint256) {
         return projects[_projectId].totalFunded;
     }
 
-    // Function to get the ticket collection address for a project
     function getTicketCollectionAddress(uint256 _projectId) public view returns (address) {
         return projects[_projectId].ticketCollection;
     }
 
-    // Function to get contributors for a project ID
     function getContributors(uint256 _projectId) public view returns (address[] memory) {
         return projects[_projectId].contributors;
     }
 
-    // Receive function to handle direct ETH transfers
+    function userContributed(uint256 _projectId, address _user) public view returns (bool, uint256) {
+        uint256 amount = projectInvestments[_projectId][_user];
+        return (amount > 0, amount);
+    }
+
+    function setTeamKycVerified(uint256 _projectId, bool _status) public onlyRole(TEAM_OPS_ROLE) {
+        require(_projectId < projectCount, "Invalid project ID");
+        projects[_projectId].teamKycVerified = _status;
+        emit TeamKYCChecked(_projectId, _status);
+    }
+
+  function pauseProject(uint256 _projectId) public onlyRole(PAUSER_ROLE) {
+        require(_projectId < projectCount, "Invalid project ID");
+        Project storage project = projects[_projectId];
+        require(project.isActive, "Project is already paused");
+
+        project.isActive = false;
+        emit ProjectPaused(_projectId);
+    }
+
+    function unpauseProject(uint256 _projectId) public onlyRole(PAUSER_ROLE) {
+        require(_projectId < projectCount, "Invalid project ID");
+        Project storage project = projects[_projectId];
+        require(!project.isActive, "Project is already active");
+
+        project.isActive = true;
+        emit ProjectUnpaused(_projectId);
+    }
+
     receive() external payable {
-        // You can add logic here to handle direct ETH transfers,
-        // such as rejecting them or storing them for a specific purpose.
-        // For example, you could revert the transaction if ETH transfers are not expected.
+        revert("ETH transfers not accepted");
     }
 }

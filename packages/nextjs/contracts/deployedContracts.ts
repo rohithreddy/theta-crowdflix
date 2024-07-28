@@ -11949,6 +11949,11 @@ const deployedContracts = {
               name: "_initialPauser",
               type: "address",
             },
+            {
+              internalType: "address",
+              name: "_initialTeamOps",
+              type: "address",
+            },
           ],
           stateMutability: "nonpayable",
           type: "constructor",
@@ -12070,25 +12075,6 @@ const deployedContracts = {
             },
             {
               indexed: false,
-              internalType: "uint256",
-              name: "newPercentage",
-              type: "uint256",
-            },
-          ],
-          name: "ProfitSharePercentageUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "projectId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
               internalType: "string",
               name: "name",
               type: "string",
@@ -12156,6 +12142,32 @@ const deployedContracts = {
             },
           ],
           name: "ProjectFinalized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+          ],
+          name: "ProjectPaused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+          ],
+          name: "ProjectUnpaused",
           type: "event",
         },
         {
@@ -12237,19 +12249,6 @@ const deployedContracts = {
           anonymous: false,
           inputs: [
             {
-              indexed: false,
-              internalType: "address",
-              name: "ticketManagerAddress",
-              type: "address",
-            },
-          ],
-          name: "TicketManagerInitialized",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
               indexed: true,
               internalType: "uint256",
               name: "projectId",
@@ -12257,12 +12256,25 @@ const deployedContracts = {
             },
             {
               indexed: false,
-              internalType: "uint256",
-              name: "newTicketsSold",
-              type: "uint256",
+              internalType: "bool",
+              name: "status",
+              type: "bool",
             },
           ],
-          name: "TicketsSoldUpdated",
+          name: "TeamKYCChecked",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "ticketManagerAddress",
+              type: "address",
+            },
+          ],
+          name: "TicketManagerInitialized",
           type: "event",
         },
         {
@@ -12332,6 +12344,19 @@ const deployedContracts = {
         {
           inputs: [],
           name: "PROPOSER_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "TEAM_OPS_ROLE",
           outputs: [
             {
               internalType: "bytes32",
@@ -12601,9 +12626,109 @@ const deployedContracts = {
                   type: "string",
                 },
                 {
-                  internalType: "enum LaunchPad.ProjectStatus",
-                  name: "status",
-                  type: "uint8",
+                  internalType: "address",
+                  name: "ticketCollection",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "projectId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "daoProposalId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "teaserURI",
+                  type: "string",
+                },
+                {
+                  internalType: "bool",
+                  name: "isFinalized",
+                  type: "bool",
+                },
+                {
+                  internalType: "bool",
+                  name: "teamKycVerified",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct LaunchPad.Project[]",
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getFinalizedProjects",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "name",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "description",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fundingGoal",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "startTime",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "endTime",
+                  type: "uint256",
+                },
+                {
+                  internalType: "address",
+                  name: "teamWallet",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "totalFunded",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "isActive",
+                  type: "bool",
+                },
+                {
+                  internalType: "address[]",
+                  name: "contributors",
+                  type: "address[]",
+                },
+                {
+                  internalType: "address",
+                  name: "creator",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "profitSharePercentage",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "category",
+                  type: "string",
                 },
                 {
                   internalType: "address",
@@ -12624,6 +12749,16 @@ const deployedContracts = {
                   internalType: "string",
                   name: "teaserURI",
                   type: "string",
+                },
+                {
+                  internalType: "bool",
+                  name: "isFinalized",
+                  type: "bool",
+                },
+                {
+                  internalType: "bool",
+                  name: "teamKycVerified",
+                  type: "bool",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -12707,11 +12842,6 @@ const deployedContracts = {
                   type: "string",
                 },
                 {
-                  internalType: "enum LaunchPad.ProjectStatus",
-                  name: "status",
-                  type: "uint8",
-                },
-                {
                   internalType: "address",
                   name: "ticketCollection",
                   type: "address",
@@ -12730,6 +12860,16 @@ const deployedContracts = {
                   internalType: "string",
                   name: "teaserURI",
                   type: "string",
+                },
+                {
+                  internalType: "bool",
+                  name: "isFinalized",
+                  type: "bool",
+                },
+                {
+                  internalType: "bool",
+                  name: "teamKycVerified",
+                  type: "bool",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -12813,11 +12953,6 @@ const deployedContracts = {
                   type: "string",
                 },
                 {
-                  internalType: "enum LaunchPad.ProjectStatus",
-                  name: "status",
-                  type: "uint8",
-                },
-                {
                   internalType: "address",
                   name: "ticketCollection",
                   type: "address",
@@ -12836,6 +12971,16 @@ const deployedContracts = {
                   internalType: "string",
                   name: "teaserURI",
                   type: "string",
+                },
+                {
+                  internalType: "bool",
+                  name: "isFinalized",
+                  type: "bool",
+                },
+                {
+                  internalType: "bool",
+                  name: "teamKycVerified",
+                  type: "bool",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -12913,11 +13058,6 @@ const deployedContracts = {
                   type: "string",
                 },
                 {
-                  internalType: "enum LaunchPad.ProjectStatus",
-                  name: "status",
-                  type: "uint8",
-                },
-                {
                   internalType: "address",
                   name: "ticketCollection",
                   type: "address",
@@ -12936,6 +13076,16 @@ const deployedContracts = {
                   internalType: "string",
                   name: "teaserURI",
                   type: "string",
+                },
+                {
+                  internalType: "bool",
+                  name: "isFinalized",
+                  type: "bool",
+                },
+                {
+                  internalType: "bool",
+                  name: "teamKycVerified",
+                  type: "bool",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -13032,11 +13182,6 @@ const deployedContracts = {
                   type: "string",
                 },
                 {
-                  internalType: "enum LaunchPad.ProjectStatus",
-                  name: "status",
-                  type: "uint8",
-                },
-                {
                   internalType: "address",
                   name: "ticketCollection",
                   type: "address",
@@ -13055,6 +13200,16 @@ const deployedContracts = {
                   internalType: "string",
                   name: "teaserURI",
                   type: "string",
+                },
+                {
+                  internalType: "bool",
+                  name: "isFinalized",
+                  type: "bool",
+                },
+                {
+                  internalType: "bool",
+                  name: "teamKycVerified",
+                  type: "bool",
                 },
               ],
               internalType: "struct LaunchPad.Project[]",
@@ -13079,6 +13234,111 @@ const deployedContracts = {
               internalType: "address",
               name: "",
               type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getUpcomingProjects",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "name",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "description",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fundingGoal",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "startTime",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "endTime",
+                  type: "uint256",
+                },
+                {
+                  internalType: "address",
+                  name: "teamWallet",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "totalFunded",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "isActive",
+                  type: "bool",
+                },
+                {
+                  internalType: "address[]",
+                  name: "contributors",
+                  type: "address[]",
+                },
+                {
+                  internalType: "address",
+                  name: "creator",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "profitSharePercentage",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "category",
+                  type: "string",
+                },
+                {
+                  internalType: "address",
+                  name: "ticketCollection",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "projectId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "daoProposalId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "teaserURI",
+                  type: "string",
+                },
+                {
+                  internalType: "bool",
+                  name: "isFinalized",
+                  type: "bool",
+                },
+                {
+                  internalType: "bool",
+                  name: "teamKycVerified",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct LaunchPad.Project[]",
+              name: "",
+              type: "tuple[]",
             },
           ],
           stateMutability: "view",
@@ -13155,6 +13415,19 @@ const deployedContracts = {
         {
           inputs: [],
           name: "pause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "pauseProject",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -13275,11 +13548,6 @@ const deployedContracts = {
               type: "string",
             },
             {
-              internalType: "enum LaunchPad.ProjectStatus",
-              name: "status",
-              type: "uint8",
-            },
-            {
               internalType: "address",
               name: "ticketCollection",
               type: "address",
@@ -13298,6 +13566,16 @@ const deployedContracts = {
               internalType: "string",
               name: "teaserURI",
               type: "string",
+            },
+            {
+              internalType: "bool",
+              name: "isFinalized",
+              type: "bool",
+            },
+            {
+              internalType: "bool",
+              name: "teamKycVerified",
+              type: "bool",
             },
           ],
           stateMutability: "view",
@@ -13360,6 +13638,24 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "_status",
+              type: "bool",
+            },
+          ],
+          name: "setTeamKycVerified",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "bytes4",
               name: "interfaceId",
               type: "bytes4",
@@ -13411,6 +13707,61 @@ const deployedContracts = {
         {
           inputs: [],
           name: "unpause",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "unpauseProject",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "userContributed",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "withdrawFunds",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
