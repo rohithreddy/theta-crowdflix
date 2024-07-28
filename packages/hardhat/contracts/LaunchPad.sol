@@ -150,15 +150,14 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         emit Contributed(_projectId, msg.sender, _amount);
     }
 
-    function finalizeProject(uint256 _projectId, uint256 _ticketPrice) public {
+   function finalizeProject(uint256 _projectId, uint256 _ticketPrice) public {
         Project storage project = projects[_projectId];
-        require(project.isActive, "Project is not active"); // Added isActive check
+        require(project.isActive, "Project is not active"); 
         require(block.timestamp > project.endTime, "Project has not ended yet");
         require(msg.sender == project.creator, "Only the project creator can finalize");
         require(!project.isFinalized, "Project is already finalized");
 
-        project.isActive = false; // Set isActive to false
-        project.isFinalized = true; // Mark the project as finalized
+        
         bool success = project.totalFunded >= project.fundingGoal;
 
         if (success) {
@@ -171,19 +170,30 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
                 project.name
             );
             fundingToken.transfer(project.teamWallet, project.totalFunded);
-        } else {
-            for (uint256 i = 0; i < project.contributors.length; i++) {
-                address contributorAddress = project.contributors[i];
-                if (projectInvestments[_projectId][contributorAddress] > 0) {
-                    uint256 refundAmount = projectInvestments[_projectId][contributorAddress];
-                    projectInvestments[_projectId][contributorAddress] = 0;
-                    fundingToken.transfer(contributorAddress, refundAmount);
-                    emit Withdrawn(_projectId, contributorAddress, refundAmount);
-                }
-            }
         }
+        project.isActive = false; 
+        project.isFinalized = true; 
 
         emit ProjectFinalized(_projectId, success);
+    }
+
+    function refundInvestors(uint256 _projectId) public {
+        Project storage project = projects[_projectId];
+        require(project.isActive, "Project is not active"); 
+        require(block.timestamp > project.endTime, "Project has not ended yet");
+        require(msg.sender == project.creator, "Only the project creator can finalize");
+        require(!project.isFinalized, "Project is already finalized");
+        require(project.totalFunded < project.fundingGoal, "The project has reached the funding Goal something is wrong");
+
+        for (uint256 i = 0; i < project.contributors.length; i++) {
+            address contributorAddress = project.contributors[i];
+            if (projectInvestments[_projectId][contributorAddress] > 0) {
+                uint256 refundAmount = projectInvestments[_projectId][contributorAddress];
+                projectInvestments[_projectId][contributorAddress] = 0;
+                fundingToken.transfer(contributorAddress, refundAmount);
+                emit Withdrawn(_projectId, contributorAddress, refundAmount);
+            }
+        }
     }
 
     function withdrawFunds(uint256 _projectId) public {
@@ -306,7 +316,8 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     function getSuccessfulProjects() public view returns (Project[] memory) {
         uint256 count = 0;
         for (uint256 i = 0; i < projectCount; i++) {
-            if (!projects[i].isFinalized && projects[i].totalFunded >= projects[i].fundingGoal) {
+            // Check if the project has ended and was successful
+            if (block.timestamp > projects[i].endTime && projects[i].totalFunded >= projects[i].fundingGoal) {
                 count++;
             }
         }
@@ -314,7 +325,8 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         Project[] memory successfulProjects = new Project[](count);
         uint256 index = 0;
         for (uint256 i = 0; i < projectCount; i++) {
-            if (!projects[i].isFinalized && projects[i].totalFunded >= projects[i].fundingGoal) {
+            // Check if the project has ended and was successful
+            if (block.timestamp > projects[i].endTime && projects[i].totalFunded >= projects[i].fundingGoal) {
                 successfulProjects[index] = projects[i];
                 index++;
             }
@@ -395,7 +407,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         return projects[_projectId].contributors;
     }
 
-    function userContributed(uint256 _projectId, address _user) public view returns (bool, uint256) {
+    function userContribution(uint256 _projectId, address _user) public view returns (bool, uint256) {
         uint256 amount = projectInvestments[_projectId][_user];
         return (amount > 0, amount);
     }

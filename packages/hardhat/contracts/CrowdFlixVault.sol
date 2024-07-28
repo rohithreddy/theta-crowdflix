@@ -140,4 +140,41 @@ contract CrowdFlixVault is AccessControl, ReentrancyGuard, Pausable {
 
         emit FundsDeposited(_projectId, _amount);
     }
+
+    // Function to get the total withdrawable ETH for a given address
+    function getTotalWithdrawableEth(address _address) public view returns (uint256) {
+        uint256 totalWithdrawable = 0;
+        for (uint256 i = 0; i < launchPad.projectCount(); i++) {
+            totalWithdrawable += withdrawableEth[i][_address];
+        }
+        return totalWithdrawable;
+    }
+
+    // Function to get the breakdown of withdrawable ETH for a given address
+    function getWithdrawableEthBreakdown(address _address) public view returns (uint256[] memory projectIds, uint256[] memory amounts) {
+    uint256 projectCount = launchPad.projectCount();
+    uint256 count = 0;
+
+    // First, count how many projects have withdrawable ETH for the address
+    for (uint256 i = 0; i < projectCount; i++) {
+        if (withdrawableEth[i][_address] > 0) {
+            count++;
+        }
+    }
+
+    // Create arrays to hold project IDs and amounts
+    projectIds = new uint256[](count);
+    amounts = new uint256[](count);
+    uint256 index = 0;
+
+    // Populate the arrays with project IDs and corresponding withdrawable amounts
+    for (uint256 i = 0; i < projectCount; i++) {
+        if (withdrawableEth[i][_address] > 0) {
+            projectIds[index] = i;
+            amounts[index] = withdrawableEth[i][_address];
+            index++;
+        }
+    }
+}
+
 }
