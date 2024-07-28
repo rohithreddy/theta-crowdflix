@@ -7,6 +7,7 @@ import { Address } from "viem";
 import { useAccount } from "wagmi";
 import { Address as AddressDisplay } from "~~/components/scaffold-eth";
 import { Button } from "~~/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
 import {
   Table,
   TableBody,
@@ -32,6 +33,7 @@ export type newProposal = {
   endBlock: string; // Changed to string
   description: string;
   state: number;
+  stateText: string;
   votes: { againstVotes: string; forVotes: string; abstainVotes: string };
 };
 
@@ -55,6 +57,18 @@ const ProposalsFetching = () => {
 
   // State to store proposals with fetched votes
   const [proposals, setProposals] = useState<any[]>([]);
+
+  // State to store proposal counts for each state
+  const [proposalCounts, setProposalCounts] = useState<{ [key: string]: number }>({
+    Pending: 0,
+    Active: 0,
+    Canceled: 0,
+    Defeated: 0,
+    Succeeded: 0,
+    Queued: 0,
+    Expired: 0,
+    Executed: 0,
+  });
 
   // Fetch proposals and votes when eventHistory is available
   useEffect(() => {
@@ -92,28 +106,28 @@ const ProposalsFetching = () => {
             let stateText = "";
             switch (proposalState) {
               case 0:
-                stateText = "Pending - 0";
+                stateText = "Pending";
                 break;
               case 1:
-                stateText = "Active - 1";
+                stateText = "Active";
                 break;
               case 2:
-                stateText = "Canceled - 2";
+                stateText = "Canceled";
                 break;
               case 3:
-                stateText = "Defeated - 3";
+                stateText = "Defeated";
                 break;
               case 4:
-                stateText = "Succeeded - 4";
+                stateText = "Succeeded";
                 break;
               case 5:
-                stateText = "Queued - 5";
+                stateText = "Queued";
                 break;
               case 6:
-                stateText = "Expired - 6";
+                stateText = "Expired";
                 break;
               case 7:
-                stateText = "Executed - 7";
+                stateText = "Executed";
                 break;
               default:
                 stateText = proposalState.toString();
@@ -130,13 +144,21 @@ const ProposalsFetching = () => {
               startBlock,
               endBlock,
               description,
-              state: stateText, // Set the state
+              state: proposalState,
+              stateText, // Set the state
               votes,
               userHasVoted,
             };
           }),
         );
         setProposals(fetchedProposals);
+
+        // Update proposal counts for each state
+        const updatedCounts = { ...proposalCounts };
+        fetchedProposals.forEach(proposal => {
+          updatedCounts[proposal.stateText]++; // Use stateText as the key
+        });
+        setProposalCounts(updatedCounts);
       };
       fetchProposals();
     }
@@ -148,6 +170,24 @@ const ProposalsFetching = () => {
       <h2 className="text-2xl font-bold p-4">Proposals</h2>
       <div className="ml-auto float-right -mt-20 py-8">
         <CreateProposal />
+      </div>
+
+      {/* Display proposal state summary in cards */}
+      <div className="flex flex-row gap-4 mt-4 mb-4 flex-wrap">
+        {Object.entries(proposalCounts).map(([state, count]) => (
+          <Card key={state} className="flex flex-col items-center flex-grow h-full">
+            {" "}
+            {/* Allow flex-grow and full height */}
+            <CardHeader>
+              <CardTitle>{state}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-grow flex items-center justify-center">
+              {" "}
+              {/* Center content */}
+              <p>{count}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Table>
@@ -189,11 +229,11 @@ const ProposalsFetching = () => {
               <TableCell>{proposal.votes?.forVotes}</TableCell>
               <TableCell>{proposal.votes?.abstainVotes}</TableCell>
               <TableCell>{proposal.votes?.againstVotes}</TableCell>
-              <TableCell>{proposal.state}</TableCell>
+              <TableCell>{proposal.stateText}</TableCell>
               <TableCell>
                 <div className="flex flex-col gap-2 grid-cols-2">
                   {/* First row of buttons */}
-                  {proposal.state === "Active - 1" && !proposal.userHasVoted && (
+                  {proposal.state === 1 && !proposal.userHasVoted && (
                     <div className="flex flex-row gap-2">
                       <Button
                         className="text-green-500 p-2"
@@ -250,19 +290,19 @@ const ProposalsFetching = () => {
                   )}
                   {/* Second row of buttons */}
                   <div className="flex flex-row gap-2">
-                    {(proposal.state === "Succeeded - 4" || proposal.state === "Queued - 5") && (
+                    {(proposal.state === 4 || proposal.state === 5) && (
                       <Button
                         className="text-background p-2"
                         onClick={async () => {
                           try {
-                            if (proposal.state === "Succeeded - 4") {
+                            if (proposal.state === 4) {
                               await govWriter({
                                 functionName: "queue",
                                 //@ts-ignore next-line
                                 args: [BigInt(proposal.id)],
                               });
                               console.log("Proposal queued successfully!");
-                            } else if (proposal.state === "Queued - 5") {
+                            } else if (proposal.state === 5) {
                               await govWriter({
                                 functionName: "execute",
                                 //@ts-ignore next-line
@@ -275,7 +315,7 @@ const ProposalsFetching = () => {
                           }
                         }}
                       >
-                        {proposal.state === "Succeeded - 4" ? "Queue" : "Execute"}
+                        {proposal.state === 4 ? "Queue" : "Execute"}
                       </Button>
                     )}
                   </div>

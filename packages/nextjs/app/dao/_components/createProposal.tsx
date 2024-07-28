@@ -98,7 +98,7 @@ const CreateProposal = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="text-background p-2">Create a New Proposal</Button>
+        <Button className="text-background p-2">Apply for a new FlixStarter Campaign</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         {" "}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ProposalsFetching from "./ProposalStates";
+import ProposalsTable from "./ProposalStates";
 import { NumberDisplayToken } from "./utilDisplay";
 import { Address } from "~~/components/scaffold-eth";
 import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
@@ -43,7 +43,7 @@ const GovernerDetails = () => {
 
       // Fetch votingDelay
       governer.read.votingDelay().then(delay => {
-        setVotingDelay(Number(delay) + 10);
+        setVotingDelay(Number(delay));
       });
 
       // Fetch governor address
@@ -56,58 +56,71 @@ const GovernerDetails = () => {
       <h1 className="text-2xl font-semibold">DAO Governor Details</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-4">
         <Card className="p-4">
-          <CardHeader>
-            <CardTitle>DAO Name</CardTitle>
+          <CardHeader className="flex items-center justify-center">
+            {" "}
+            {/* Center the CardHeader */}
+            <CardTitle className="text-center">DAO Name</CardTitle> {/* Center the CardTitle */}
           </CardHeader>
           <CardContent className="flex flex-col mt-2 items-center">
-            <p>{name}</p>
+            <p className="font-bold text-xl">{name}</p>
           </CardContent>
         </Card>
         <Card className="p-4">
-          <CardHeader>
-            <CardTitle>Total Proposals</CardTitle>
+          <CardHeader className="flex items-center justify-center">
+            {" "}
+            {/* Center the CardHeader */}
+            <CardTitle className="text-center">Total Proposals</CardTitle> {/* Center the CardTitle */}
           </CardHeader>
-          <CardContent className="flex flex-col mt-2 items-center">
+          <CardContent className="flex flex-col mt-2 font-bold text-xl items-center">
             <NumberDisplayToken value={BigInt(proposalCount)} />
           </CardContent>
         </Card>
         <Card className="p-4">
-          <CardHeader>
-            <CardTitle>Voting Period</CardTitle>
+          <CardHeader className="flex items-center justify-center">
+            {" "}
+            {/* Center the CardHeader */}
+            <CardTitle className="text-center">Voting Period</CardTitle> {/* Center the CardTitle */}
           </CardHeader>
-          <CardContent className="flex flex-col mt-2 items-center">
-            <p>
-              {votingPeriod} seconds = {votingPeriod / 60 / 60 / 24} days{" "}
+          <CardContent className="flex flex-col mt-2 items-center justify-center">
+            <p className="font-bold text-xl">
+              {votingPeriod / 60 / 60 / 24} days <br />
+              {votingPeriod} seconds
             </p>
           </CardContent>
         </Card>
         <Card className="p-4">
-          <CardHeader>
-            <CardTitle>Quorum Numerator</CardTitle>
+          <CardHeader className="flex items-center justify-center">
+            {" "}
+            {/* Center the CardHeader */}
+            <CardTitle className="text-center">Quorum Numerator</CardTitle> {/* Center the CardTitle */}
           </CardHeader>
           <CardContent className="flex flex-col mt-2 items-center">
-            <p>{quorumNumerator}</p>
-            <p className="text-sm">% votes required for proposal success</p>
+            <p className="font-bold text-xl">{quorumNumerator}</p>
+            <p className="text-sm">% votes required for a success</p>
           </CardContent>
         </Card>
         <Card className="p-4">
-          <CardHeader>
-            <CardTitle>Voting Delay</CardTitle>
+          <CardHeader className="flex items-center justify-center">
+            {" "}
+            {/* Center the CardHeader */}
+            <CardTitle className="text-center">Voting Delay</CardTitle> {/* Center the CardTitle */}
           </CardHeader>
           <CardContent className="flex flex-col mt-2 items-center">
-            <p>{votingDelay} seconds</p>
+            <p className="font-bold text-xl">{votingDelay} seconds</p>
           </CardContent>
         </Card>
         <Card className="p-4">
-          <CardHeader>
-            <CardTitle>Governor Address</CardTitle>
+          <CardHeader className="flex items-center justify-center">
+            {" "}
+            {/* Center the CardHeader */}
+            <CardTitle className="text-center">Governor Address</CardTitle> {/* Center the CardTitle */}
           </CardHeader>
           <CardContent className="flex flex-col mt-2 items-center">
             <Address address={governorAddress as `0x${string}`} />
           </CardContent>
         </Card>
       </div>
-      <ProposalsFetching />
+      <ProposalsTable />
     </div>
   );
 };
