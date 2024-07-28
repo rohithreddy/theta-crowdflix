@@ -21,7 +21,7 @@ async function forwardTimeAndExecute(hre: HardhatRuntimeEnvironment) {
 
   // Forward the time to the proposal deadline
   //   await hre.ethers.provider.send("evm_setNextBlockTimestamp", [Number(proposalDeadline)]);
-  console.log(await hre.ethers.provider.send("evm_mine", [1722419598]));
+  console.log(await hre.ethers.provider.send("evm_mine", [1722286351]));
 
   // Check the current state of the proposal
   //   console.log("Proposal State:", await crowdFlixDaoGovernor.state(proposalId));
