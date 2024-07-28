@@ -1,3 +1,4 @@
+import ProposalsTable from "./_components/ProposalStates";
 import TokenDetails from "./_components/TokenDetails";
 import GovernerDetails from "./_components/governerDetails";
 import type { NextPage } from "next";
@@ -29,6 +30,10 @@ const JoinDAO: NextPage = async () => {
       <div>
         <GovernerDetails />
       </div>
+      <div>
+        <ProposalsTable />
+      </div>
+      <div></div>
     </>
   );
 };

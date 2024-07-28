@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ProposalsTable from "./ProposalStates";
 import { NumberDisplayToken } from "./utilDisplay";
 import { Address } from "~~/components/scaffold-eth";
 import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
@@ -122,7 +121,6 @@ const GovernerDetails = () => {
           </CardContent>
         </Card>
       </div>
-      <ProposalsTable />
     </div>
   );
 };

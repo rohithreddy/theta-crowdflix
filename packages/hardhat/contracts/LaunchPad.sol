@@ -194,6 +194,9 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
                 emit Withdrawn(_projectId, contributorAddress, refundAmount);
             }
         }
+        project.isActive = false; 
+        project.isFinalized = true; 
+
     }
 
     function withdrawFunds(uint256 _projectId) public {
