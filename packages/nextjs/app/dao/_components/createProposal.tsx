@@ -38,6 +38,7 @@ const CreateProposal = () => {
   const [teamWallet, setTeamWallet] = useState("");
   const [category, setCategory] = useState("movie"); // Default category to "movie"
   const [profitSharePercentage, setProfitSharePercentage] = useState(""); // Add state for profitSharePercentage
+  const [teaserURI, setTeaserURI] = useState(""); // Add state for teaserURI
 
   const { data: launchPadInfo } = useDeployedContractInfo("LaunchPad");
   const { data: governer, isLoading } = useScaffoldContract({
@@ -70,6 +71,7 @@ const CreateProposal = () => {
         userAddress, // _creator - Ensure it's a valid address
         profitSharePercentageBigInt, // _profitSharePercentage
         category, // _category
+        teaserURI, // _teaserURI
       ],
     });
 
@@ -216,6 +218,17 @@ const CreateProposal = () => {
               className="col-span-3"
               type="number"
               onChange={e => setProfitSharePercentage(e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="teaserURI" className="text-right">
+              Teaser Link
+            </Label>
+            <Input
+              id="teaserURI"
+              defaultValue={teaserURI}
+              className="col-span-3"
+              onChange={e => setTeaserURI(e.target.value)}
             />
           </div>
         </div>

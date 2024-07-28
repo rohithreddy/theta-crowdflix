@@ -43,6 +43,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         address ticketCollection; // Add ticket collection address
         uint256 projectId; // Added project ID
         uint256 daoProposalId; // Added DAO proposal ID
+        string teaserURI; // Added teaserURI
     }
 
     mapping(uint256 => Project) public projects;
@@ -98,7 +99,8 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         address _teamWallet, // Added teamWallet parameter
         address _creator,
         uint256 _profitSharePercentage, // Added profitSharePercentage parameter
-        string memory _category // Added category parameter
+        string memory _category, // Added category parameter
+        string memory _teaserURI // Added teaserURI parameter
     ) public onlyRole(PROPOSER_ROLE) { // Changed DAO_GOVERNER_ROLE to PROPOSER_ROLE
         require(_startTime >= block.timestamp, "Start time must be in the future");
         require(_endTime > _startTime, "End time must be after start time");
@@ -126,7 +128,8 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
             status: ProjectStatus.InProgress, // Set initial status to InProgress
             ticketCollection: address(0), // Initialize ticketCollection to 0
             projectId: projectId, // Assign project ID
-            daoProposalId: 0 // Initialize daoProposalId to 0
+            daoProposalId: 0, // Initialize daoProposalId to 0
+            teaserURI: _teaserURI // Assign teaserURI
         });
 
         projectCount++;
@@ -225,7 +228,8 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         uint256 _newStartTime,
         uint256 _newEndTime,
         address _newTeamWallet,
-        string memory _newCategory
+        string memory _newCategory,
+        string memory _newTeaserURI // Added newTeaserURI parameter
     ) public {
         require(_projectId < projectCount, "Invalid project ID");
         Project storage project = projects[_projectId];
@@ -239,6 +243,7 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         project.endTime = _newEndTime;
         project.teamWallet = _newTeamWallet;
         project.category = _newCategory;
+        project.teaserURI = _newTeaserURI; // Update teaserURI
 
         // Ensure new start and end times are valid
         require(project.startTime >= block.timestamp, "Start time must be in the future");

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import ProposalsFetching from "./ProposalStates";
 import { NumberDisplayToken } from "./utilDisplay";
+import { Address } from "~~/components/scaffold-eth";
 import { Card, CardContent, CardHeader, CardTitle } from "~~/components/ui/card";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 
@@ -75,7 +76,9 @@ const GovernerDetails = () => {
             <CardTitle>Voting Period</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col mt-2 items-center">
-            <p>{votingPeriod} seconds = {votingPeriod / 60 / 60 / 24} days </p>
+            <p>
+              {votingPeriod} seconds = {votingPeriod / 60 / 60 / 24} days{" "}
+            </p>
           </CardContent>
         </Card>
         <Card className="p-4">
@@ -100,7 +103,7 @@ const GovernerDetails = () => {
             <CardTitle>Governor Address</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col mt-2 items-center">
-            <p>{governorAddress}</p>
+            <Address address={governorAddress as `0x${string}`} />
           </CardContent>
         </Card>
       </div>

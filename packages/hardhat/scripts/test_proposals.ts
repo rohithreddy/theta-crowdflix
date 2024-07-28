@@ -68,6 +68,8 @@ async function createProposals(hre: HardhatRuntimeEnvironment) {
   // Set a common funding goal and time frame for all proposals
   const fundingGoal = parseEther("100");
 
+  const teaserURI = "https://www.youtube.com/watch?v=wegd5ERgQuA";
+
   // Calculate start and end times 4 days in the future
   const fourDaysInSeconds = 4 * 24 * 60 * 60;
   const startTime = Math.floor(Date.now() / 1000) + fourDaysInSeconds + 60; // 1 minute after 4 days
@@ -89,6 +91,7 @@ async function createProposals(hre: HardhatRuntimeEnvironment) {
       deployer, // _creator
       50, // _profitSharePercentage
       project.category, // _category
+      teaserURI,
     ]);
 
     const launchPadAddress = (await launchPad.getAddress()).toString();

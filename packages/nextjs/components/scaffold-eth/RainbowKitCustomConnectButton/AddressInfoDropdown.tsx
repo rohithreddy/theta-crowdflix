@@ -61,110 +61,115 @@ export const AddressInfoDropdown = ({
   };
   useOutsideClick(dropdownRef, closeDropdown);
 
+  // State to control the QR code dialog
+  const [showQRCode, setShowQRCode] = useState(false);
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div className="relative">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="secondary"
-                className="pl-2 pr-2 bg-foreground/20 hover:bg-foreground/40 !h-auto flex flex-row"
-              >
-                <BlockieAvatar address={checkSumAddress} size={30} ensImage={ensAvatar} />
-                <span className="ml-2 mr-1">
-                  {isENS(displayName) ? displayName : checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4)}
-                </span>
-                <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
+    <div className="relative">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="secondary"
+            className="pl-2 pr-2 bg-foreground/20 hover:bg-foreground/40 !h-auto flex flex-row"
+          >
+            <BlockieAvatar address={checkSumAddress} size={30} ensImage={ensAvatar} />
+            <span className="ml-2 mr-1">
+              {isENS(displayName) ? displayName : checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4)}
+            </span>
+            <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="z-9999">
+          <NetworkOptions hidden={!selectingNetwork} />
+          <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
+            {addressCopied ? (
+              <Button variant="ghost" className="flex gap-3 py-3">
+                <CheckCircleIcon
+                  className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
+                  aria-hidden="true"
+                />
+                <span className="whitespace-nowrap">Address copied</span>
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="z-9999">
-              <NetworkOptions hidden={!selectingNetwork} />
-              <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
-                {addressCopied ? (
-                  <Button variant="ghost" className="flex gap-3 py-3">
-                    <CheckCircleIcon
-                      className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
-                      aria-hidden="true"
-                    />
-                    <span className="whitespace-nowrap">Address copied</span>
-                  </Button>
-                ) : (
-                  <CopyToClipboard
-                    text={checkSumAddress}
-                    onCopy={() => {
-                      setAddressCopied(true);
-                      setTimeout(() => {
-                        setAddressCopied(false);
-                      }, 800);
-                    }}
-                  >
-                    <Button variant="ghost" className="flex gap-3 py-3">
-                      <DocumentDuplicateIcon
-                        className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
-                        aria-hidden="true"
-                      />
-                      <span className="whitespace-nowrap">Copy address</span>
-                    </Button>
-                  </CopyToClipboard>
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
-                <Button variant="ghost" className="flex gap-4 py-2">
-                  <QrCodeIcon className="h-6 w-4 ml-2 sm:ml-0" />
-                  <span className="whitespace-nowrap">View QR Code</span>
+            ) : (
+              <CopyToClipboard
+                text={checkSumAddress}
+                onCopy={() => {
+                  setAddressCopied(true);
+                  setTimeout(() => {
+                    setAddressCopied(false);
+                  }, 800);
+                }}
+              >
+                <Button variant="ghost" className="flex gap-3 py-3">
+                  <DocumentDuplicateIcon
+                    className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
+                    aria-hidden="true"
+                  />
+                  <span className="whitespace-nowrap">Copy address</span>
                 </Button>
-              </DropdownMenuItem>
-              <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
-                <Button variant="ghost" className="flex gap-3 ">
-                  <ArrowTopRightOnSquareIcon className="h-6 w-4 ml-2 sm:ml-0" />
-                  <a
-                    target="_blank"
-                    href={blockExplorerAddressLink}
-                    rel="noopener noreferrer"
-                    className="whitespace-nowrap"
-                  >
-                    View on Block Explorer
-                  </a>
-                </Button>
-              </DropdownMenuItem>
-              {allowedNetworks.length > 1 ? (
-                <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
-                  <Button
-                    variant="ghost"
-                    className="flex gap-3 py-3"
-                    onClick={() => {
-                      setSelectingNetwork(true);
-                    }}
-                  >
-                    <ArrowsRightLeftIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Switch Network</span>
-                  </Button>
-                </DropdownMenuItem>
-              ) : null}
-              <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
-                <Button variant="ghost" className="flex gap-3 py-3" onClick={() => disconnect()}>
-                  <ArrowLeftOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Disconnect</span>
-                </Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>QR Code</DialogTitle>
-          <DialogDescription>Scan this QR code to add the address to your wallet.</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3 py-6">
-          <div className="flex flex-col items-center gap-6">
-            <QRCodeSVG value={address} size={256} />
-            <Address address={address} format="long" disableAddressLink />
+              </CopyToClipboard>
+            )}
+          </DropdownMenuItem>
+          <DropdownMenuItem className={selectingNetwork ? "hidden" : ""} onClick={() => setShowQRCode(true)}>
+            <Button variant="ghost" className="flex gap-4 py-2">
+              <QrCodeIcon className="h-6 w-4 ml-2 sm:ml-0" />
+              <span className="whitespace-nowrap">View QR Code</span>
+            </Button>
+          </DropdownMenuItem>
+          <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
+            <Button variant="ghost" className="flex gap-3 ">
+              <ArrowTopRightOnSquareIcon className="h-6 w-4 ml-2 sm:ml-0" />
+              <a
+                target="_blank"
+                href={blockExplorerAddressLink}
+                rel="noopener noreferrer"
+                className="whitespace-nowrap"
+              >
+                View on Block Explorer
+              </a>
+            </Button>
+          </DropdownMenuItem>
+          {allowedNetworks.length > 1 ? (
+            <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
+              <Button
+                variant="ghost"
+                className="flex gap-3 py-3"
+                onClick={() => {
+                  setSelectingNetwork(true);
+                }}
+              >
+                <ArrowsRightLeftIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Switch Network</span>
+              </Button>
+            </DropdownMenuItem>
+          ) : null}
+          <DropdownMenuItem className={selectingNetwork ? "hidden" : ""}>
+            <Button variant="ghost" className="flex gap-3 py-3" onClick={() => disconnect()}>
+              <ArrowLeftOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Disconnect</span>
+            </Button>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Separate Dialog for QR Code */}
+      <Dialog open={showQRCode} onOpenChange={setShowQRCode}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>QR Code</DialogTitle>
+            <DialogDescription>Scan this QR code to add the address to your wallet.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-6">
+            <div className="flex flex-col items-center gap-6">
+              <QRCodeSVG value={address} size={256} />
+              <Address address={address} format="long" disableAddressLink />
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button type="button">Close</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter>
+            <Button type="button" onClick={() => setShowQRCode(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };

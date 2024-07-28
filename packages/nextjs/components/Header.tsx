@@ -22,7 +22,7 @@ import { useOutsideClick } from "~~/hooks/scaffold-eth";
 const routes = [
   { name: "Home", href: "/", icon: "" },
   // { name: "Debug Contracts", href: "/debug", icon: <Bug className="h-4 w-4" /> }, // Use Lucide Bug icon
-  { name: "TheFlix DAO", href: "/joindao", icon: <Users className="h-5 w-5" /> }, // Use Lucide Users icon
+  { name: "TheFlix DAO", href: "/dao", icon: <Users className="h-5 w-5" /> }, // Use Lucide Users icon
   { name: "Flix Starter", href: "/flixstarter", icon: <Rocket className="h-5 w-5" /> }, // Use Lucide CreditCard icon
   { name: "Theatre", href: "/theatre", icon: <Video className="h-5 w-5" /> }, // Use Lucide Video icon
   { name: "Faucet", href: "/faucet", icon: <CreditCard className="h-5 w-5" /> }, // Use Lucide CurrencyDollar icon
