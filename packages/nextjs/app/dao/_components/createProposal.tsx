@@ -55,6 +55,24 @@ const CreateProposal = () => {
     // Convert startTime and endTime to Unix timestamps
     const extendedStartTime = startTime ? Math.floor(Date.parse(startTime) / 1000) : 0;
     const extendedEndTime = endTime ? Math.floor(Date.parse(endTime) / 1000) : 0;
+
+    // Validate start and end times
+    const now = Date.now() / 1000; // Current time in seconds
+    const twoHoursTwoMinutes = 2 * 60 * 60 + 2 * 60; // 2 hours and 2 minutes in seconds
+
+    if (extendedStartTime <= now + twoHoursTwoMinutes) {
+      notification.error("Start time must be at least 2 hours and 2 minutes in the future.");
+      return;
+    }
+    if (extendedEndTime <= now) {
+      notification.error("End time must be in the future.");
+      return;
+    }
+    if (extendedStartTime >= extendedEndTime) {
+      notification.error("Start time must be before end time.");
+      return;
+    }
+
     const fundingGoalBigInt = BigInt(Number(fundingGoal) * 10 ** 18);
     const profitSharePercentageBigInt = BigInt(profitSharePercentage); // Convert profitSharePercentage to BigInt
 
@@ -90,6 +108,8 @@ const CreateProposal = () => {
       });
       notification.success(`✅ Proposal created for ${projectName} with transaction hash: ${txhash}`);
       setIsOpen(false);
+      //reload the page here
+      window.location.reload();
     } catch (e: any) {
       notification.error("Error creating proposal:", e.toString());
     }
