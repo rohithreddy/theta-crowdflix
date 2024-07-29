@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol"; // Import AccessContr
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./MasterTicket.sol"; // Import MasterTicket from the same directory
-import "./CrowdFlixVault.sol";
+import "./ICrowdFlixVault.sol";
 
 contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
     bytes32 public constant LAUNCHPAD_ROLE = keccak256("LAUNCHPAD_ROLE");
@@ -30,7 +30,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
 
     // Address of the ERC721 ticket implementation contract
     address public immutable ticketImplementation;
-    CrowdFlixVault public crowdFlixVault; 
+    ICrowdFlixVault public crowdFlixVault; 
 
     // Keep track of the total number of collections deployed
     uint256 public collectionCount;
@@ -46,14 +46,14 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
 
     constructor(address _ticketImplementation, address launchPadAddress, address _crowdFlixVaultAddress) {
         ticketImplementation = _ticketImplementation;
-        crowdFlixVault = CrowdFlixVault(_crowdFlixVaultAddress);
+        crowdFlixVault = ICrowdFlixVault(_crowdFlixVaultAddress);
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(LAUNCHPAD_ROLE, launchPadAddress);
         _grantRole(PAUSER_ROLE, msg.sender);
     }
 
     // Function to create a new ERC721 ticket collection clone
-    function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price, string memory _category, string memory _title) public onlyRole(LAUNCHPAD_ROLE) whenNotPaused returns (address) {
+    function createTicketCollection(uint256 _projectId, string memory _name, string memory _symbol, uint256 _price, string memory _category, string memory _title, address[] memory _investors, uint256[] memory _investmentAmounts, uint256 _fundingGoal, uint256 _profitSharePercentage, address _creator) public onlyRole(LAUNCHPAD_ROLE) whenNotPaused returns (address) {
         // Create a new clone of the ERC721 ticket implementation
         address ticketContract = Clones.clone(ticketImplementation);
         // console.log("Ticket Contract", ticketContract);
@@ -79,9 +79,8 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         // Add the collection address to the array
         collectionAddresses.push(ticketContract);
 
-        // console.log("Pusged to to collectionAddresses");
-
-        CrowdFlixVault(crowdFlixVault).createProjectVault(_projectId);
+        crowdFlixVault.createProjectVault(_projectId, _investors, _investmentAmounts, _fundingGoal, _profitSharePercentage , _creator);
+        // CrowdFlixVault(crowdFlixVault).createProjectVault(_projectId);
 
         // console.log("INIT Project vault");
 

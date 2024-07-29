@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./ITicketManager.sol";
-import "./CrowdFlixVault.sol";
 
 contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE");
@@ -41,7 +40,6 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     mapping(uint256 => mapping(address => uint256)) public projectInvestments;
 
     ITicketManager public ticketManager;
-    CrowdFlixVault public crowdFlixVault;
 
     event ProjectCreated(
         uint256 indexed projectId,
@@ -59,7 +57,6 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
     event Withdrawn(uint256 indexed projectId, address indexed recipient, uint256 amount);
     event ProjectFinalized(uint256 indexed projectId, bool success);
     event TicketManagerInitialized(address ticketManagerAddress);
-    event CrowdFlixVaultInitialized(address crowdFlixVaultAddress);
     event DaoProposalIdSet(uint256 indexed projectId, uint256 daoProposalId);
     event ProjectPaused(uint256 indexed projectId);
     event ProjectUnpaused(uint256 indexed projectId);
@@ -79,11 +76,6 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         emit TicketManagerInitialized(_ticketManagerAddress);
     }
 
-    function initializeCrowdFlixVault(address _crowdFlixVaultAddress) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(address(crowdFlixVault) == address(0), "CrowdFlixVault already initialized");
-        crowdFlixVault = CrowdFlixVault(_crowdFlixVaultAddress);
-        emit CrowdFlixVaultInitialized(_crowdFlixVaultAddress);
-    }
 
     function createProject(
         string memory _name,
@@ -102,7 +94,6 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         require(_teamWallet != address(0), "Team wallet cannot be zero address");
         require(_profitSharePercentage <= 90, "Profit share percentage cannot exceed 90%");
         require(address(ticketManager) != address(0), "TicketManager not initialized");
-        require(address(crowdFlixVault) != address(0), "CrowdFlixVault not initialized");
 
         uint256 projectId = projectCount;
         projects[projectId] = Project({
@@ -141,7 +132,6 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         fundingToken.transferFrom(msg.sender, address(this), _amount);
         project.totalFunded += _amount;
         projectInvestments[_projectId][msg.sender] += _amount;
-        crowdFlixVault.contributeAndUpdateShares(_projectId, msg.sender, _amount, project.profitSharePercentage);
 
         if (project.contributors.length == 0 || project.contributors[project.contributors.length - 1] != msg.sender) {
             project.contributors.push(msg.sender);
@@ -161,21 +151,42 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         bool success = project.totalFunded >= project.fundingGoal;
 
         if (success) {
+             (address[] memory investors, uint256[] memory investment_amounts) = _getContributorData(_projectId);
             project.ticketCollection = ticketManager.createTicketCollection(
                 _projectId,
                 string(abi.encodePacked(project.name, " Tickets")),
-                "FLIXTKT",
+                string(abi.encodePacked("FLIXTKT#", _projectId)),
                 _ticketPrice,
                 project.category,
-                project.name
+                project.name,
+                investors,
+                investment_amounts, 
+                project.fundingGoal,
+                project.profitSharePercentage,
+                project.creator
             );
             fundingToken.transfer(project.teamWallet, project.totalFunded);
+            project.isActive = false; 
+            project.isFinalized = true; 
         }
-        project.isActive = false; 
-        project.isFinalized = true; 
+        
 
         emit ProjectFinalized(_projectId, success);
     }
+    
+    function _getContributorData(uint256 _projectId) private view returns (address[] memory, uint256[] memory) {
+    Project storage project = projects[_projectId];
+    uint256 count = project.contributors.length;
+    address[] memory contributors = new address[](count);
+    uint256[] memory amounts = new uint256[](count);
+
+    for (uint256 i = 0; i < count; i++) {
+        contributors[i] = project.contributors[i];
+        amounts[i] = projectInvestments[_projectId][project.contributors[i]];
+    }
+
+    return (contributors, amounts);
+}
 
     function refundInvestors(uint256 _projectId) public {
         Project storage project = projects[_projectId];
@@ -396,6 +407,10 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         }
 
         return finalizedProjects;
+    }
+    function getProjectByProjectId(uint256 _projectId) public view returns (Project memory) {
+    require(_projectId < projectCount, "Invalid project ID");
+    return projects[_projectId];
     }
 
     function totalFunded(uint256 _projectId) public view returns (uint256) {

@@ -121,7 +121,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("Deploying CrowdFlixVault...");
   const crowdFlixVaultDeployment = await deploy("CrowdFlixVault", {
     from: deployer,
-    args: [deployer, deployer, await launchPad.getAddress(), ticketManagerAddress], // Set initial roles (consider multi-sig or DAO later)
+    args: [deployer, deployer], // Set initial roles (consider multi-sig or DAO later)
     log: true,
     autoMine: true,
   });
@@ -166,9 +166,9 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("TicketManager initialized on LaunchPad");
 
   // Initialize the CrowdFlixVault on the LaunchPad contract
-  console.log("Initializing CrowdFlixVault on LaunchPad...");
-  await launchPad.initializeCrowdFlixVault(await crowdFlixVault.getAddress());
-  console.log("CrowdFlixVault initialized on LaunchPad");
+  // console.log("Initializing CrowdFlixVault on LaunchPad...");
+  // await launchPad.initializeCrowdFlixVault(await crowdFlixVault.getAddress());
+  // console.log("CrowdFlixVault initialized on LaunchPad");
 
   // Initialize the CrowdFlixDaoGovernor on the LaunchPad contract
   // await launchPad.initializeCrowdFlixDaoGovernor(await crowdFlixDaoGovernor.getAddress());
