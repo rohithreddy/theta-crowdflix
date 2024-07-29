@@ -20,6 +20,9 @@ export const theta_privatenet = defineChain({
   testnet: true,
 });
 export const theta_testnet = defineChain({
+  fees: {
+    baseFeeMultiplier: 1.5,
+  },
   id: 365,
   name: "Theta Testnet",
   nativeCurrency: {
@@ -35,7 +38,7 @@ export const theta_testnet = defineChain({
   blockExplorers: {
     default: { name: "Explorer", url: "https://testnet-explorer.thetatoken.org" },
   },
-  testnet: true,
+  // testnet: true,
 });
 
 export const theta_mainnet = defineChain({
@@ -64,6 +67,9 @@ export type ScaffoldConfig = {
   walletConnectProjectId: string;
   onlyLocalBurnerWallet: boolean;
 };
+const networks = process.env.NODE_ENV === "development" ? [chains.hardhat, theta_testnet] : [theta_testnet];
+console.log(networks);
+console.log(process.env.NODE_ENV);
 
 const scaffoldConfig = {
   // The networks on which your DApp is live

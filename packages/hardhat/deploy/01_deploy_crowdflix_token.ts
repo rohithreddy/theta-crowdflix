@@ -11,6 +11,7 @@ import { getExpectedContractAddress } from "../helpers/expected_contract";
  * @param hre HardhatRuntimeEnvironment object.
  */
 const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  console.log(hre.network.name);
   /*
     On localhost, the deployer account is the one that comes with Hardhat, which is already funded.
 
@@ -158,8 +159,6 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
   const ticketManager = await hre.ethers.getContract<Contract>("TicketManager", deployer);
   console.log("TicketManager Deployed at address", await ticketManager.getAddress());
-  // await crowdFlixVault.grantRole(ethers.id("TICKET_MANAGER_ROLE"), await ticketManager.getAddress());
-  // console.log("GRANTED TICKET MANAGER ROLE to=> " + (await ticketManager.getAddress()));
 
   await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds timeout
 
@@ -175,22 +174,30 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const crowdFlixFaucet = await hre.ethers.getContract<Contract>("CrowdFlixFaucet", deployer);
   console.log("CrowdFlixFaucet Deployed at address", await crowdFlixFaucet.getAddress());
 
-  // TODO
-  // 1. mint tokens to faucet
-  // 2 . initialize ticket manager on Launchpad
-  // 3. vault grant ticket_manager role to ticket mamanager address
+  // Check if the current network is hardhat
+  if (hre.network.name === "localhost") {
+    // TODO
+    // 1. mint tokens to faucet
+    // Mint 10 million CROWDFLIX tokens to CrowdFlixFaucet
+    console.log("Minting CROWDFLIX tokens to CrowdFlixFaucet...");
+    await crowdFlixToken
+      .mint(await crowdFlixFaucet.getAddress(), parseEther("10000")) // thousand tokens
+      .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
+      .catch(err => console.log(err));
 
-  // Mint 10 million CROWDFLIX tokens to CrowdFlixFaucet
-  // console.log("Minting CROWDFLIX tokens to CrowdFlixFaucet...");
-  // await crowdFlixToken
-  //   .mint(await crowdFlixFaucet.getAddress(), parseEther("10000")) // thousand tokens
-  //   .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
-  //   .catch(err => console.log(err));
+    // 2 . initialize ticket manager on Launchpad
+    console.log("Initializing TicketManager on LaunchPad...");
+    await launchPad.initializeTicketManager(await ticketManager.getAddress());
+    console.log("TicketManager initialized on LaunchPad");
+    // 3. vault grant ticket_manager role to ticket mamanager address
+    await crowdFlixVault.grantRole(ethers.id("TICKET_MANAGER_ROLE"), await ticketManager.getAddress());
+    console.log("GRANTED TICKET MANAGER ROLE to=> " + (await ticketManager.getAddress()));
+  }
+
+  // await crowdFlixVault.grantRole(await crowdFlixVault.TICKET_MANAGER_ROLE, await ticketManager.getAddress())
 
   // // Initialize the TicketManager on the LaunchPad contract
-  // console.log("Initializing TicketManager on LaunchPad...");
-  // await launchPad.initializeTicketManager(await ticketManager.getAddress());
-  // console.log("TicketManager initialized on LaunchPad");
+  //
 
   // Initialize the CrowdFlixVault on the LaunchPad contract
   // console.log("Initializing CrowdFlixVault on LaunchPad...");
@@ -199,9 +206,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   // Initialize the CrowdFlixDaoGovernor on the LaunchPad contract
   // await launchPad.initializeCrowdFlixDaoGovernor(await crowdFlixDaoGovernor.getAddress());
-  // console.log("CrowdFlixDaoGovernor initialized on LaunchPad");
-
-  // crowdFlixVault.grantRole(crowdFlixVault.TICKET_MANAGER_ROLE, await ticketManager.getAddress())
+  // console.log("CrowdFlixDaoGovernor initialized on LaunchPad")
   // // await masterTicket.initialize(
   // //   await ticketManager.getAddress(), // Replace with the address of your initial authority
   // //   "Master Ticket", // Replace with your desired name

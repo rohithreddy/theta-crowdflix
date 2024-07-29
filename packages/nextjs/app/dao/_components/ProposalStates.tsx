@@ -47,7 +47,7 @@ const ProposalsFetching = () => {
   const { data: eventHistory, isLoading: eventHistoryLoading } = useScaffoldEventHistory({
     contractName: "CrowdFlixDaoGovernor",
     eventName: "ProposalCreated",
-    fromBlock: 27339334n,
+    fromBlock: 27339334n, // 0n if the env is development
     receiptData: true,
   });
 
