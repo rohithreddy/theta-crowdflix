@@ -33,7 +33,7 @@ export const theta_testnet = defineChain({
     },
   },
   blockExplorers: {
-    default: { name: "Explorer", url: "https://testnet-explorer.thetatoken.org/" },
+    default: { name: "Explorer", url: "https://testnet-explorer.thetatoken.org" },
   },
   testnet: true,
 });
