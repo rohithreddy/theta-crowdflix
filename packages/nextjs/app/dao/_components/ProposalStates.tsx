@@ -47,9 +47,12 @@ const ProposalsFetching = () => {
   const { data: eventHistory, isLoading: eventHistoryLoading } = useScaffoldEventHistory({
     contractName: "CrowdFlixDaoGovernor",
     eventName: "ProposalCreated",
-    fromBlock: 0n,
+    fromBlock: 27339334n,
     receiptData: true,
   });
+
+  console.log("eventHistory", eventHistory);
+  console.log("eventHistoryLoading", eventHistoryLoading);
 
   // Access the writeContractAsync function from the hook
   const { writeContractAsync: govWriter } = useScaffoldWriteContract("CrowdFlixDaoGovernor"); // Renamed to govWriter
