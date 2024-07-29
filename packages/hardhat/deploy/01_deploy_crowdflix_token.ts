@@ -47,6 +47,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("expected token address iS :D ", token_address);
   const cflixTokenAddress = await crowdFlixToken.getAddress();
 
+  await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds timeout
+
   // Deploy TimeLockController
   console.log("Deploying TimeLockController...");
   const proposers = [deployer, timelock_address, dao_governor_address];
@@ -62,6 +64,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const timeLockController = await hre.ethers.getContract<Contract>("FlixTimelock", deployer);
   console.log("TimeLockController Deployed at address", await timeLockController.getAddress());
   console.log("The expected timelock address is", timelock_address);
+
+  await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds timeout
 
   // Deploy CrowdFlixDaoGovernor
   console.log("Deploying CrowdFlixDaoGovernor...");
@@ -88,6 +92,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("Deployed Governer successfully", await crowdFlixDaoGovernor.getAddress());
   console.log("expected dao governor address iS :D ", dao_governor_address);
 
+  await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds timeout
+
   // Deploy LaunchPad
   console.log("Deploying LaunchPad...");
   await deploy("LaunchPad", {
@@ -107,15 +113,27 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const launchPad = await hre.ethers.getContract<Contract>("LaunchPad", deployer);
   console.log("Launchpad Deployed at address", await launchPad.getAddress());
 
+  await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds timeout
+
   // Deploy MasterTicket
   console.log("Deploying MasterTicket...");
-  const MasterTicket = await hre.ethers.getContractFactory("MasterTicket");
-  const masterTicket = await MasterTicket.deploy();
+  // const MasterTicket = await hre.ethers.getContractFactory("MasterTicket");
+  // const masterTicket = await MasterTicket.deploy();
   // await masterTicket.deployed();
-
+  await deploy("MasterTicket", {
+    from: deployer,
+    args: [],
+    log: true,
+    // autoMine: true, // can be passed to the deploy function to make the deployment process faster on local networks by
+    //  automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
+  const masterTicket = await hre.ethers.getContract<Contract>("MasterTicket", deployer);
   // // Initialize MasterTicket
 
   console.log("MasterTicket deployed to:", await masterTicket.getAddress());
+
+  await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds timeout
 
   // Deploy CrowdFlixVault
   console.log("Deploying CrowdFlixVault...");
@@ -128,6 +146,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const crowdFlixVault = await hre.ethers.getContractAt("CrowdFlixVault", crowdFlixVaultDeployment.address);
   console.log("CrowdFlixVault deployed to:", crowdFlixVaultDeployment.address);
 
+  await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds timeout
+
   // Deploy TicketManager
   console.log("Deploying TicketManager...");
   await deploy("TicketManager", {
@@ -138,8 +158,10 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
   const ticketManager = await hre.ethers.getContract<Contract>("TicketManager", deployer);
   console.log("TicketManager Deployed at address", await ticketManager.getAddress());
-  await crowdFlixVault.grantRole(ethers.id("TICKET_MANAGER_ROLE"), await ticketManager.getAddress());
-  console.log("GRANTED TICKET MANAGER ROLE to=> " + (await ticketManager.getAddress()));
+  // await crowdFlixVault.grantRole(ethers.id("TICKET_MANAGER_ROLE"), await ticketManager.getAddress());
+  // console.log("GRANTED TICKET MANAGER ROLE to=> " + (await ticketManager.getAddress()));
+
+  await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds timeout
 
   // Deploy CrowdFlixFaucet
   console.log("Deploying CrowdFlixFaucet...");
@@ -153,17 +175,22 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const crowdFlixFaucet = await hre.ethers.getContract<Contract>("CrowdFlixFaucet", deployer);
   console.log("CrowdFlixFaucet Deployed at address", await crowdFlixFaucet.getAddress());
 
-  // Mint 10 million CROWDFLIX tokens to CrowdFlixFaucet
-  console.log("Minting CROWDFLIX tokens to CrowdFlixFaucet...");
-  await crowdFlixToken
-    .mint(await crowdFlixFaucet.getAddress(), parseEther("10000")) // thousand tokens
-    .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
-    .catch(err => console.log(err));
+  // TODO
+  // 1. mint tokens to faucet
+  // 2 . initialize ticket manager on Launchpad
+  // 3. vault grant ticket_manager role to ticket mamanager address
 
-  // Initialize the TicketManager on the LaunchPad contract
-  console.log("Initializing TicketManager on LaunchPad...");
-  await launchPad.initializeTicketManager(await ticketManager.getAddress());
-  console.log("TicketManager initialized on LaunchPad");
+  // Mint 10 million CROWDFLIX tokens to CrowdFlixFaucet
+  // console.log("Minting CROWDFLIX tokens to CrowdFlixFaucet...");
+  // await crowdFlixToken
+  //   .mint(await crowdFlixFaucet.getAddress(), parseEther("10000")) // thousand tokens
+  //   .then(() => console.log("Minted CROWDFLIX Token to CrowdFlixFaucet"))
+  //   .catch(err => console.log(err));
+
+  // // Initialize the TicketManager on the LaunchPad contract
+  // console.log("Initializing TicketManager on LaunchPad...");
+  // await launchPad.initializeTicketManager(await ticketManager.getAddress());
+  // console.log("TicketManager initialized on LaunchPad");
 
   // Initialize the CrowdFlixVault on the LaunchPad contract
   // console.log("Initializing CrowdFlixVault on LaunchPad...");

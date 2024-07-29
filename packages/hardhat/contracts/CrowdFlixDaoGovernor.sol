@@ -32,7 +32,7 @@ contract CrowdFlixDaoGovernor is Governor, GovernorSettings, GovernorCountingSim
         uint48 _initialVoteExtension
     )
         Governor(_name)
-        GovernorSettings(0, 2 days, 0)
+        GovernorSettings(0, 2 hours, 0)
         GovernorVotes(_token)
         GovernorVotesQuorumFraction(_quorumNumeratorValue)
         GovernorPreventLateQuorum(_initialVoteExtension)
