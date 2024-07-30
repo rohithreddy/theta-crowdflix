@@ -33,6 +33,8 @@ const DaoFaucet = (props: Props) => {
       try {
         await claimTokensAsync({
           functionName: "claim",
+          gasPrice: 6000000000000n,
+          __mode: "prepared",
         });
         setUserClaimed(true);
       } catch (e) {
@@ -46,7 +48,9 @@ const DaoFaucet = (props: Props) => {
       try {
         await delegateTokens({
           functionName: "delegate",
-          args: [userAddress],
+          args: [userAddress as `0x${string}`],
+          gasPrice: 6000000000000n,
+          __mode: "prepared",
         });
         console.log("Tokens delegated successfully!");
       } catch (e) {

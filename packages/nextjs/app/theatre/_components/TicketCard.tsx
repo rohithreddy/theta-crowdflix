@@ -65,6 +65,8 @@ const TicketCard = ({ ticket }: TicketProps) => {
                   functionName: "buyTicket",
                   args: [ticket.projectId],
                   value: parseEther(formatUnits(ticket.price, 18)), // Pass the price in ETH
+                  gasPrice: 6000000000000n,
+                  __mode: "prepared",
                 });
                 notification.success("Ticket purchased successfully!");
               } catch (e: any) {

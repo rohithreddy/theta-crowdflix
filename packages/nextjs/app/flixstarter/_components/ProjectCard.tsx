@@ -148,10 +148,14 @@ const ProjectCard = ({ project, status }: ProjectProps) => {
                     await flixToken({
                       functionName: "approve",
                       args: [pad?.address, BigInt(Number(amount) * 10 ** 18)],
+                      __mode: "prepared",
+                      gasPrice: 6000000000000n,
                     });
                     const ctxn = await launchPad({
                       functionName: "contribute",
                       args: [BigInt(project.projectId), BigInt(Number(amount) * 10 ** 18)],
+                      __mode: "prepared",
+                      gasPrice: 6000000000000n,
                     });
                     console.log("Contribution successful!");
                     setAmount(""); // Clear the input after contribution
@@ -189,6 +193,8 @@ const ProjectCard = ({ project, status }: ProjectProps) => {
                     await launchPad({
                       functionName: "finalizeProject",
                       args: [BigInt(project.projectId), BigInt(Number(ticketPrice) * 10 ** 18)], // Pass ticketPrice in wei
+                      __mode: "prepared",
+                      gasPrice: 6000000000000n,
                     });
                     console.log("Project finalized successfully!");
                   } catch (e) {
@@ -225,6 +231,8 @@ const ProjectCard = ({ project, status }: ProjectProps) => {
                     await launchPad({
                       functionName: "refundInvestors",
                       args: [BigInt(project.projectId)], // Pass ticketPrice in wei
+                      gasPrice: 6000000000000n,
+                      __mode: "prepared",
                     });
                     console.log("Project finalized successfully!");
                   } catch (e) {
@@ -250,6 +258,8 @@ const ProjectCard = ({ project, status }: ProjectProps) => {
                     await launchPad({
                       functionName: "withdrawFunds",
                       args: [BigInt(project.projectId)], // Pass ticketPrice in wei
+                      gasPrice: 6000000000000n,
+                      __mode: "prepared",
                     });
                     console.log("Project finalized successfully!");
                   } catch (e) {

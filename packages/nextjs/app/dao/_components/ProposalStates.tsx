@@ -246,6 +246,8 @@ const ProposalsFetching = () => {
                             await govWriter({
                               functionName: "castVote",
                               args: [BigInt(proposal.id!), 1], // Assuming you want to vote "yes"
+                              __mode: "prepared",
+                              gasPrice: 6000000000000n,
                             });
                             console.log("Vote cast successfully!");
                           } catch (e) {
@@ -263,6 +265,8 @@ const ProposalsFetching = () => {
                             await govWriter({
                               functionName: "castVote",
                               args: [BigInt(proposal.id!), 2], // Assuming you want to vote "yes"
+                              __mode: "prepared",
+                              gasPrice: 6000000000000n,
                             });
                             console.log("Vote cast successfully!");
                           } catch (e) {
@@ -280,6 +284,8 @@ const ProposalsFetching = () => {
                             await govWriter({
                               functionName: "castVote",
                               args: [BigInt(proposal.id!), 0], // Assuming you want to vote "yes"
+                              gasPrice: 6000000000000n,
+                              __mode: "prepared",
                             });
                             console.log("Vote cast successfully!");
                           } catch (e) {
@@ -303,6 +309,8 @@ const ProposalsFetching = () => {
                                 functionName: "queue",
                                 //@ts-ignore next-line
                                 args: [BigInt(proposal.id)],
+                                gasPrice: 6000000000000n,
+                                __mode: "prepared",
                               });
                               console.log("Proposal queued successfully!");
                             } else if (proposal.state === 5) {
@@ -310,6 +318,8 @@ const ProposalsFetching = () => {
                                 functionName: "execute",
                                 //@ts-ignore next-line
                                 args: [BigInt(proposal.id)],
+                                gasPrice: 6000000000000n,
+                                __mode: "prepared",
                               });
                               console.log("Proposal executed successfully!");
                             }

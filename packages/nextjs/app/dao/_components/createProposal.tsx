@@ -105,6 +105,8 @@ const CreateProposal = () => {
           [createLaunchPadCampaignCallData], //transaction call data
           proposalDescription,
         ],
+        gasPrice: 6000000000000n,
+        __mode: "prepared",
       });
       notification.success(`✅ Proposal created for ${projectName} with transaction hash: ${txhash}`);
       setIsOpen(false);

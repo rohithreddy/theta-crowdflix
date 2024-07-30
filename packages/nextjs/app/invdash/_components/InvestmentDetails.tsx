@@ -14,13 +14,13 @@ const InvestmentDetails = (props: Props) => {
   const { data: totalWithDrawableFuel, isLoading: totalWithDrawableFuelLoading } = useScaffoldReadContract({
     contractName: "CrowdFlixVault",
     functionName: "getTotalWithdrawableEth",
-    args: [userAddress],
+    args: [userAddress as `0x${string}`],
   });
 
   const { data: withFuellist, isLoading: fuelWithListLoading } = useScaffoldReadContract({
     contractName: "CrowdFlixVault",
     functionName: "getWithdrawableEthBreakdown",
-    args: [userAddress],
+    args: [userAddress as `0x${string}`],
   });
 
   const { writeContractAsync: withdrawFunds } = useScaffoldWriteContract("CrowdFlixVault");
@@ -67,6 +67,8 @@ const InvestmentDetails = (props: Props) => {
                         await withdrawFunds({
                           functionName: "withdrawFunds",
                           args: [projectId],
+                          gasPrice: 6000000000000n,
+                          __mode: "prepared",
                         });
                         console.log("Funds withdrawn successfully!");
                       } catch (e) {

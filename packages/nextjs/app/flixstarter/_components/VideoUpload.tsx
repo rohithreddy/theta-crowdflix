@@ -171,6 +171,8 @@ const VideoUpload = ({ projectId }: VideoUploadProps) => {
           await launchPad({
             functionName: "setVideoURL",
             args: [projectId, videoId],
+            __mode: "prepared",
+            gasPrice: 6000000000000n,
           });
           console.log("Video URL set successfully!");
         } catch (error) {
