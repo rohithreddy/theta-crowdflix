@@ -38,7 +38,7 @@ export const theta_testnet = defineChain({
   blockExplorers: {
     default: { name: "Explorer", url: "https://testnet-explorer.thetatoken.org" },
   },
-  // testnet: true,
+  testnet: true,
 });
 
 export const theta_mainnet = defineChain({
@@ -67,13 +67,13 @@ export type ScaffoldConfig = {
   walletConnectProjectId: string;
   onlyLocalBurnerWallet: boolean;
 };
-const networks = process.env.NODE_ENV === "development" ? [chains.hardhat, theta_testnet] : [theta_testnet];
-console.log(networks);
-console.log(process.env.NODE_ENV);
+// const networks = process.env.NODE_ENV === "development" ? [chains.hardhat, theta_testnet] : [theta_testnet];
+// console.log(networks);
+// console.log(process.env.NODE_ENV);
 
 const scaffoldConfig = {
   // The networks on which your DApp is live
-  targetNetworks: [theta_testnet],
+  targetNetworks: [theta_testnet, chains.hardhat],
   // targetNetworks: [chains.hardhat, theta_privatenet, theta_testnet, theta_mainnet],
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect if you only target the local network (default is 4000)

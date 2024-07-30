@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./ThemeToggle";
-import { Bug, CreditCard, Menu, Rocket, Users, Video } from "lucide-react";
+import { Bug, CreditCard, DollarSign, Menu, Rocket, Users, Video } from "lucide-react";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { Button } from "~~/components/ui/button";
 import {
@@ -24,7 +24,7 @@ const routes = [
   // { name: "Debug Contracts", href: "/debug", icon: <Bug className="h-4 w-4" /> }, // Use Lucide Bug icon
   { name: "TheFlix DAO", href: "/dao", icon: <Users className="h-5 w-5" /> }, // Use Lucide Users icon
   { name: "Flix Starter", href: "/flixstarter", icon: <Rocket className="h-5 w-5" /> }, // Use Lucide CreditCard icon
-  { name: "Investments", href: "/invdash", icon: <Video className="h-5 w-5" /> },
+  { name: "Investments", href: "/invdash", icon: <DollarSign className="h-5 w-5" /> },
   { name: "Theatre", href: "/theatre", icon: <Video className="h-5 w-5" /> }, // Use Lucide Video icon
   { name: "Faucet", href: "/faucet", icon: <CreditCard className="h-5 w-5" /> }, // Use Lucide CurrencyDollar icon
 ] as const;
