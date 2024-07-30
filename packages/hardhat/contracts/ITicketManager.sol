@@ -19,4 +19,7 @@ interface ITicketManager {
 
     // Add the getTicketsSold function to the interface
     function getTicketsSold(uint256 _projectId) external view returns (uint256);
+
+    // Add the setVideoURL function to the interface
+    function setVideoURL(uint256 _projectId, string memory _videoURL) external;
 }

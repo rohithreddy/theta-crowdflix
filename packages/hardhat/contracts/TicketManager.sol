@@ -23,6 +23,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         string category;
         string title;
         uint256 ticketsSold; // Track tickets sold for this collection
+        string videoID; // Add VideoURL string
     }
 
     // Mapping to store ticket collections and their associated project IDs
@@ -43,6 +44,7 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
 
     // Event emitted when a new ticket collection is created
     event TicketCollectionCreated(uint256 indexed projectId, address indexed ticketContract, uint256 price);
+    event VideoURLSet(uint256 indexed projectId, string videoURL); // New event for setting VideoURL
 
     constructor(address _ticketImplementation, address launchPadAddress, address _crowdFlixVaultAddress) {
         ticketImplementation = _ticketImplementation;
@@ -65,7 +67,8 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
             price: _price, // Store the price
             category: _category,
             title: _title,
-            ticketsSold: 0 // Initialize ticketsSold to 0
+            ticketsSold: 0, // Initialize ticketsSold to 0
+            videoID: "" // Initialize videoURL as empty string
         });
         // console.log("After ticket collections");
 
@@ -90,15 +93,29 @@ contract TicketManager is Pausable, AccessControl, ReentrancyGuard {
         return address(ticketContract);
     }
 
+    // Function to set the VideoURL for a ticket collection
+    function setVideoURL(uint256 _projectId, string memory _videoURL) public onlyRole(LAUNCHPAD_ROLE) {
+        require(_projectId < collectionCount, "Invalid project ID");
+        ticketCollections[_projectId].videoID = _videoURL;
+        emit VideoURLSet(_projectId, _videoURL);
+    }
+
     // Function to get the ticket contract address for a given project ID
     function getTicketContractAddress(uint256 _projectId) public view returns (address) {
         return ticketCollections[_projectId].ticketContract;
+    }
+
+    // Function to get the VideoURL of a ticket collection
+    function getVideoURL(uint256 _projectId) public view returns (string memory) {
+        return ticketCollections[_projectId].videoID;
     }
 
     // Function to get the price of a ticket collection
     function getTicketCollectionPrice(uint256 _projectId) public view returns (uint256) {
         return ticketCollections[_projectId].price;
     }
+
+    
 
     // Function to pause the factory
     function pause() public onlyRole(PAUSER_ROLE) {

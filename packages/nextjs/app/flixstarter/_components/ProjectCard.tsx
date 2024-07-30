@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import VideoUpload from "./VideoUpload";
 import { formatUnits } from "viem";
 import { useAccount } from "wagmi";
 import { Address } from "~~/components/scaffold-eth";
@@ -11,6 +12,8 @@ import { Input } from "~~/components/ui/input";
 import { Label } from "~~/components/ui/label";
 // Import Badge component
 import { useDeployedContractInfo, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+
+// Import the new VideoUpload component
 
 type ProjectProps = {
   project: {
@@ -271,6 +274,11 @@ const ProjectCard = ({ project, status }: ProjectProps) => {
           <div className="flex justify-center mt-2">
             <Badge className="bg-green-500">All Investors have been refunded</Badge>
           </div>
+        )}
+
+        {/* Show VideoUpload component if project is finalized and successful */}
+        {status === "success" && userAddress === project.creator && project.isFinalized && (
+          <VideoUpload projectId={project.projectId} />
         )}
       </CardContent>
     </Card>

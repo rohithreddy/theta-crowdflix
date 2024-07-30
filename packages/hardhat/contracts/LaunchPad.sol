@@ -436,6 +436,15 @@ contract LaunchPad is Pausable, AccessControl, ReentrancyGuard {
         emit TeamKYCChecked(_projectId, _status);
     }
 
+    function setVideoURL(uint256 _projectId, string memory _videoURI) public {
+        Project storage project = projects[_projectId];
+        require(msg.sender == project.creator, "Only the project creator can set the video URL");
+        require(project.isFinalized, "Project must be finalized to set the video URL");
+
+        // Call the ticketManager's setVideoURL function
+        ticketManager.setVideoURL(_projectId, _videoURI);
+    }
+
   function pauseProject(uint256 _projectId) public onlyRole(PAUSER_ROLE) {
         require(_projectId < projectCount, "Invalid project ID");
         Project storage project = projects[_projectId];

@@ -18,6 +18,7 @@ type TicketProps = {
     title: string;
     ticketsSold: bigint;
     index: number;
+    videoID: string | null; // Add videoID property
   };
 };
 
@@ -74,6 +75,19 @@ const TicketCard = ({ ticket }: TicketProps) => {
             Buy Ticket
           </Button>
         </div>
+        {/* Show video link if videoID is present */}
+        {ticket.videoID && (
+          <div className="flex justify-center mt-2">
+            <a
+              href={`https://player.thetavideoapi.com/video/${ticket.videoID}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline"
+            >
+              Watch Now
+            </a>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

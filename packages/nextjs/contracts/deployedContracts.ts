@@ -15157,6 +15157,24 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "_videoURI",
+              type: "string",
+            },
+          ],
+          name: "setVideoURL",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "bytes4",
               name: "interfaceId",
               type: "bytes4",
@@ -16244,6 +16262,25 @@ const deployedContracts = {
           type: "event",
         },
         {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "videoURL",
+              type: "string",
+            },
+          ],
+          name: "VideoURLSet",
+          type: "event",
+        },
+        {
           inputs: [],
           name: "DEFAULT_ADMIN_ROLE",
           outputs: [
@@ -16445,6 +16482,11 @@ const deployedContracts = {
                   name: "ticketsSold",
                   type: "uint256",
                 },
+                {
+                  internalType: "string",
+                  name: "videoID",
+                  type: "string",
+                },
               ],
               internalType: "struct TicketManager.TicketCollection[]",
               name: "",
@@ -16495,6 +16537,11 @@ const deployedContracts = {
                   internalType: "uint256",
                   name: "ticketsSold",
                   type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "videoID",
+                  type: "string",
                 },
               ],
               internalType: "struct TicketManager.TicketCollection[]",
@@ -16576,6 +16623,25 @@ const deployedContracts = {
               internalType: "uint256",
               name: "",
               type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "getVideoURL",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
             },
           ],
           stateMutability: "view",
@@ -16688,6 +16754,24 @@ const deployedContracts = {
             },
           ],
           name: "revokeRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "_videoURL",
+              type: "string",
+            },
+          ],
+          name: "setVideoURL",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
