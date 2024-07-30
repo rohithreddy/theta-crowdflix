@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   365: {
     CrowdFlixDaoGovernor: {
-      address: "0x4121caFCFE504a84516275365B5890bFAa46022C",
+      address: "0x18aE00a04eF7A3DC33687485c3971956b7576DfF",
       abi: [
         {
           inputs: [
@@ -1894,7 +1894,7 @@ const deployedContracts = {
       },
     },
     CrowdFlixFaucet: {
-      address: "0xa3a708f2dac3F94789E98639Fb604437bf75FE38",
+      address: "0xA586Eb1071C7991664b2439E6fc83E76865d28D4",
       abi: [
         {
           inputs: [
@@ -1963,7 +1963,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CrowdFlixToken: {
-      address: "0x680CB1c26DEa1075bf02469fCf2007520C656689",
+      address: "0x6DDc4b74C370129cEB84AD566db1AfD0d1A2ab02",
       abi: [
         {
           inputs: [
@@ -3237,7 +3237,7 @@ const deployedContracts = {
       },
     },
     CrowdFlixVault: {
-      address: "0x5F88BC7535eEe75882ed656Bb10801Dd8b948132",
+      address: "0xD132fdDbAD74De8bE3fE054190a4A87179c83d3f",
       abi: [
         {
           inputs: [
@@ -3950,7 +3950,7 @@ const deployedContracts = {
       },
     },
     FlixTimelock: {
-      address: "0x6A5f8c032D73f4cAa6A51b8641b8ec1f1E984e9C",
+      address: "0x3dfB313627Bc0Ba3D958F72D086adeF2ecb2Ac64",
       abi: [
         {
           inputs: [
@@ -4963,7 +4963,7 @@ const deployedContracts = {
       },
     },
     LaunchPad: {
-      address: "0x2fDf419C0bd097E8b1E834B1dE5e846D2971c8f6",
+      address: "0xB0C0775A8aE52938302345401902b661fd2F9F82",
       abi: [
         {
           inputs: [
@@ -6779,6 +6779,24 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "_videoURI",
+              type: "string",
+            },
+          ],
+          name: "setVideoURL",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "bytes4",
               name: "interfaceId",
               type: "bytes4",
@@ -6906,7 +6924,7 @@ const deployedContracts = {
       },
     },
     MasterTicket: {
-      address: "0x2EccB86E3B2e2294940bEb3cbC04FA051731300a",
+      address: "0x5143e817751F90b23Ebf4c4E21ccCa7b8BBe582a",
       abi: [
         {
           inputs: [],
@@ -7675,7 +7693,7 @@ const deployedContracts = {
       },
     },
     TicketManager: {
-      address: "0xffFb4a070aBa4aA69c5DA15f6C88E45e7f936B9a",
+      address: "0x2f3D8A88cBc99397Aa15a2f7a32DD7257C23E2B8",
       abi: [
         {
           inputs: [
@@ -7863,6 +7881,25 @@ const deployedContracts = {
             },
           ],
           name: "Unpaused",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "videoURL",
+              type: "string",
+            },
+          ],
+          name: "VideoURLSet",
           type: "event",
         },
         {
@@ -8067,6 +8104,11 @@ const deployedContracts = {
                   name: "ticketsSold",
                   type: "uint256",
                 },
+                {
+                  internalType: "string",
+                  name: "videoID",
+                  type: "string",
+                },
               ],
               internalType: "struct TicketManager.TicketCollection[]",
               name: "",
@@ -8117,6 +8159,11 @@ const deployedContracts = {
                   internalType: "uint256",
                   name: "ticketsSold",
                   type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "videoID",
+                  type: "string",
                 },
               ],
               internalType: "struct TicketManager.TicketCollection[]",
@@ -8198,6 +8245,25 @@ const deployedContracts = {
               internalType: "uint256",
               name: "",
               type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+          ],
+          name: "getVideoURL",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
             },
           ],
           stateMutability: "view",
@@ -8310,6 +8376,24 @@ const deployedContracts = {
             },
           ],
           name: "revokeRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "_videoURL",
+              type: "string",
+            },
+          ],
+          name: "setVideoURL",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
