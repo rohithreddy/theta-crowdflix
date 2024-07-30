@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./ThemeToggle";
-import { Bug, CreditCard, DollarSign, Menu, Rocket, Users, Video } from "lucide-react";
+import { Book, Bug, CreditCard, DollarSign, Menu, Rocket, Users, Video } from "lucide-react";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { Button } from "~~/components/ui/button";
 import {
@@ -27,6 +27,7 @@ const routes = [
   { name: "Investments", href: "/invdash", icon: <DollarSign className="h-5 w-5" /> },
   { name: "Theatre", href: "/theatre", icon: <Video className="h-5 w-5" /> }, // Use Lucide Video icon
   { name: "Faucet", href: "/faucet", icon: <CreditCard className="h-5 w-5" /> }, // Use Lucide CurrencyDollar icon
+  { name: "Docs", href: "/docs", icon: <Book className="h-5 w-5" /> },
 ] as const;
 
 export const Header = () => {
