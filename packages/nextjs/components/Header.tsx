@@ -27,7 +27,7 @@ const routes = [
   { name: "Investments", href: "/invdash", icon: <DollarSign className="h-5 w-5" /> },
   { name: "Theatre", href: "/theatre", icon: <Video className="h-5 w-5" /> }, // Use Lucide Video icon
   { name: "Faucet", href: "/faucet", icon: <CreditCard className="h-5 w-5" /> }, // Use Lucide CurrencyDollar icon
-  { name: "Docs", href: "/docs", icon: <Book className="h-5 w-5" /> },
+  { name: "D", href: "/docs", icon: <Book className="h-5 w-5" /> },
 ] as const;
 
 export const Header = () => {
